@@ -1,4 +1,4 @@
-// src/components/Layout.jsx (or Sidebar.jsx if separate)
+
 import React, { useState } from 'react';
 import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import {

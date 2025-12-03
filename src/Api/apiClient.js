@@ -1,5 +1,4 @@
-// src/services/api.js
-// Mock API service for now - we'll connect to real backend later
+
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
 
 // Simulated delay for API calls

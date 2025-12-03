@@ -1,7 +1,4 @@
-/* src/App.css */
-/* Remove the Tailwind imports - they're now in index.css */
 
-/* Quill Editor Styles */
 .ql-container {
   font-family: inherit !important;
   font-size: 16px !important;
