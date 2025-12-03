@@ -1,0 +1,63 @@
+// src/redux/constants/actionTypes.js
+
+// Auth Action Types
+export const LOGIN_REQUEST = 'auth/LOGIN_REQUEST';
+export const LOGIN_SUCCESS = 'auth/LOGIN_SUCCESS';
+export const LOGIN_FAILURE = 'auth/LOGIN_FAILURE';
+export const LOGOUT = 'auth/LOGOUT';
+export const REGISTER_REQUEST = 'auth/REGISTER_REQUEST';
+export const REGISTER_SUCCESS = 'auth/REGISTER_SUCCESS';
+export const REGISTER_FAILURE = 'auth/REGISTER_FAILURE';
+export const GET_PROFILE_REQUEST = 'auth/GET_PROFILE_REQUEST';
+export const GET_PROFILE_SUCCESS = 'auth/GET_PROFILE_SUCCESS';
+export const GET_PROFILE_FAILURE = 'auth/GET_PROFILE_FAILURE';
+
+// CMS Action Types
+export const FETCH_CMS_REQUEST = 'cms/FETCH_CMS_REQUEST';
+export const FETCH_CMS_SUCCESS = 'cms/FETCH_CMS_SUCCESS';
+export const FETCH_CMS_FAILURE = 'cms/FETCH_CMS_FAILURE';
+export const UPDATE_CMS_REQUEST = 'cms/UPDATE_CMS_REQUEST';
+export const UPDATE_CMS_SUCCESS = 'cms/UPDATE_CMS_SUCCESS';
+export const UPDATE_CMS_FAILURE = 'cms/UPDATE_CMS_FAILURE';
+
+// Posts Action Types
+export const FETCH_POSTS_REQUEST = 'posts/FETCH_POSTS_REQUEST';
+export const FETCH_POSTS_SUCCESS = 'posts/FETCH_POSTS_SUCCESS';
+export const FETCH_POSTS_FAILURE = 'posts/FETCH_POSTS_FAILURE';
+export const FETCH_POST_REQUEST = 'posts/FETCH_POST_REQUEST';
+export const FETCH_POST_SUCCESS = 'posts/FETCH_POST_SUCCESS';
+export const FETCH_POST_FAILURE = 'posts/FETCH_POST_FAILURE';
+export const CREATE_POST_REQUEST = 'posts/CREATE_POST_REQUEST';
+export const CREATE_POST_SUCCESS = 'posts/CREATE_POST_SUCCESS';
+export const CREATE_POST_FAILURE = 'posts/CREATE_POST_FAILURE';
+export const UPDATE_POST_REQUEST = 'posts/UPDATE_POST_REQUEST';
+export const UPDATE_POST_SUCCESS = 'posts/UPDATE_POST_SUCCESS';
+export const UPDATE_POST_FAILURE = 'posts/UPDATE_POST_FAILURE';
+export const DELETE_POST_REQUEST = 'posts/DELETE_POST_REQUEST';
+export const DELETE_POST_SUCCESS = 'posts/DELETE_POST_SUCCESS';
+export const DELETE_POST_FAILURE = 'posts/DELETE_POST_FAILURE';
+
+// Media Action Types
+export const FETCH_MEDIA_REQUEST = 'media/FETCH_MEDIA_REQUEST';
+export const FETCH_MEDIA_SUCCESS = 'media/FETCH_MEDIA_SUCCESS';
+export const FETCH_MEDIA_FAILURE = 'media/FETCH_MEDIA_FAILURE';
+export const UPLOAD_MEDIA_REQUEST = 'media/UPLOAD_MEDIA_REQUEST';
+export const UPLOAD_MEDIA_SUCCESS = 'media/UPLOAD_MEDIA_SUCCESS';
+export const UPLOAD_MEDIA_FAILURE = 'media/UPLOAD_MEDIA_FAILURE';
+export const DELETE_MEDIA_REQUEST = 'media/DELETE_MEDIA_REQUEST';
+export const DELETE_MEDIA_SUCCESS = 'media/DELETE_MEDIA_SUCCESS';
+export const DELETE_MEDIA_FAILURE = 'media/DELETE_MEDIA_FAILURE';
+
+// Users Action Types
+export const FETCH_USERS_REQUEST = 'users/FETCH_USERS_REQUEST';
+export const FETCH_USERS_SUCCESS = 'users/FETCH_USERS_SUCCESS';
+export const FETCH_USERS_FAILURE = 'users/FETCH_USERS_FAILURE';
+export const CREATE_USER_REQUEST = 'users/CREATE_USER_REQUEST';
+export const CREATE_USER_SUCCESS = 'users/CREATE_USER_SUCCESS';
+export const CREATE_USER_FAILURE = 'users/CREATE_USER_FAILURE';
+export const UPDATE_USER_REQUEST = 'users/UPDATE_USER_REQUEST';
+export const UPDATE_USER_SUCCESS = 'users/UPDATE_USER_SUCCESS';
+export const UPDATE_USER_FAILURE = 'users/UPDATE_USER_FAILURE';
+export const DELETE_USER_REQUEST = 'users/DELETE_USER_REQUEST';
+export const DELETE_USER_SUCCESS = 'users/DELETE_USER_SUCCESS';
+export const DELETE_USER_FAILURE = 'users/DELETE_USER_FAILURE';

@@ -1,0 +1,66 @@
+
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from 'react-router-dom';
+import Layout from './components/Layout';
+import Dashboard from './containers/Dashboard';
+import PostsList from './containers/PostsList';
+import CreatePost from './containers/CreatePost';
+import EditPost from './containers/EditPost';
+import Media from './containers/Media';
+import Users from './containers/Users';
+import Settings from './containers/Settings';
+import Login from './containers/Login';
+import ContentModels from './containers/ContentModels';
+import ContentItems from './containers/ContentItems';
+import ContentItemForm from './containers/ContentItemForm';
+import Home from './containers/Home';
+import './App.css';
+
+const PublicLayout = () => {
+  return <Outlet />;
+};
+
+
+const ProtectedRoute = ({ children }:any) => {
+  const isAuthenticated = localStorage.getItem('token') ? true : false;
+  
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+  
+  return children;
+};
+
+function App() {
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<PublicLayout />}>
+          <Route index element={<Home />} />
+          <Route path="login" element={<Login />} />
+        </Route>
+
+        <Route path="/dashboard" element={
+          <ProtectedRoute>
+            <Layout />
+          </ProtectedRoute>
+        }>
+          <Route index element={<Dashboard />} />
+          <Route path="posts" element={<PostsList />} />
+          <Route path="posts/create" element={<CreatePost />} />
+          <Route path="posts/edit/:id" element={<EditPost />} />
+          <Route path="content-models" element={<ContentModels />} />
+          <Route path="content-models/:modelSlug" element={<ContentItems />} />
+          <Route path="content-models/:modelSlug/create" element={<ContentItemForm />} />
+          <Route path="content-models/:modelSlug/edit/:itemId" element={<ContentItemForm />} />
+          <Route path="media" element={<Media />} />
+          <Route path="users" element={<Users />} />
+          <Route path="settings" element={<Settings />} />
+        </Route>
+
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </Router>
+  );
+}
+export default App;
