@@ -150,15 +150,20 @@ const Home = (props) => {
           <div className="flex justify-between items-center">
             <div className="flex items-center">
               <Link to="/" className="flex items-center">
-                <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl flex items-center justify-center mr-3 shadow-lg">
-                  <Sparkles className="w-6 h-6 text-white" />
+                {/* <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl flex items-center justify-center mr-3 shadow-lg">
+                
                 </div>
                 <div>
                   <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                     RM Tech
                   </span>
                   <span className="block text-xs text-gray-500">Solution</span>
-                </div>
+                </div> */}
+                  <img 
+                  src={require('../assets/logoT.png')}
+                  className="object-cover"
+                  style={{  height: '90px',width: '200px' }}
+                />
               </Link>
             </div>
 
@@ -592,13 +597,18 @@ const Home = (props) => {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
             <div>
               <div className="flex items-center mb-6">
-                <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl flex items-center justify-center mr-3">
+                {/* <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl flex items-center justify-center mr-3">
                   <Sparkles className="w-6 h-6 text-white" />
-                </div>
-                <div>
+                </div> */}
+                  <img 
+                  src={require('../assets/logoT.png')}
+                  className="object-cover"
+                  style={{  height: '90px',width: '200px' }}
+                />
+                {/* <div>
                   <span className="text-2xl font-bold">RM Tech</span>
                   <span className="block text-sm text-gray-400">Solution</span>
-                </div>
+                </div> */}
               </div>
               <p className="text-gray-400 mb-6">
                 Modern content management solutions.
