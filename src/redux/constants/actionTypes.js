@@ -19,6 +19,9 @@ export const FETCH_CMS_FAILURE = 'cms/FETCH_CMS_FAILURE';
 export const UPDATE_CMS_REQUEST = 'cms/UPDATE_CMS_REQUEST';
 export const UPDATE_CMS_SUCCESS = 'cms/UPDATE_CMS_SUCCESS';
 export const UPDATE_CMS_FAILURE = 'cms/UPDATE_CMS_FAILURE';
+export const ADD_CMS_REQUEST = 'cms/ADD_CMS_REQUEST';
+export const ADD_CMS_SUCCESS = 'cms/ADD_CMS_SUCCESS';
+export const ADD_CMS_FAILURE = 'cms/ADD_CMS_FAILURE';
 
 // Posts Action Types
 export const FETCH_POSTS_REQUEST = 'posts/FETCH_POSTS_REQUEST';

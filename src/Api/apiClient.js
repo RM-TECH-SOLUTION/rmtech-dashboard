@@ -1,10 +1,10 @@
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+const API_BASE_URL = 'https://api.rmtechsolution.com/';
 
-// Simulated delay for API calls
+
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
-// Mock data storage (in real app, this would be from a backend)
+
 let mockPosts = [
   { id: 1, title: 'Getting Started with React CMS', category: 'Technology', author: 'John Doe', date: '2024-01-15', status: 'published', views: '1.2k', content: '<p>Sample content</p>', excerpt: 'Learn how to build a modern CMS', tags: 'react, cms' },
   { id: 2, title: 'Web Development Best Practices', category: 'Development', author: 'Jane Smith', date: '2024-01-14', status: 'draft', views: '890', content: '<p>Sample content</p>', excerpt: 'Best practices for web development', tags: 'web, development' },
@@ -20,7 +20,7 @@ let mockMedia = [
   { id: 2, name: 'document.pdf', type: 'document', url: '#', size: '1.2 MB', uploaded: '2024-01-14' },
 ];
 
-// Posts API
+
 export const postsAPI = {
   getAll: async () => {
     await delay(500);

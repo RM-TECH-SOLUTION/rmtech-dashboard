@@ -5,7 +5,10 @@ import {
   FETCH_CMS_FAILURE,
   UPDATE_CMS_REQUEST,
   UPDATE_CMS_SUCCESS,
-  UPDATE_CMS_FAILURE
+  UPDATE_CMS_FAILURE,
+  ADD_CMS_FAILURE,
+  ADD_CMS_REQUEST,
+  ADD_CMS_SUCCESS
 } from '../constants/actionTypes';
 
 const initialState = {
@@ -112,6 +115,49 @@ const cmsReducer = (state = initialState, action) => {
       };
 
     case UPDATE_CMS_FAILURE:
+      return {
+        ...state,
+        loading: {
+          ...state.loading,
+          [action.cmsName]: false,
+        },
+        error: {
+          ...state.error,
+          [action.cmsName]: action.error,
+        },
+      };
+
+      case ADD_CMS_REQUEST:
+      return {
+        ...state,
+        loading: {
+          ...state.loading,
+          [action.cmsName]: true,
+        },
+        error: {
+          ...state.error,
+          [action.cmsName]: null,
+        },
+      };
+
+    case ADD_CMS_SUCCESS:
+      return {
+        ...state,
+        loading: {
+          ...state.loading,
+          [action.cmsName]: false,
+        },
+        data: {
+          ...state.data,
+          [action.cmsName]: action.payload,
+        },
+        lastUpdated: {
+          ...state.lastUpdated,
+          [action.cmsName]: new Date().toISOString(),
+        },
+      };
+
+    case ADD_CMS_FAILURE:
       return {
         ...state,
         loading: {

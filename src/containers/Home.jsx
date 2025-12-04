@@ -1,6 +1,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { fetchCMSData  } from '../redux/actions/cmsActions';
+import { connect } from 'react-redux';
 import {
   Menu,
   X,
@@ -36,12 +38,13 @@ import {
   ShieldCheck
 } from 'lucide-react';
 
-const Home = () => {
+const Home = (props) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
+    props.fetchCMSData();
     const handleScroll = () => {
       setScrolled(window.scrollY > 50);
     };
@@ -82,49 +85,49 @@ const Home = () => {
       role: 'CTO, RM Tech Solution', 
       content: 'RM Tech CMS transformed our content workflow!',
       rating: 5,
-      avatar: 'AJ'
+      avatar: 'MA'
     },
     { 
       name: 'Ram Mohan Rao', 
       role: 'Managing Director', 
       content: 'Intuitive interface with powerful features.',
       rating: 5,
-      avatar: 'SM'
+      avatar: 'RM'
     },
     {
-      name: 'Shahil', 
+      name: 'Shahil ', 
       role: 'Product Head',
       content: 'The best CMS I have ever used for my projects.',
       rating: 4,
-      avatar: 'JS'
+      avatar: 'S'
     },
       {
       name: 'Alim Abdul', 
       role: 'Marketing Manager',
       content: 'Streamlined our content operations significantly.',
       rating: 4,
-      avatar: 'JS'
+      avatar: 'AA'
     },
     {
       name: 'Ramesh pothi',
       role: 'Lead Developer',
       content: 'Highly recommend RM Tech CMS for any team!',
       rating: 5,
-      avatar: 'JD'
+      avatar: 'RP'
     },
     {
       name: 'Rahaman',
       role: 'Chated accountant',
       content: 'A game-changer for our Accounting management needs.',
       rating: 4,
-      avatar: 'AJ'
+      avatar: 'R'
     },
     {
       name: 'Zakeer Asmath',
       role: 'Project Manager',
       content: 'Our team productivity has skyrocketed since using this CMS.',
       rating: 5,
-      avatar: 'BW'
+      avatar: 'ZA'
     }
   ];
 
@@ -662,4 +665,14 @@ const Home = () => {
   );
 };
 
-export default Home;
+const mapStateToProps = (state) => ({
+  cms: state.cms,
+  posts: state.posts,
+  users: state.users,
+});
+
+const mapDispatchToProps = {
+  fetchCMSData,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Home);
