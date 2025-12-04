@@ -108,6 +108,13 @@ const Home = (props) => {
       rating: 4,
       avatar: 'AA'
     },
+      {
+      name: 'Adil Abdul', 
+      role: 'Tech Support, RM Tech Solution',
+      content: 'Reliable and efficient CMS platform.',
+      rating: 4,
+      avatar: 'AA'
+    },
     {
       name: 'Ramesh pothi',
       role: 'Lead, RM Tech Solution',
