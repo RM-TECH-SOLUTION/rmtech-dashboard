@@ -82,49 +82,49 @@ const Home = (props) => {
   const testimonials = [
     { 
       name: 'Mujibuddin Ansari', 
-      role: 'CTO, RM Tech Solution', 
+      role: 'Co-Founder, RM Tech Solution', 
       content: 'RM Tech CMS transformed our content workflow!',
       rating: 5,
       avatar: 'MA'
     },
     { 
       name: 'Ram Mohan Rao', 
-      role: 'Managing Director', 
+      role: 'Co-Founder, RM Tech Solution', 
       content: 'Intuitive interface with powerful features.',
       rating: 5,
       avatar: 'RM'
     },
     {
       name: 'Shahil ', 
-      role: 'Product Head',
+      role: 'Product Head, RM Tech Solution',
       content: 'The best CMS I have ever used for my projects.',
       rating: 4,
       avatar: 'S'
     },
       {
       name: 'Alim Abdul', 
-      role: 'Marketing Manager',
+      role: 'Marketing Manager, RM Tech Solution',
       content: 'Streamlined our content operations significantly.',
       rating: 4,
       avatar: 'AA'
     },
     {
       name: 'Ramesh pothi',
-      role: 'Lead Developer',
+      role: 'Lead, RM Tech Solution',
       content: 'Highly recommend RM Tech CMS for any team!',
       rating: 5,
       avatar: 'RP'
     },
     {
       name: 'Rahaman',
-      role: 'Chated accountant',
+      role: 'Chated Accountant, RM Tech Solution',
       content: 'A game-changer for our Accounting management needs.',
       rating: 4,
       avatar: 'R'
     },
     {
       name: 'Zakeer Asmath',
-      role: 'Project Manager',
+      role: 'Project Manager, RM Tech Solution',
       content: 'Our team productivity has skyrocketed since using this CMS.',
       rating: 5,
       avatar: 'ZA'
