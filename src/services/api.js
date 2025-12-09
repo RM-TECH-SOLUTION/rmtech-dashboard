@@ -3,7 +3,7 @@ const BASE_URL = 'https://api.rmtechsolution.com/';
 
 const URLS = {
   addCms: BASE_URL + 'addCms',
-  getCms: BASE_URL + 'cms',
+  getCms: BASE_URL + 'getCms',
   updateCms: BASE_URL + 'updateCms',
 };
 

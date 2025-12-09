@@ -20,6 +20,9 @@ import {
   Type,
   Hash
 } from 'lucide-react';
+import { addCMSData, fetchCMSData } from "../redux/actions/cmsActions"
+import { useDispatch, useSelector } from "react-redux";
+
 
 const ContentModels = () => {
   const [models, setModels] = useState([]);
@@ -28,91 +31,50 @@ const ContentModels = () => {
   const [showJsonView, setShowJsonView] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
+  const cmsData = useSelector((state) => state.cms.data);
 
-  // Load models from localStorage
   useEffect(() => {
-    loadModels();
-  }, []);
+    dispatch(fetchCMSData());
+  }, [!showForm]);
 
-  const loadModels = () => {
-    const savedModels = localStorage.getItem('contentModels');
-    if (savedModels) {
-      setModels(JSON.parse(savedModels));
-    } else {
-      // Default models
-      const defaultModels = [
-        {
-          id: 1,
-          name: 'Home Banners',
-          slug: 'homeBanners',
-          description: 'Manage hero banners for homepage',
-          icon: '🎨',
-          fields: [
-            { id: 1, name: 'Banner Image', key: 'image', type: 'image', required: true },
-            { id: 2, name: 'Title', key: 'title', type: 'text', required: true },
-            { id: 3, name: 'Subtitle', key: 'subtitle', type: 'text', required: false },
-            { id: 4, name: 'Button Text', key: 'buttonText', type: 'text', required: false },
-            { id: 5, name: 'Button Link', key: 'buttonLink', type: 'text', required: false },
-            { id: 6, name: 'Active', key: 'isActive', type: 'boolean', required: true, defaultValue: true }
-          ]
-        },
-        {
-          id: 2,
-          name: 'Home Page Settings',
-          slug: 'homePageSettings',
-          description: 'Global settings for homepage',
-          icon: '⚙️',
-          singletonInApi: true,
-          fields: [
-            { id: 1, name: 'Top Left Icon', key: 'topLeftIcon', type: 'image', required: false },
-            { id: 2, name: 'Bottom Right Icon', key: 'bottomRightIcon', type: 'image', required: false },
-            { id: 3, name: 'Title', key: 'title', type: 'string', required: true },
-            { id: 4, name: 'Description', key: 'description', type: 'text', required: true },
-            { id: 5, name: 'Box Background', key: 'boxBackground', type: 'color', required: true, defaultValue: '#3b82f6' },
-            { id: 6, name: 'Box Text', key: 'boxText', type: 'color', required: true, defaultValue: '#ffffff' },
-            { id: 7, name: 'Favicon', key: 'favicon', type: 'image', required: false },
-            { id: 8, name: 'Icon', key: 'icon', type: 'image', required: false },
-            { id: 9, name: 'Button Title', key: 'buttonTitle', type: 'text', required: false },
-            { id: 10, name: 'Button Path', key: 'buttonPath', type: 'text', required: false },
-            { id: 11, name: 'Disable Button', key: 'disableButton', type: 'boolean', required: false, defaultValue: false }
-          ]
-        },
-        {
-          id: 3,
-          name: 'Testimonials',
-          slug: 'testimonials',
-          description: 'Customer testimonials and reviews',
-          icon: '💬',
-          fields: [
-            { id: 1, name: 'Customer Name', key: 'customerName', type: 'string', required: true },
-            { id: 2, name: 'Position', key: 'position', type: 'string', required: false },
-            { id: 3, name: 'Company', key: 'company', type: 'string', required: false },
-            { id: 4, name: 'Avatar', key: 'avatar', type: 'image', required: false },
-            { id: 5, name: 'Rating', key: 'rating', type: 'number', required: true, min: 1, max: 5 },
-            { id: 6, name: 'Testimonial Text', key: 'text', type: 'text', required: true },
-            { id: 7, name: 'Featured', key: 'featured', type: 'boolean', required: false }
-          ]
-        },
-        {
-          id: 4,
-          name: 'Services',
-          slug: 'services',
-          description: 'List of services offered',
-          icon: '🛠️',
-          fields: [
-            { id: 1, name: 'Service Name', key: 'name', type: 'string', required: true },
-            { id: 2, name: 'Icon', key: 'icon', type: 'image', required: false },
-            { id: 3, name: 'Description', key: 'description', type: 'text', required: true },
-            { id: 4, name: 'Features', key: 'features', type: 'array', required: false, itemType: 'string' },
-            { id: 5, name: 'Price', key: 'price', type: 'number', required: false },
-            { id: 6, name: 'Display Order', key: 'order', type: 'number', required: true }
-          ]
-        }
-      ];
-      setModels(defaultModels);
-      localStorage.setItem('contentModels', JSON.stringify(defaultModels));
-    }
+  const convertCMSResponseToUI = (cmsArray) => {
+    if (!cmsArray || !Array.isArray(cmsArray)) return [];
+
+    return cmsArray.map((item, index) => {
+      const fields = Object.values(item.cms || {}).map((field, i) => ({
+        id: i + 1,
+        name: field.fieldName,
+        key: field.fieldKey,
+        type: field.fieldType,
+        value: field.fieldValue,
+      }));
+
+      return {
+        id: index + 1,
+        name: item.modelName,
+        slug: item.modelSlug,
+        description: "",
+        icon: "📄",
+        singletonInApi: Number(item.singletonModel) === 1,
+        fields,
+      };
+    });
   };
+
+
+  useEffect(() => {
+    if (cmsData && cmsData.length > 0) {
+      const list = convertCMSResponseToUI(cmsData);
+      setModels(list);
+    }
+  }, [cmsData]);
+
+  // Filter search
+  const filteredModels = models.filter((model) =>
+    model.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    model.slug.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   const saveModels = (updatedModels) => {
     localStorage.setItem('contentModels', JSON.stringify(updatedModels));
@@ -157,7 +119,7 @@ const ContentModels = () => {
   };
 
   const handleSaveModel = (updatedModel) => {
-    const updatedModels = models.map(model => 
+    const updatedModels = models.map(model =>
       model.id === updatedModel.id ? updatedModel : model
     );
     if (!models.find(m => m.id === updatedModel.id)) {
@@ -175,10 +137,10 @@ const ContentModels = () => {
       exportedAt: new Date().toISOString(),
       version: '1.0.0'
     };
-    
+
     const dataStr = JSON.stringify(jsonData, null, 2);
-    const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-    
+    const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
+
     const exportFileDefaultName = 'content-models.json';
     const linkElement = document.createElement('a');
     linkElement.setAttribute('href', dataUri);
@@ -222,12 +184,6 @@ const ContentModels = () => {
     array: <Layers size={16} className="text-indigo-500" />,
     date: <Calendar size={16} className="text-orange-500" />
   };
-
-  const filteredModels = models.filter(model =>
-    model.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    model.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    model.slug.toLowerCase().includes(searchTerm.toLowerCase())
-  );
 
   return (
     <div className="space-y-6">
@@ -442,66 +398,84 @@ const ContentModels = () => {
 
 // Model Form Component
 const ModelForm = ({ model, onSave, onCancel }) => {
+  const dispatch = useDispatch();
+
   const [formData, setFormData] = useState(model || {
-    id: Date.now(),
-    name: '',
-    slug: '',
-    description: '',
-    icon: '📄',
-    singletonInApi: false,
+    merchantId: "",
+    modelName: "",
+    modelSlug: "",
+    description: "",
+    icon: "📄",
+    singletonModel: 0,
     fields: []
   });
 
+
+  console.log(formData.fields, "formDataformDatahhhh");
+
+
   const [newField, setNewField] = useState({
-    name: '',
-    key: '',
-    type: 'string',
-    required: false,
-    defaultValue: ''
+    merchantId: "",
+    modelName: "",
+    modelSlug: "",
+    fieldName: "",
+    fieldKey: "",
+    fieldType: "string",
+    fieldValue: "",
+    singletonModel: 0,
   });
 
-  const fieldTypes = [
-    { value: 'string', label: 'String', icon: <Type size={16} /> },
-    { value: 'text', label: 'Text (Long)', icon: <Text size={16} /> },
-    { value: 'number', label: 'Number', icon: <Hash size={16} /> },
-    { value: 'boolean', label: 'Boolean', icon: <CheckSquare size={16} /> },
-    { value: 'image', label: 'Image', icon: <ImageIcon size={16} /> },
-    { value: 'color', label: 'Color', icon: <Palette size={16} /> },
-    { value: 'array', label: 'Array', icon: <Layers size={16} /> },
-    { value: 'date', label: 'Date', icon: <Calendar size={16} /> }
-  ];
-
-  const icons = ['📄', '🎨', '⚙️', '💬', '🛠️', '📊', '📱', '💻', '🌐', '🎯', '✨', '🔧', '📈'];
-
+  // Update Input Handler
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
+
+    // auto-fill slug from modelName
+    if (name === "modelName") {
+      const generatedSlug = value
+        .toLowerCase()
+        .replace(/\s+/g, "-")
+        .replace(/[^a-z0-9-]/g, "");
+
+      setFormData(prev => ({
+        ...prev,
+        modelName: value,
+        modelSlug: prev.modelSlug || generatedSlug
+      }));
+
+      return;
+    }
+
     setFormData(prev => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : value
+      [name]: type === "checkbox" ? checked : value
     }));
   };
 
+  // New field input change
   const handleFieldInputChange = (e) => {
-    const { name, value, type, checked } = e.target;
+    const { name, value } = e.target;
     setNewField(prev => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : value
+      [name]: value
     }));
   };
 
+  // Add Field
   const handleAddField = () => {
-    if (!newField.name || !newField.key) {
-      alert('Field name and key are required');
+    if (!newField.fieldName || !newField.fieldKey) {
+      alert("Field name & key required");
       return;
     }
 
     const field = {
-      id: Date.now(),
-      name: newField.name,
-      key: newField.key,
-      type: newField.type,
-      required: newField.required,
-      defaultValue: newField.defaultValue
+      merchantId: formData.merchantId,
+      modelName: formData.modelName,
+      modelSlug: formData.modelSlug,
+      singletonModel: formData.singletonModel ? 1 : 0,
+      fieldName: newField.fieldName,
+      fieldKey: newField.fieldKey,
+      fieldType: newField.fieldType,
+      fieldValue: newField.fieldValue
     };
 
     setFormData(prev => ({
@@ -510,268 +484,217 @@ const ModelForm = ({ model, onSave, onCancel }) => {
     }));
 
     setNewField({
-      name: '',
-      key: '',
-      type: 'string',
-      required: false,
-      defaultValue: ''
+      fieldName: "",
+      fieldKey: "",
+      fieldType: "string",
+      fieldValue: ""
     });
   };
 
+
+  // Remove Field
   const handleRemoveField = (id) => {
     setFormData(prev => ({
       ...prev,
-      fields: prev.fields.filter(field => field.id !== id)
+      fields: prev.fields.filter(f => f.id !== id)
     }));
   };
 
+  // ✅ Convert form data into EXACT API FORMAT
+  const createApiPayload = () => {
+    return formData.fields.map(field => ({
+      merchantId: Number(formData.merchantId),
+      modelSlug: formData.modelSlug,
+      modelName: formData.modelName,
+      fieldName: field.fieldName,
+      fieldKey: field.fieldKey,
+      fieldType: field.fieldType,
+      fieldValue: field.fieldValue || "",
+      singletonModel: formData.singletonModel ? 1 : 0
+    }));
+  };
+
+  // Submit
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    const payload = formData.fields;
+
+    console.log("FINAL PAYLOAD SENDING TO REDUX:", payload);
+
+    // 🚀 THIS IS THE FIX
+    dispatch(addCMSData(payload));
+
     onSave(formData);
   };
+
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
       <div className="bg-white rounded-xl shadow-lg max-w-4xl w-full max-h-[90vh] overflow-hidden">
+
+        {/* HEADER */}
         <div className="p-6 border-b">
           <h3 className="text-lg font-semibold">
-            {model ? 'Edit Content Model' : 'Create Content Model'}
+            {model ? "Edit Content Model" : "Create Content Model"}
           </h3>
         </div>
 
+        {/* FORM */}
         <form onSubmit={handleSubmit} className="overflow-y-auto max-h-[70vh]">
+
           <div className="p-6 space-y-6">
-            {/* Basic Info */}
+
+            {/* BASIC INPUTS */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Icon
-                </label>
-                <div className="flex flex-wrap gap-2">
-                  {icons.map(icon => (
-                    <button
-                      type="button"
-                      key={icon}
-                      onClick={() => setFormData(prev => ({ ...prev, icon }))}
-                      className={`p-2 text-xl rounded-lg border ${
-                        formData.icon === icon
-                          ? 'border-blue-500 bg-blue-50'
-                          : 'border-gray-300 hover:border-gray-400'
-                      }`}
-                    >
-                      {icon}
-                    </button>
-                  ))}
-                </div>
-              </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Model Name *
-                </label>
+                <label className="block text-sm font-medium">Merchant ID *</label>
                 <input
                   type="text"
-                  name="name"
-                  value={formData.name}
+                  name="merchantId"
+                  placeholder="Merchant ID"
+                  value={formData.merchantId}
                   onChange={handleInputChange}
                   required
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg"
-                  placeholder="e.g., Home Banners"
+                  className="w-full px-4 py-2 border rounded-lg"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Slug *
-                </label>
+                <label className="block text-sm font-medium">Model Name *</label>
                 <input
                   type="text"
-                  name="slug"
-                  value={formData.slug}
+                  name="modelName"
+                  placeholder="Model Name"
+                  value={formData.modelName}
                   onChange={handleInputChange}
                   required
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg"
-                  placeholder="e.g., home-banners"
+                  className="w-full px-4 py-2 border rounded-lg"
                 />
               </div>
+
+              <div>
+                <label className="block text-sm font-medium">Model Slug *</label>
+                <input
+                  type="text"
+                  name="modelSlug"
+                  placeholder="Model Slug"
+                  value={formData.modelSlug}
+                  onChange={handleInputChange}
+                  required
+                  className="w-full px-4 py-2 border rounded-lg"
+                />
+              </div>
+
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Description
-              </label>
-              <textarea
-                name="description"
-                value={formData.description}
-                onChange={handleInputChange}
-                rows={2}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg"
-                placeholder="Describe what this model is used for..."
-              />
-            </div>
-
+            {/* SINGLETON CHECKBOX */}
             <div className="flex items-center">
               <input
                 type="checkbox"
-                id="singletonInApi"
-                name="singletonInApi"
-                checked={formData.singletonInApi}
+                name="singletonModel"
+                checked={formData.singletonModel}
                 onChange={handleInputChange}
-                className="w-4 h-4 text-blue-600 border-gray-300 rounded"
+                className="w-4 h-4"
               />
-              <label htmlFor="singletonInApi" className="ml-2 text-sm text-gray-700">
-                Singleton Model (Only one instance exists)
-              </label>
+              <label className="ml-2 text-sm">Singleton Model (Only one allowed)</label>
             </div>
 
-            {/* Fields Section */}
+            {/* ADD FIELD UI */}
             <div className="border-t pt-6">
               <h4 className="text-lg font-medium mb-4">Fields</h4>
 
-              {/* Add New Field */}
-              <div className="bg-gray-50 p-4 rounded-lg mb-6">
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Field Name
-                    </label>
-                    <input
-                      type="text"
-                      name="name"
-                      value={newField.name}
-                      onChange={handleFieldInputChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
-                      placeholder="e.g., Banner Image"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Key
-                    </label>
-                    <input
-                      type="text"
-                      name="key"
-                      value={newField.key}
-                      onChange={handleFieldInputChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
-                      placeholder="e.g., bannerImage"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Type
-                    </label>
-                    <select
-                      name="type"
-                      value={newField.type}
-                      onChange={handleFieldInputChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
-                    >
-                      {fieldTypes.map(type => (
-                        <option key={type.value} value={type.value}>
-                          {type.label}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  <div className="flex items-end">
-                    <button
-                      type="button"
-                      onClick={handleAddField}
-                      className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm"
-                    >
-                      Add Field
-                    </button>
-                  </div>
-                </div>
-                <div className="flex items-center space-x-4">
-                  <label className="flex items-center">
-                    <input
-                      type="checkbox"
-                      name="required"
-                      checked={newField.required}
-                      onChange={handleFieldInputChange}
-                      className="w-4 h-4 text-blue-600 border-gray-300 rounded"
-                    />
-                    <span className="ml-2 text-sm text-gray-700">Required</span>
-                  </label>
-                  {newField.type !== 'boolean' && (
-                    <div className="flex-1">
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Default Value
-                      </label>
-                      <input
-                        type="text"
-                        name="defaultValue"
-                        value={newField.defaultValue}
-                        onChange={handleFieldInputChange}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
-                        placeholder="Optional"
-                      />
-                    </div>
-                  )}
-                </div>
+              <div className="bg-gray-50 p-4 rounded-lg mb-6 grid grid-cols-1 md:grid-cols-4 gap-4">
+
+                <input
+                  type="text"
+                  name="fieldName"
+                  value={newField.fieldName}
+                  onChange={handleFieldInputChange}
+                  placeholder="Field Name"
+                  className="px-3 py-2 border rounded-lg text-sm"
+                />
+
+                <input
+                  type="text"
+                  name="fieldKey"
+                  value={newField.fieldKey}
+                  onChange={handleFieldInputChange}
+                  placeholder="Field Key"
+                  className="px-3 py-2 border rounded-lg text-sm"
+                />
+
+                <select
+                  name="fieldType"
+                  value={newField.fieldType}
+                  onChange={handleFieldInputChange}
+                  className="px-3 py-2 border rounded-lg text-sm"
+                >
+                  <option value="string">String</option>
+                  <option value="text">Text</option>
+                  <option value="number">Number</option>
+                  <option value="boolean">Boolean</option>
+                  <option value="image">Color</option>
+                </select>
+
+                <input
+                  type="text"
+                  name="fieldValue"
+                  value={newField.fieldValue}
+                  onChange={handleFieldInputChange}
+                  placeholder="Field Value"
+                  className="px-3 py-2 border rounded-lg text-sm"
+                />
+
+                <button
+                  type="button"
+                  onClick={handleAddField}
+                  className="col-span-1 px-4 py-2 bg-blue-600 text-white rounded-lg"
+                >
+                  Add Field
+                </button>
+
               </div>
 
-              {/* Fields List */}
-              <div className="space-y-3">
-                {formData.fields.map((field, index) => (
-                  <div
-                    key={field.id}
-                    className="flex items-center justify-between p-3 bg-white border rounded-lg"
-                  >
-                    <div className="flex items-center space-x-4">
-                      <div className="text-gray-400">#{index + 1}</div>
-                      <div>
-                        <div className="font-medium">{field.name}</div>
-                        <div className="text-sm text-gray-500">
-                          {field.key} • {field.type}
-                          {field.required && ' • Required'}
-                        </div>
-                      </div>
+              {/* FIELD LIST */}
+              <div>
+                {formData.fields.map((field, i) => (
+                  <div key={field.id} className="p-3 border rounded-lg flex justify-between">
+                    <div>
+                      <b>{field.fieldName}</b> — {field.fieldKey} ({field.fieldType})
                     </div>
                     <button
                       type="button"
                       onClick={() => handleRemoveField(field.id)}
-                      className="text-red-600 hover:text-red-800"
+                      className="text-red-600"
                     >
-                      <Trash2 size={16} />
+                      Remove
                     </button>
                   </div>
                 ))}
-
-                {formData.fields.length === 0 && (
-                  <div className="text-center py-6 text-gray-500">
-                    No fields added yet. Add your first field above.
-                  </div>
-                )}
               </div>
+
             </div>
+
           </div>
 
-          {/* Form Actions */}
-          <div className="p-6 border-t">
-            <div className="flex justify-end space-x-4">
-              <button
-                type="button"
-                onClick={onCancel}
-                className="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-              >
-                {model ? 'Update Model' : 'Create Model'}
-              </button>
-            </div>
+          {/* ACTION BUTTONS */}
+          <div className="p-6 border-t flex justify-end space-x-4">
+            <button type="button" onClick={onCancel} className="px-6 py-2 border rounded-lg">
+              Cancel
+            </button>
+            <button type="submit" className="px-6 py-2 bg-blue-600 text-white rounded-lg">
+              Save Model
+            </button>
           </div>
+
         </form>
       </div>
     </div>
   );
 };
+
 
 // Missing Calendar icon component
 const Calendar = (props) => (

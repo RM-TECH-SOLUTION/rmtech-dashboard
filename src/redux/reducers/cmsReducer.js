@@ -1,175 +1,103 @@
-// src/redux/reducers/cmsReducer.js
 import {
   FETCH_CMS_REQUEST,
   FETCH_CMS_SUCCESS,
   FETCH_CMS_FAILURE,
+  ADD_CMS_REQUEST,
+  ADD_CMS_SUCCESS,
+  ADD_CMS_FAILURE,
   UPDATE_CMS_REQUEST,
   UPDATE_CMS_SUCCESS,
-  UPDATE_CMS_FAILURE,
-  ADD_CMS_FAILURE,
-  ADD_CMS_REQUEST,
-  ADD_CMS_SUCCESS
-} from '../constants/actionTypes';
+  UPDATE_CMS_FAILURE
+} from "../constants/actionTypes";
 
 const initialState = {
-  data: {
-    navbar: null,
-    footer: null,
-    home: null,
-    about: null,
-    contact: null,
-    settings: null,
-  },
-  loading: {
-    navbar: false,
-    footer: false,
-    home: false,
-    about: false,
-    contact: false,
-    settings: false,
-  },
-  error: {
-    navbar: null,
-    footer: null,
-    home: null,
-    about: null,
-    contact: null,
-    settings: null,
-  },
-  lastUpdated: {},
+  data: [],        // all CMS models
+  loading: false,
+  error: null,
+  addLoading: false,
+  addError: null,
+  lastUpdated: null,
 };
+
 
 const cmsReducer = (state = initialState, action) => {
   switch (action.type) {
+    // ---------------------------
+    // FETCH CMS
+    // ---------------------------
     case FETCH_CMS_REQUEST:
       return {
         ...state,
-        loading: {
-          ...state.loading,
-          [action.cmsName]: true,
-        },
-        error: {
-          ...state.error,
-          [action.cmsName]: null,
-        },
+        loading: true,
+        error: null,
       };
 
     case FETCH_CMS_SUCCESS:
       return {
         ...state,
-        loading: {
-          ...state.loading,
-          [action.cmsName]: false,
-        },
-        data: {
-          ...state.data,
-          [action.cmsName]: action.payload,
-        },
-        lastUpdated: {
-          ...state.lastUpdated,
-          [action.cmsName]: new Date().toISOString(),
-        },
+        loading: false,
+        data: action.payload,  // Full CMS array from backend
+        lastUpdated: new Date().toISOString(),
       };
 
     case FETCH_CMS_FAILURE:
       return {
         ...state,
-        loading: {
-          ...state.loading,
-          [action.cmsName]: false,
-        },
-        error: {
-          ...state.error,
-          [action.cmsName]: action.error,
-        },
+        loading: false,
+        error: action.error,
       };
 
-    case UPDATE_CMS_REQUEST:
+    // ---------------------------
+    // ADD CMS
+    // ---------------------------
+    case ADD_CMS_REQUEST:
       return {
         ...state,
-        loading: {
-          ...state.loading,
-          [action.cmsName]: true,
-        },
-        error: {
-          ...state.error,
-          [action.cmsName]: null,
-        },
-      };
-
-    case UPDATE_CMS_SUCCESS:
-      return {
-        ...state,
-        loading: {
-          ...state.loading,
-          [action.cmsName]: false,
-        },
-        data: {
-          ...state.data,
-          [action.cmsName]: action.payload,
-        },
-        lastUpdated: {
-          ...state.lastUpdated,
-          [action.cmsName]: new Date().toISOString(),
-        },
-      };
-
-    case UPDATE_CMS_FAILURE:
-      return {
-        ...state,
-        loading: {
-          ...state.loading,
-          [action.cmsName]: false,
-        },
-        error: {
-          ...state.error,
-          [action.cmsName]: action.error,
-        },
-      };
-
-      case ADD_CMS_REQUEST:
-      return {
-        ...state,
-        loading: {
-          ...state.loading,
-          [action.cmsName]: true,
-        },
-        error: {
-          ...state.error,
-          [action.cmsName]: null,
-        },
+        addLoading: true,
+        addError: null,
       };
 
     case ADD_CMS_SUCCESS:
       return {
         ...state,
-        loading: {
-          ...state.loading,
-          [action.cmsName]: false,
-        },
-        data: {
-          ...state.data,
-          [action.cmsName]: action.payload,
-        },
-        lastUpdated: {
-          ...state.lastUpdated,
-          [action.cmsName]: new Date().toISOString(),
-        },
+        addLoading: false,
+        // Append new item(s) if response contains data
+        data: action.payload ? action.payload : state.data,
+        lastUpdated: new Date().toISOString(),
       };
 
     case ADD_CMS_FAILURE:
       return {
         ...state,
-        loading: {
-          ...state.loading,
-          [action.cmsName]: false,
-        },
-        error: {
-          ...state.error,
-          [action.cmsName]: action.error,
-        },
+        addLoading: false,
+        addError: action.error,
       };
 
+    // ---------------------------
+    // UPDATE CMS
+    // ---------------------------
+    case UPDATE_CMS_REQUEST:
+      return {
+        ...state,
+        loading: true,
+      };
+
+    case UPDATE_CMS_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        data: action.payload,  // Updated full data returned from backend
+        lastUpdated: new Date().toISOString(),
+      };
+
+    case UPDATE_CMS_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        error: action.error,
+      };
+
+    // ---------------------------
     default:
       return state;
   }
