@@ -167,7 +167,7 @@ const Home = (props) => {
                   <span className="block text-xs text-gray-500">Solution</span>
                 </div> */}
                   <img 
-                  src={require('../assets/logoT.png')}
+                  src={require('../assets/logo4.png')}
                   className="object-cover"
                   style={{  height: '90px',width: '200px' }}
                 />
@@ -608,7 +608,7 @@ const Home = (props) => {
                   <Sparkles className="w-6 h-6 text-white" />
                 </div> */}
                   <img 
-                  src={require('../assets/logoT.png')}
+                  src={require('../assets/logo4.png')}
                   className="object-cover"
                   style={{  height: '90px',width: '200px' }}
                 />
