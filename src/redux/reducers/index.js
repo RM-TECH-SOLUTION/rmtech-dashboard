@@ -5,6 +5,7 @@ import cmsReducer from './cmsReducer';
 import postReducer from './postReducer';
 import mediaReducer from './mediaReducer';
 import userReducer from './userReducer';
+import catalogueReducer from './catalogueSlice';
 
 const rootReducer = combineReducers({
   auth: authReducer,
@@ -12,6 +13,7 @@ const rootReducer = combineReducers({
   posts: postReducer,
   media: mediaReducer,
   users: userReducer,
+  catalogue: catalogueReducer,
 });
 
 export default rootReducer;
