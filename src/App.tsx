@@ -14,6 +14,9 @@ import ContentModels from './containers/ContentModels';
 import ContentItems from './containers/ContentItems';
 import ContentItemForm from './containers/ContentItemForm';
 import Home from './containers/Home';
+import CatalogueModels from './containers/Catalogue/CatalogueModels';
+import CatalogueItems from './containers/Catalogue/CatalogueItems';
+import CatalogueForm from './containers/Catalogue/CatalogueForm';
 import './App.css';
 
 const PublicLayout = () => {
@@ -53,6 +56,10 @@ function App() {
           <Route path="content-models/:modelSlug" element={<ContentItems />} />
           <Route path="content-models/:modelSlug/create" element={<ContentItemForm />} />
           <Route path="content-models/:modelSlug/edit/:itemId" element={<ContentItemForm />} />
+          <Route path="catalogue" element={<CatalogueModels />} />
+          <Route path="catalogue/:modelSlug" element={<CatalogueItems />} />
+          <Route path="catalogue/:modelSlug/create" element={<CatalogueForm />} />
+          <Route path="catalogue/:modelSlug/edit/:itemId" element={<CatalogueForm />} />
           <Route path="media" element={<Media />} />
           <Route path="users" element={<Users />} />
           <Route path="settings" element={<Settings />} />
