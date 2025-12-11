@@ -201,7 +201,7 @@ const handleSubmit = (e) => {
         onSubmit={handleSubmit}
         className="bg-white w-full max-w-4xl rounded-lg p-6 space-y-6"
       >
-        <h2 className="text-2xl font-bold">Singleton Model (Index {singletonIndex})</h2>
+        <h2 className="text-2xl font-bold">Singleton Model</h2>
 
         {/* BASIC INFO */}
         <div className="grid grid-cols-3 gap-4">
