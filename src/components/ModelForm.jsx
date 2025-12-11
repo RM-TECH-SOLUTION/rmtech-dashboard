@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { addCMSData } from "../redux/actions/cmsActions";
-import { Trash2 } from "lucide-react";
+import { Trash2, Edit } from "lucide-react";
 
 const ModelForm = ({ model, onClose }) => {
   const dispatch = useDispatch();
-
-  // Detect Edit Mode
   const isEdit = Boolean(model);
 
   const [formData, setFormData] = useState({
@@ -28,8 +26,9 @@ const ModelForm = ({ model, onClose }) => {
         fields: model.fields || [],
       });
     }
-  }, [model]);
+  }, [model, isEdit]);
 
+  // For new field (add mode only)
   const [newField, setNewField] = useState({
     fieldName: "",
     fieldKey: "",
@@ -37,16 +36,25 @@ const ModelForm = ({ model, onClose }) => {
     fieldValue: "",
   });
 
-  // Add Field (ONLY when creating model)
+  // For editing fields
+  const [editIndex, setEditIndex] = useState(null);
+  const [editField, setEditField] = useState(null);
+
+  // ADD FIELD
   const handleAddField = () => {
     if (!newField.fieldName || !newField.fieldKey) {
-      alert("Field Name & Field Key required");
+      alert("Field Name & Key are required");
       return;
     }
 
+    const fieldToAdd = {
+      ...newField,
+      fieldValue: formData.singletonModel === 1 ? "" : newField.fieldValue,
+    };
+
     setFormData((prev) => ({
       ...prev,
-      fields: [...prev.fields, { ...newField }],
+      fields: [...prev.fields, fieldToAdd],
     }));
 
     setNewField({
@@ -57,7 +65,7 @@ const ModelForm = ({ model, onClose }) => {
     });
   };
 
-  // Submit Form
+  // ON SUBMIT
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -76,6 +84,90 @@ const ModelForm = ({ model, onClose }) => {
     onClose();
   };
 
+  // DYNAMIC FIELD INPUT UI
+  const renderDynamicField = (field, setField) => {
+    switch (field.fieldType) {
+      case "string":
+        return (
+          <input
+            className="border p-2 rounded w-full"
+            value={field.fieldValue}
+            onChange={(e) =>
+              setField({ ...field, fieldValue: e.target.value })
+            }
+          />
+        );
+
+      case "text":
+        return (
+          <textarea
+            className="border p-2 rounded w-full"
+            value={field.fieldValue}
+            onChange={(e) =>
+              setField({ ...field, fieldValue: e.target.value })
+            }
+          />
+        );
+
+      case "number":
+        return (
+          <input
+            type="number"
+            className="border p-2 rounded w-full"
+            value={field.fieldValue}
+            onChange={(e) =>
+              setField({ ...field, fieldValue: e.target.value })
+            }
+          />
+        );
+
+      case "boolean":
+        return (
+          <select
+            className="border p-2 rounded w-full"
+            value={field.fieldValue}
+            onChange={(e) =>
+              setField({ ...field, fieldValue: e.target.value })
+            }
+          >
+            <option value="">Select</option>
+            <option value="true">True</option>
+            <option value="false">False</option>
+          </select>
+        );
+
+      case "color":
+        return (
+          <input
+            type="color"
+            className="border p-2 rounded h-10 w-full"
+            value={field.fieldValue || "#000000"}
+            onChange={(e) =>
+              setField({ ...field, fieldValue: e.target.value })
+            }
+          />
+        );
+
+      case "image":
+        return (
+          <input
+            type="file"
+            accept="image/*"
+            className="border p-2 rounded"
+            onChange={(e) =>
+              setField({
+                ...field,
+                fieldValue: e.target.files[0]?.name || "",
+              })
+            }
+          />
+        );
+
+      default:
+        return null;
+    }
+  };
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center p-4">
       <form
@@ -88,12 +180,11 @@ const ModelForm = ({ model, onClose }) => {
 
         {/* BASIC INFO */}
         <div className="grid grid-cols-3 gap-4">
-
           <input
             className="border p-2 rounded"
             placeholder="Merchant ID"
             value={formData.merchantId}
-            disabled={isEdit}           // Disable during edit
+            disabled={isEdit}
             onChange={(e) =>
               setFormData({ ...formData, merchantId: e.target.value })
             }
@@ -103,7 +194,7 @@ const ModelForm = ({ model, onClose }) => {
             className="border p-2 rounded"
             placeholder="Model Name"
             value={formData.modelName}
-            disabled={isEdit}          // Disable during edit
+            disabled={isEdit}
             onChange={(e) =>
               setFormData({ ...formData, modelName: e.target.value })
             }
@@ -113,33 +204,32 @@ const ModelForm = ({ model, onClose }) => {
             className="border p-2 rounded"
             placeholder="Model Slug"
             value={formData.modelSlug}
-            disabled={isEdit}          // Disable during edit
+            disabled={isEdit}
             onChange={(e) =>
               setFormData({ ...formData, modelSlug: e.target.value })
             }
           />
         </div>
 
-        {/* SINGLETON CHECKBOX */}
-        <div className="flex items-center gap-2">
-          <input
-            type="checkbox"
-            checked={formData.singletonModel === 1}
-            disabled={isEdit}          // disable when editing
-            onChange={(e) =>
-              setFormData({
-                ...formData,
-                singletonModel: e.target.checked ? 1 : 0,
-              })
-            }
-            className="w-4 h-4"
-          />
-          <label className="text-sm font-medium">
-            Singleton Model (Only one entry allowed)
-          </label>
-        </div>
+        {/* SINGLETON CHECKBOX (ONLY IN CREATE MODE) */}
+        {!isEdit && (
+          <div className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              checked={formData.singletonModel === 1}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  singletonModel: e.target.checked ? 1 : 0,
+                })
+              }
+              className="w-4 h-4"
+            />
+            <label>Singleton Model (Only one entry allowed)</label>
+          </div>
+        )}
 
-        {/* ONLY SHOW ADD-FIELD UI IN CREATE MODE */}
+        {/* ADD FIELD UI (ONLY CREATE MODE) */}
         {!isEdit && (
           <div className="bg-gray-100 p-4 rounded-lg">
             <h3 className="font-semibold mb-3">Add Fields</h3>
@@ -178,79 +268,9 @@ const ModelForm = ({ model, onClose }) => {
                 <option value="image">Image</option>
               </select>
 
-              {/* Dynamic Default UI */}
-              {newField.fieldType === "string" && (
-                <input
-                  className="border p-2 rounded"
-                  placeholder="Default Value"
-                  value={newField.fieldValue}
-                  onChange={(e) =>
-                    setNewField({ ...newField, fieldValue: e.target.value })
-                  }
-                />
-              )}
-
-              {newField.fieldType === "text" && (
-                <textarea
-                  className="border p-2 rounded"
-                  placeholder="Default Text"
-                  value={newField.fieldValue}
-                  onChange={(e) =>
-                    setNewField({ ...newField, fieldValue: e.target.value })
-                  }
-                />
-              )}
-
-              {newField.fieldType === "number" && (
-                <input
-                  type="number"
-                  className="border p-2 rounded"
-                  placeholder="Default Number"
-                  value={newField.fieldValue}
-                  onChange={(e) =>
-                    setNewField({ ...newField, fieldValue: e.target.value })
-                  }
-                />
-              )}
-
-              {newField.fieldType === "boolean" && (
-                <select
-                  className="border p-2 rounded"
-                  value={newField.fieldValue}
-                  onChange={(e) =>
-                    setNewField({ ...newField, fieldValue: e.target.value })
-                  }
-                >
-                  <option value="">Select</option>
-                  <option value="true">True</option>
-                  <option value="false">False</option>
-                </select>
-              )}
-
-              {newField.fieldType === "color" && (
-                <input
-                  type="color"
-                  className="border p-2 rounded h-10"
-                  value={newField.fieldValue || "#000000"}
-                  onChange={(e) =>
-                    setNewField({ ...newField, fieldValue: e.target.value })
-                  }
-                />
-              )}
-
-              {newField.fieldType === "image" && (
-                <input
-                  type="file"
-                  accept="image/*"
-                  className="border p-2 rounded"
-                  onChange={(e) =>
-                    setNewField({
-                      ...newField,
-                      fieldValue: e.target.files[0]?.name || "",
-                    })
-                  }
-                />
-              )}
+              {/* hide value input if singleton */}
+              {formData.singletonModel === 0 &&
+                renderDynamicField(newField, setNewField)}
             </div>
 
             <button
@@ -263,35 +283,163 @@ const ModelForm = ({ model, onClose }) => {
           </div>
         )}
 
-        {/* FIELD LIST (Always show) */}
+        {/* --------------------------------------------- */}
+        {/* FIELD LIST SECTION */}
+        {/* --------------------------------------------- */}
+
         <div className="mt-4 space-y-2">
-          {formData.fields.map((f, idx) => (
-            <div
-              key={idx}
-              className="p-2 border rounded flex justify-between items-center"
-            >
-              <div>
-                <b>{f.fieldName}</b> — {f.fieldValue} ({f.fieldType})
+          {/* SINGLETON MODEL → TABLE STYLE LIST */}
+          {formData.singletonModel === 1 ? (
+            <div className="border rounded-lg">
+
+              {/* HEADER */}
+              <div className="grid grid-cols-3 p-3 font-semibold bg-gray-100 border-b">
+                <div>Field Name</div>
+                <div>Field Type</div>
+                <div className="text-right pr-4">Actions</div>
               </div>
 
-              {/* DELETE FIELD BUTTON */}
-              <button
-                type="button"
-                onClick={() =>
-                  setFormData((prev) => ({
-                    ...prev,
-                    fields: prev.fields.filter((_, i) => i !== idx),
-                  }))
-                }
-                className="p-2 text-red-600 hover:bg-red-100 rounded-lg"
-              >
-                <Trash2 size={18} />
-              </button>
+              {formData.fields.map((field, idx) => (
+                <div key={idx} className="grid grid-cols-3 p-3 border-b items-center">
+
+                  <div>{field.fieldName}</div>
+                  <div>{field.fieldValue}</div>
+                  <div>{field.fieldType}</div>
+
+                  <div className="flex justify-end gap-3 pr-4">
+                    <button
+                      type="button"
+                      className="text-blue-600 hover:bg-blue-100 p-2 rounded"
+                      onClick={() => {
+                        setEditIndex(idx);
+                        setEditField(field);
+                      }}
+                    >
+                      <Edit size={18} />
+                    </button>
+
+                    <button
+                      type="button"
+                      className="text-red-600 hover:bg-red-100 p-2 rounded"
+                      onClick={() =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          fields: prev.fields.filter((_, i) => i !== idx),
+                        }))
+                      }
+                    >
+                      <Trash2 size={18} />
+                    </button>
+                  </div>
+                </div>
+              ))}
             </div>
-          ))}
+          ) : (
+            /* NORMAL MODEL FIELD LIST */
+            formData.fields.map((field, idx) => (
+              <div key={idx} className="p-3 border rounded flex justify-between items-center">
+
+                {editIndex === idx ? (
+                  <div className="w-full space-y-2">
+                    <input
+                      className="border p-2 rounded w-full"
+                      value={editField.fieldName}
+                      onChange={(e) =>
+                        setEditField({ ...editField, fieldName: e.target.value })
+                      }
+                    />
+
+                    <input
+                      className="border p-2 rounded w-full"
+                      value={editField.fieldKey}
+                      onChange={(e) =>
+                        setEditField({ ...editField, fieldKey: e.target.value })
+                      }
+                    />
+
+                    <select
+                      className="border p-2 rounded w-full"
+                      value={editField.fieldType}
+                      onChange={(e) =>
+                        setEditField({ ...editField, fieldType: e.target.value })
+                      }
+                    >
+                      <option value="string">String</option>
+                      <option value="text">Text</option>
+                      <option value="number">Number</option>
+                      <option value="boolean">Boolean</option>
+                      <option value="color">Color</option>
+                      <option value="image">Image</option>
+                    </select>
+
+                    {renderDynamicField(editField, setEditField)}
+
+                    <div className="flex gap-2">
+                      <button
+                        type="button"
+                        className="px-3 py-1 bg-green-600 text-white rounded"
+                        onClick={() => {
+                          let updated = [...formData.fields];
+                          updated[idx] = editField;
+                          setFormData({ ...formData, fields: updated });
+                          setEditIndex(null);
+                          setEditField(null);
+                        }}
+                      >
+                        Save
+                      </button>
+
+                      <button
+                        type="button"
+                        className="px-3 py-1 bg-gray-300 rounded"
+                        onClick={() => {
+                          setEditIndex(null);
+                          setEditField(null);
+                        }}
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    <div>
+                      <b>{field.fieldName}</b> — {field.fieldValue} ({field.fieldType})
+                    </div>
+
+                    <div className="flex gap-3">
+                      <button
+                        type="button"
+                        className="p-2 text-blue-600 hover:bg-blue-100 rounded"
+                        onClick={() => {
+                          setEditIndex(idx);
+                          setEditField(field);
+                        }}
+                      >
+                        <Edit size={18} />
+                      </button>
+
+                      <button
+                        type="button"
+                        className="p-2 text-red-600 hover:bg-red-100 rounded"
+                        onClick={() =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            fields: prev.fields.filter((_, i) => i !== idx),
+                          }))
+                        }
+                      >
+                        <Trash2 size={18} />
+                      </button>
+                    </div>
+                  </>
+                )}
+              </div>
+            ))
+          )}
         </div>
 
-        {/* ACTION BUTTONS */}
+        {/* FOOTER BUTTONS */}
         <div className="flex justify-end gap-4">
           <button
             type="button"

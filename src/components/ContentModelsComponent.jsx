@@ -4,7 +4,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchCMSData } from "../redux/actions/cmsActions";
 
 import ModelCard from "./ModelCard";
-import ModelForm from "./ModelForm";
+
+// IMPORT ALL FORMS
+import CreateModelForm from "./CreateModelForm";
+import EditModelForm from "./EditModelForm";
+import SingletonModelForm from "./SingletonModelForm";
 
 const ContentModelsComponent = () => {
   const dispatch = useDispatch();
@@ -12,28 +16,32 @@ const ContentModelsComponent = () => {
 
   const [models, setModels] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedModel, setSelectedModel] = useState(null);
-  const [showForm, setShowForm] = useState(false);
 
-  // Fetch CMS list on mount OR when closing modal
+  // modal mode → "create" | "singleton" | "edit" | null
+  const [mode, setMode] = useState(null);
+  const [selectedModel, setSelectedModel] = useState(null);
+  const [singletonBase, setSingletonBase] = useState(null);
+
+  // ---- Fetch CMS data whenever modal closes/opens ----
   useEffect(() => {
     dispatch(fetchCMSData());
-  }, [dispatch, showForm]);
+  }, [dispatch, mode]);
 
-  // Convert API → UI list
+  // ---- Convert API response into UI friendly ----
   useEffect(() => {
     if (Array.isArray(cmsData) && cmsData.length > 0) {
       const formatted = cmsData.map((item, index) => ({
         id: index + 1,
-        name: item.modelName,
-        slug: item.modelSlug,
-        singletonInApi: Number(item.singletonModel) === 1,
+        merchantId: item.merchantId,
+        modelName: item.modelName,
+        modelSlug: item.modelSlug,
+        singletonModel: Number(item.singletonModel) === 1,
         fields: Object.values(item.cms).map((field, i) => ({
           id: i + 1,
-          name: field.fieldName,
-          key: field.fieldKey,
-          type: field.fieldType,
-          value: field.fieldValue,
+          fieldName: field.fieldName,
+          fieldKey: field.fieldKey,
+          fieldType: field.fieldType,
+          fieldValue: field.fieldValue,
         })),
       }));
       setModels(formatted);
@@ -42,9 +50,15 @@ const ContentModelsComponent = () => {
 
   const filtered = models.filter(
     (m) =>
-      m.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      m.slug.toLowerCase().includes(searchTerm.toLowerCase())
+      m.modelName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      m.modelSlug.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const closeForm = () => {
+    setMode(null);
+    setSelectedModel(null);
+    setSingletonBase(null);
+  };
 
   return (
     <div className="space-y-6">
@@ -59,16 +73,16 @@ const ContentModelsComponent = () => {
         <button
           onClick={() => {
             setSelectedModel(null);
-            setShowForm(true);
+            setMode("create");
           }}
-          className="flex items-center bg-blue-600 text-white px-4 py-2 rounded-lg"
+          className="px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:shadow-lg transition-all duration-300 flex items-center shadow-lg"
         >
           <Plus size={18} className="mr-2" />
           New Model
         </button>
       </div>
 
-      {/* SEARCH */}
+      {/* SEARCH BAR */}
       <div className="bg-white border p-4 rounded-xl">
         <div className="relative">
           <Search className="absolute left-3 top-3 text-gray-400" size={18} />
@@ -89,17 +103,43 @@ const ContentModelsComponent = () => {
             model={m}
             onEdit={() => {
               setSelectedModel(m);
-              setShowForm(true);
+              setMode("edit");
             }}
           />
         ))}
       </div>
 
-      {/* FORM MODAL */}
-      {showForm && (
-        <ModelForm
+      {/* ------------------------------------------------------------ */}
+      {/* MODALS CONDITIONAL */}
+      {/* ------------------------------------------------------------ */}
+
+      {/* Create Normal Model */}
+      {mode === "create" && (
+        <CreateModelForm
+          onClose={closeForm}
+          onSelectSingleton={(base) => {
+            // When user checks "singleton" inside CreateModelForm
+            setSingletonBase(base);
+            // setMode("singleton");
+          }}
+          setMode ={setMode}
+        />
+      )}
+
+      {/* Create Singleton Model */}
+      {mode === "singleton" && (
+        <SingletonModelForm
+          baseData={singletonBase}
+          onClose={closeForm}
+          setMode ={setMode}
+        />
+      )}
+
+      {/* Edit Model */}
+      {mode === "edit" && selectedModel && (
+        <EditModelForm
           model={selectedModel}
-          onClose={() => setShowForm(false)}
+          onClose={closeForm}
         />
       )}
     </div>

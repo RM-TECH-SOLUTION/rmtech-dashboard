@@ -2,16 +2,19 @@ import React from "react";
 import { Edit, Trash2, Database } from "lucide-react";
 
 const ModelCard = ({ model, onEdit, onDelete }) => {
+
+  console.log(model,"modelmodel");
+  
   return (
     <div className="bg-white border rounded-xl p-6 shadow hover:shadow-md">
 
       <div className="flex justify-between items-start mb-3">
         <div>
-          <h3 className="text-lg font-semibold">{model.name}</h3>
-          <p className="text-gray-500">{model.slug}</p>
+          <h3 className="text-lg font-semibold">{model.modelName}</h3>
+          <p className="text-gray-500">{model.modelSlug}</p>
         </div>
 
-        {model.singletonInApi && (
+        {model.singletonModel && (
           <span className="px-2 py-1 text-xs bg-purple-200 text-purple-800 rounded">
             Singleton
           </span>
