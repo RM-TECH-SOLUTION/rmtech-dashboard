@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Plus, Search } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchCMSData } from "../redux/actions/cmsActions";
+import { fetchCMSData,updateCMSData } from "../redux/actions/cmsActions";
 
 import ModelCard from "./ModelCard";
 
@@ -9,6 +9,7 @@ import ModelCard from "./ModelCard";
 import CreateModelForm from "./CreateModelForm";
 import EditModelForm from "./EditModelForm";
 import SingletonModelForm from "./SingletonModelForm";
+import EditSingletonModelForm from "./EditSingletonModelForm";
 
 const ContentModelsComponent = () => {
   const dispatch = useDispatch();
@@ -28,25 +29,57 @@ const ContentModelsComponent = () => {
   }, [dispatch, mode]);
 
   // ---- Convert API response into UI friendly ----
-  useEffect(() => {
-    if (Array.isArray(cmsData) && cmsData.length > 0) {
-      const formatted = cmsData.map((item, index) => ({
-        id: index + 1,
-        merchantId: item.merchantId,
-        modelName: item.modelName,
-        modelSlug: item.modelSlug,
-        singletonModel: Number(item.singletonModel) === 1,
-        fields: Object.values(item.cms).map((field, i) => ({
-          id: i + 1,
-          fieldName: field.fieldName,
-          fieldKey: field.fieldKey,
-          fieldType: field.fieldType,
-          fieldValue: field.fieldValue,
-        })),
+useEffect(() => {
+  if (!Array.isArray(cmsData) || cmsData.length === 0) return;
+
+  const formatted = cmsData.map((item, index) => {
+    let fields = [];
+
+    // ------------------------------------------------------------------
+    // CASE 1 → NON-SINGLETON MODEL (cms is object)
+    // ------------------------------------------------------------------
+    if (!item.singletonModel && typeof item.cms === "object" && !Array.isArray(item.cms)) {
+      fields = Object.values(item.cms).map((field, i) => ({
+        id: i + 1,
+        fieldName: field.fieldName,
+        fieldKey: field.fieldKey,
+        fieldType: field.fieldType,
+        fieldValue: field.fieldValue,
       }));
-      setModels(formatted);
     }
-  }, [cmsData]);
+
+    // ------------------------------------------------------------------
+    // CASE 2 → SINGLETON MODEL (cms is array)
+    // ------------------------------------------------------------------
+    if (item.singletonModel && Array.isArray(item.cms)) {
+      fields = item.cms.map((rowObj, rowIndex) => {
+        return {
+          index: rowIndex + 1,
+          fields: Object.values(rowObj).map((f, i) => ({
+            id: i + 1,
+            fieldName: f.fieldName,
+            fieldKey: f.fieldKey,
+            fieldType: f.fieldType,
+            fieldValue: f.fieldValue,
+            singletonModelIndex: f.singletonModelIndex
+          }))
+        };
+      });
+    }
+
+    return {
+      id: index + 1,
+      merchantId: item.merchantId,
+      modelName: item.modelName,
+      modelSlug: item.modelSlug,
+      singletonModel: Number(item.singletonModel) === 1,
+      fields: fields,
+    };
+  });
+
+  setModels(formatted);
+}, [cmsData]);
+
 
   const filtered = models.filter(
     (m) =>
@@ -59,6 +92,9 @@ const ContentModelsComponent = () => {
     setSelectedModel(null);
     setSingletonBase(null);
   };
+
+  console.log(filtered,"cmsDatacmsDataggg");
+  
 
   return (
     <div className="space-y-6">
@@ -101,9 +137,13 @@ const ContentModelsComponent = () => {
           <ModelCard
             key={m.id}
             model={m}
-            onEdit={() => {
-              setSelectedModel(m);
-              setMode("edit");
+            onEdit={(model, mode) => {
+              setSelectedModel(model);
+              setMode(mode);       
+            }}
+            onEditSingelton={(model, mode) => {
+              setSelectedModel(model); 
+              setMode(mode);           
             }}
           />
         ))}
@@ -122,7 +162,7 @@ const ContentModelsComponent = () => {
             setSingletonBase(base);
             // setMode("singleton");
           }}
-          setMode ={setMode}
+          setMode={setMode}
         />
       )}
 
@@ -131,7 +171,8 @@ const ContentModelsComponent = () => {
         <SingletonModelForm
           baseData={singletonBase}
           onClose={closeForm}
-          setMode ={setMode}
+          setMode={setMode}
+         
         />
       )}
 
@@ -140,6 +181,20 @@ const ContentModelsComponent = () => {
         <EditModelForm
           model={selectedModel}
           onClose={closeForm}
+          updateCMSData ={(data)=>{
+            dispatch(updateCMSData(data))
+          }
+          }
+        />
+      )}
+      {mode === "editSingelton" && selectedModel && (
+        <EditSingletonModelForm
+          model={selectedModel}
+          onClose={closeForm}
+           updateCMSData ={(data)=>{
+            dispatch(updateCMSData(data))
+          }
+          }
         />
       )}
     </div>

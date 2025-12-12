@@ -44,41 +44,43 @@ export const fetchCMSData = () => async (dispatch) => {
 
 
 
-export const updateCMSData = (cmsName, data) => async (dispatch, getState) => {
-  dispatch({ type: UPDATE_CMS_REQUEST, cmsName });
+export const updateCMSData = (data) => async (dispatch) => {
+  dispatch({ type: UPDATE_CMS_REQUEST });
 
   try {
-    const merchantId = getState().auth.merchantId;
+    const merchantId = 1;
+
     const response = await api.post(api.Urls.updateCms, {
       merchantId,
-      cmsName,
-      ...data
+      ...data,  // include the CMS fields to update
     });
 
-    if (response.success) {
+    // API success check
+    if (response?.success) {
       dispatch({
         type: UPDATE_CMS_SUCCESS,
-        cmsName,
-        payload: response.data,
+        payload: response.data || [],   // backend should return updated CMS
       });
+
       return response.data;
     } else {
       dispatch({
         type: UPDATE_CMS_FAILURE,
-        cmsName,
-        error: response.message || 'Failed to update CMS data',
+        error: response.message || "Failed to update CMS data",
       });
-      throw new Error(response.message || 'Failed to update CMS data');
+
+      throw new Error(response.message || "Failed to update CMS data");
     }
   } catch (error) {
     dispatch({
       type: UPDATE_CMS_FAILURE,
-      cmsName,
-      error: error.message || 'Network error',
+      error: error.message || "Network error",
     });
+
     throw error;
   }
 };
+
 
 
 export const addCMSData = (data) => async (dispatch) => {

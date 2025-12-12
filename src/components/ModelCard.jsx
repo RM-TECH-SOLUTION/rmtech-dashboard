@@ -1,10 +1,10 @@
 import React from "react";
 import { Edit, Trash2, Database } from "lucide-react";
 
-const ModelCard = ({ model, onEdit, onDelete }) => {
+const ModelCard = ({ model, onEdit, onDelete, onEditSingelton }) => {
 
-  console.log(model,"modelmodel");
-  
+  console.log(model, "modelmodel");
+
   return (
     <div className="bg-white border rounded-xl p-6 shadow hover:shadow-md">
 
@@ -31,7 +31,13 @@ const ModelCard = ({ model, onEdit, onDelete }) => {
 
         {/* EDIT */}
         <button
-          onClick={onEdit}
+          onClick={() => {
+            if (model.singletonModel) {
+              onEditSingelton(model, "editSingelton")
+            } else {
+              onEdit(model, "edit")
+            }
+          }}
           className="p-2 text-blue-600 hover:bg-blue-100 rounded-lg"
         >
           <Edit size={18} />

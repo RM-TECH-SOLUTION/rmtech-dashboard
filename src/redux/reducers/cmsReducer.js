@@ -89,6 +89,7 @@ const cmsReducer = (state = initialState, action) => {
         data: action.payload,  // Updated full data returned from backend
         lastUpdated: new Date().toISOString(),
       };
+      
 
     case UPDATE_CMS_FAILURE:
       return {

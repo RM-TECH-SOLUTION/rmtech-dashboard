@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Trash2, Edit } from "lucide-react";
 
-const EditModelForm = ({ model, onClose }) => {
+const EditModelForm = ({ model, onClose,updateCMSData }) => {
   const [formData, setFormData] = useState({
     merchantId: "",
     modelName: "",
@@ -13,7 +13,7 @@ const EditModelForm = ({ model, onClose }) => {
   const [editIndex, setEditIndex] = useState(null);
   const [editField, setEditField] = useState(null);
 
-  console.log(formData,"formDataformData");
+  console.log(editField,"formDataformData");
   
 
   useEffect(() => {
@@ -111,17 +111,36 @@ const EditModelForm = ({ model, onClose }) => {
     }));
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+const handleSubmit = (e) => {
+  e.preventDefault();
 
-    // you can dispatch update API here
-    console.log("UPDATED MODEL:", formData);
+  const payload = [];
 
-    onClose();
-  };
+  formData.fields.forEach((field) => {
+    payload.push({
+      merchantId: formData.merchantId,
+      modelSlug: formData.modelSlug,
+      modelName: formData.modelName,
+      fieldKey: field.fieldKey,
+      fieldName: field.fieldName,
+      fieldType: field.fieldType,
+      fieldValue: field.fieldValue,
+      singletonModel: formData.singletonModel ? 1 : 0,
+      singletonModelIndex: 0,
+      merchantId:1
+    });
+  });
+
+  updateCMSData({ data: payload });
+  onClose();
+};
+
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center p-4">
+    <div 
+    className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center p-4"
+    
+    >
       <form
         onSubmit={handleSubmit}
         className="bg-white w-full max-w-3xl rounded-lg p-6 space-y-6"
@@ -180,60 +199,81 @@ const EditModelForm = ({ model, onClose }) => {
             </div>
           ) : (
             /* NORMAL MODE */
-            formData.fields.map((field, idx) => (
-              <div key={idx} className="border p-3 rounded flex justify-between">
-                <div>
-                  <b>Name:- {field.fieldName}</b> — Value:- {field.fieldValue} - {field.fieldType}
-                </div>
+         <div
+  className="mt-4 space-y-2 overflow-y-auto"
+  style={{ maxHeight: "200px", paddingRight: "6px" }}
+>
+  {formData.fields.map((field, idx) => (
+    <div
+      key={idx}
+      className="border p-3 rounded flex justify-between bg-white shadow-sm"
+    >
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <span style={{ fontWeight: "bold", marginRight: 5 }}>{field.fieldName} - </span>
+        <span style={{ fontWeight: "500" }}>{field.fieldValue}</span>
+      </div>
 
-                <div className="flex gap-3">
-                  <button
-                    type="button"
-                    className="text-blue-600 p-2 hover:bg-blue-100 rounded"
-                    onClick={() => {
-                      setEditIndex(idx);
-                      setEditField(field);
-                    }}
-                  >
-                    <Edit size={18} />
-                  </button>
+      <div className="flex gap-3">
+        <button
+          type="button"
+          className="text-blue-600 p-2 hover:bg-blue-100 rounded"
+          onClick={() => {
+            setEditIndex(idx);
+            setEditField(field);
+          }}
+        >
+          <Edit size={18} />
+        </button>
 
-                  <button
-                    type="button"
-                    className="text-red-600 p-2 hover:bg-red-100 rounded"
-                    onClick={() => handleDeleteField(idx)}
-                  >
-                    <Trash2 size={18} />
-                  </button>
-                </div>
-              </div>
-            ))
+        <button
+          type="button"
+          className="text-red-600 p-2 hover:bg-red-100 rounded"
+          onClick={() => handleDeleteField(idx)}
+        >
+          <Trash2 size={18} />
+        </button>
+      </div>
+    </div>
+  ))}
+</div>
+
           )}
         </div>
 
         {/* EDIT POPUP */}
         {editIndex !== null && (
-          <div className="bg-gray-100 p-4 rounded-lg mt-4 space-y-3">
-            <h3 className="font-semibold">Edit Field</h3>
+          <React.Fragment>
+            <h3 style={{fontSize:20,fontWeight:"bold",marginTop:25}}>Edit Fields</h3>
+          <div className="bg-gray-100 p-4 rounded-lg space-y-3">
+            <span style={{fontSize:15,fontWeight:"bold"}}>Edit Field Name</span>
 
             <input
               className="border p-2 rounded w-full"
               value={editField.fieldName}
+              style={{margin:0,marginBottom:10}}
               onChange={(e) =>
                 setEditField({ ...editField, fieldName: e.target.value })
               }
             />
-
+            <span style={{fontSize:15,fontWeight:"bold"}}>Edit Field Key</span>
             <input
               className="border p-2 rounded w-full"
               value={editField.fieldKey}
+              style={{margin:0,marginBottom:10}}
               onChange={(e) =>
                 setEditField({ ...editField, fieldKey: e.target.value })
               }
             />
-
+            <span style={{fontSize:15,fontWeight:"bold",marginTop:10}}>Edit Field Type</span>
             <select
               className="border p-2 rounded w-full"
+              style={{margin:0,marginBottom:10}}
               value={editField.fieldType}
               onChange={(e) =>
                 setEditField({ ...editField, fieldType: e.target.value })
@@ -246,13 +286,12 @@ const EditModelForm = ({ model, onClose }) => {
               <option value="color">Color</option>
               <option value="image">Image</option>
             </select>
-
             {renderDynamicField(editField, setEditField)}
 
             <div className="flex gap-3">
               <button
                 type="button"
-                className="bg-green-600 text-white px-4 py-2 rounded"
+                className="px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:shadow-lg transition-all duration-300 flex items-center shadow-lg"
                 onClick={handleSaveField}
               >
                 Save
@@ -260,7 +299,7 @@ const EditModelForm = ({ model, onClose }) => {
 
               <button
                 type="button"
-                className="px-4 py-2 rounded border"
+                className="px-6 py-2 border rounded-xl"
                 onClick={() => {
                   setEditField(null);
                   setEditIndex(null);
@@ -270,15 +309,16 @@ const EditModelForm = ({ model, onClose }) => {
               </button>
             </div>
           </div>
+          </React.Fragment>
         )}
 
         {/* FOOTER BUTTONS */}
         <div className="flex justify-end gap-3 mt-5">
-          <button type="button" onClick={onClose} className="border px-4 py-2 rounded">
+          <button type="button" onClick={onClose} className="px-6 py-2 border rounded-xl">
             Close
           </button>
 
-          <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded">
+          <button type="submit" className="px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:shadow-lg transition-all duration-300 flex items-center shadow-lg">
             Save Changes
           </button>
         </div>

@@ -201,7 +201,7 @@ const handleSubmit = (e) => {
         onSubmit={handleSubmit}
         className="bg-white w-full max-w-4xl rounded-lg p-6 space-y-6"
       >
-        <h2 className="text-2xl font-bold">Singleton Model</h2>
+        <h2 className="text-2xl font-bold">Singleton Model (Index {singletonIndex})</h2>
 
         {/* BASIC INFO */}
         <div className="grid grid-cols-3 gap-4">
@@ -335,7 +335,7 @@ const handleSubmit = (e) => {
 
         {/* FOOTER */}
         <div className="flex justify-end gap-3">
-          <button type="button" onClick={onClose} className="px-4 py-2 border rounded">
+          <button type="button" onClick={onClose} className="px-6 py-2 border rounded-xl">
             Cancel
           </button>
           <button type="submit" className="px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:shadow-lg transition-all duration-300 flex items-center shadow-lg">
