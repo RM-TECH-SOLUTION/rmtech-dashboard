@@ -192,7 +192,7 @@ const Home = (props) => {
       avatar: 'AA'
     },
     {
-      name: 'Ramesh pothi',
+      name: 'Ramesh Pothi',
       role: 'Lead, RM Tech Solution',
       content: 'Highly recommend RM Tech CMS for any team!',
       rating: 5,
@@ -429,7 +429,7 @@ const Home = (props) => {
 
          {/* Desktop Menu */}
             <div className="hidden md:flex items-center space-x-8">
-              {['Home','showcase', "Features",'Industries','Services','Pricing', 'Portfolio', 'About'].map((item) => (
+              {['Home','Showcase', "Features",'Industries','Services','Pricing', 'Portfolio', 'About'].map((item) => (
                 <a
                   key={item}
                   href={`#${item.toLowerCase()}`}
