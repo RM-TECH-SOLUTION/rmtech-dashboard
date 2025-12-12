@@ -515,7 +515,7 @@ const Home = (props) => {
                 </span>
               </h1>
               
-              <p className="text-xl text-gray-600 mb-10 max-w-2xl">
+              <p className="text-xl text-gray-600 mb-10 max-w-xl">
                 Complete <span className="font-semibold text-blue-600">CMS + E-commerce + Mobile App</span> solutions for small businesses. 
                 Get your professional digital presence in 30 days or less.
               </p>
@@ -550,7 +550,7 @@ const Home = (props) => {
                     ))}
                   </div>
                   <div>
-                    <div className="font-bold text-gray-900">500+</div>
+                    <div className="font-bold text-gray-900">50+</div>
                     <div className="text-sm text-gray-500">Happy Clients</div>
                   </div>
                 </div>
@@ -2022,7 +2022,7 @@ const Home = (props) => {
               Ready to 2X Your Business?
             </h2>
             <p className="text-xl text-blue-100 mb-10 max-w-3xl mx-auto relative z-10">
-              Join 500+ businesses that have transformed with RM Tech Solution
+              Join 50+ businesses that have transformed with RM Tech Solution
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center relative z-10">
               <button
@@ -2045,7 +2045,7 @@ const Home = (props) => {
                 <div className="text-blue-100">Support</div>
               </div>
               <div className="text-center">
-                <div className="text-3xl font-bold text-white">500+</div>
+                <div className="text-3xl font-bold text-white">50+</div>
                 <div className="text-blue-100">Happy Clients</div>
               </div>
               <div className="text-center">
