@@ -1,15 +1,22 @@
 
-import React from 'react';
+import React,{ useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import Topbar from './Topbar';
 
 const Layout = () => {
+   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+    const toggleMobileSidebar = () => {
+    setIsMobileSidebarOpen(!isMobileSidebarOpen);
+  };
   return (
     <div className="flex h-screen bg-gray-50">
-      <Sidebar />
+      <Sidebar
+      isMobileOpen={isMobileSidebarOpen} 
+        toggleMobileSidebar={toggleMobileSidebar} 
+       />
       <div className="flex flex-col flex-1 overflow-hidden">
-        <Topbar />
+        <Topbar  toggleSidebar={toggleMobileSidebar} />
         <main className="flex-1 overflow-y-auto p-4 md:p-6">
           <Outlet />
         </main>

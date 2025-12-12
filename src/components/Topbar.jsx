@@ -1,36 +1,30 @@
-
 import React, { useState } from 'react';
 import { Search, Bell, HelpCircle, Menu } from 'lucide-react';
-import {  useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
-
-const Topbar = () => {
+const Topbar = ({ toggleSidebar }) => {
   const [searchOpen, setSearchOpen] = useState(false);
   const navigate = useNavigate();
 
   return (
-    <header className="bg-white border-b px-6 py-4">
+    <header className="bg-white border-b px-4 md:px-6 py-4">
       <div className="flex items-center justify-between">
         {/* Left Section */}
         <div className="flex items-center space-x-4">
-          <button className="md:hidden p-2 hover:bg-gray-100 rounded-lg">
+          <button 
+            className="md:hidden p-2 hover:bg-gray-100 rounded-lg"
+            onClick={toggleSidebar}
+          >
             <Menu size={20} />
           </button>
-         <div className="hidden md:flex items-center ">
-            
-              <button
-                onClick={() => navigate('/')}
-                className="px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:shadow-lg transition-all duration-300 flex items-center shadow-lg"
-              > Home 
-              </button>
-            </div>
         </div>
 
         {/* Right Section */}
         <div className="flex items-center space-x-4">
           {/* Search */}
-          <div className={`relative ${searchOpen ? 'w-64' : 'w-10'}`}>
+          <div className={`relative ${searchOpen ? 'w-32 md:w-64' : 'w-10'}`}>
             <div className="relative">
+              
               <Search 
                 className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 cursor-pointer" 
                 size={20}
@@ -53,10 +47,17 @@ const Topbar = () => {
           </button>
 
           {/* Help */}
-          <button className="p-2 hover:bg-gray-100 rounded-lg">
+          <button className="p-2 hover:bg-gray-100 rounded-lg hidden md:block">
             <HelpCircle size={20} />
           </button>
-
+ <div className="md:flex items-center">
+            <button
+              onClick={() => navigate('/')}
+              className="px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:shadow-lg transition-all duration-300 flex items-center shadow-lg"
+            >
+              Home
+            </button>
+          </div>
           {/* Quick Stats */}
           <div className="hidden md:flex items-center space-x-4 text-sm">
             <div className="px-3 py-1 bg-green-100 text-green-800 rounded-full">

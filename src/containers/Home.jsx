@@ -515,7 +515,7 @@ const Home = (props) => {
                 </span>
               </h1>
               
-              <p className="text-xl text-gray-600 mb-10 max-w-xl">
+              <p className="text-xl text-gray-600 mb-10 max-w-lg">
                 Complete <span className="font-semibold text-blue-600">CMS + E-commerce + Mobile App</span> solutions for small businesses. 
                 Get your professional digital presence in 30 days or less.
               </p>
