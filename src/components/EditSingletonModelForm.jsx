@@ -3,7 +3,7 @@ import { Trash2 } from "lucide-react";
 import { useDispatch } from "react-redux";
 import { updateCMSData } from "../redux/actions/cmsActions";
 
-const EditSingletonModelForm = ({ model, onClose }) => {
+const EditSingletonModelForm = ({ model, onClose,deleteCms }) => {
   const dispatch = useDispatch();
 
   // -------------------------------
@@ -40,9 +40,23 @@ const EditSingletonModelForm = ({ model, onClose }) => {
   // -------------------------------
   // DELETE a row
   // -------------------------------
-  const deleteRow = (idx) => {
-    const updated = rows.filter((_, i) => i !== idx);
-    setRows(updated);
+  const handleDeleteRow = async (rowIndex) => {
+    const singletonIndex = rowIndex + 1;
+
+    // 🔥 CALL DELETE API
+    await deleteCms({
+      data: [
+        {
+          merchantId: 1,
+          modelSlug: model.modelSlug,
+          singletonModel: 1,
+          singletonModelIndex: singletonIndex,
+        },
+      ],
+    });
+
+    // 🔥 REMOVE FROM UI
+    setRows((prev) => prev.filter((_, i) => i !== rowIndex));
   };
 
   // -------------------------------
@@ -136,6 +150,11 @@ const EditSingletonModelForm = ({ model, onClose }) => {
         <h2 className="text-2xl font-bold">Edit Singleton Model</h2>
         <h2 className="text-2xl font-bold">{model.modelName}</h2>
 
+
+              <div
+  className="mt-4 space-y-2 overflow-y-auto"
+  style={{ maxHeight: "400px", paddingRight: "6px" }}
+>
         {rows.map((row, rowIndex) => (
           <div
             key={rowIndex}
@@ -144,7 +163,7 @@ const EditSingletonModelForm = ({ model, onClose }) => {
             {/* DELETE ROW BUTTON */}
             <button
               type="button"
-              onClick={() => deleteRow(rowIndex)}
+            onClick={() => handleDeleteRow(rowIndex)}
               className="absolute top-3 right-3 text-red-600 hover:text-red-800"
             >
               <Trash2 size={20} />
@@ -164,6 +183,7 @@ const EditSingletonModelForm = ({ model, onClose }) => {
             </div>
           </div>
         ))}
+        </div>
 
         <div className="flex justify-end gap-3">
           <button

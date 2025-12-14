@@ -1,13 +1,22 @@
 import React from "react";
 import { Edit, Trash2, Database } from "lucide-react";
 
-const ModelCard = ({ model, onEdit, onDelete, onEditSingelton }) => {
+const ModelCard = ({ model, onEdit, deleteModel, onEditSingelton }) => {
 
-  console.log(model, "modelmodel");
+  const handleDelete = () => {
+    deleteModel({
+      data: [
+        {
+          merchantId: 1,
+          modelSlug: model.modelSlug,
+          singletonModel: model.singletonModel ? 1 : 0,
+        }
+      ]
+    });
+  };
 
   return (
     <div className="bg-white border rounded-xl p-6 shadow hover:shadow-md">
-
       <div className="flex justify-between items-start mb-3">
         <div>
           <h3 className="text-lg font-semibold">{model.modelName}</h3>
@@ -33,9 +42,9 @@ const ModelCard = ({ model, onEdit, onDelete, onEditSingelton }) => {
         <button
           onClick={() => {
             if (model.singletonModel) {
-              onEditSingelton(model, "editSingelton")
+              onEditSingelton(model, "editSingelton");
             } else {
-              onEdit(model, "edit")
+              onEdit(model, "edit");
             }
           }}
           className="p-2 text-blue-600 hover:bg-blue-100 rounded-lg"
@@ -45,12 +54,11 @@ const ModelCard = ({ model, onEdit, onDelete, onEditSingelton }) => {
 
         {/* DELETE */}
         <button
-          onClick={() => onDelete(model)}
+          onClick={handleDelete}
           className="p-2 text-red-600 hover:bg-red-100 rounded-lg"
         >
           <Trash2 size={18} />
         </button>
-
       </div>
     </div>
   );

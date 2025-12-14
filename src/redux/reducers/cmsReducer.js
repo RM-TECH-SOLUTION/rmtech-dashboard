@@ -7,7 +7,13 @@ import {
   ADD_CMS_FAILURE,
   UPDATE_CMS_REQUEST,
   UPDATE_CMS_SUCCESS,
-  UPDATE_CMS_FAILURE
+  UPDATE_CMS_FAILURE,
+  DELETE_CMS_REQUEST,
+  DELETE_CMS_SUCCESS,
+  DELETE_CMS_FAILURE,
+  DELETE_MODEL_REQUEST,
+  DELETE_MODEL_SUCCESS,
+  DELETE_MODEL_FAILURE,
 } from "../constants/actionTypes";
 
 const initialState = {
@@ -17,6 +23,8 @@ const initialState = {
   addLoading: false,
   addError: null,
   lastUpdated: null,
+  deleteData:null,
+  deleteModelData:null
 };
 
 
@@ -92,6 +100,52 @@ const cmsReducer = (state = initialState, action) => {
       
 
     case UPDATE_CMS_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        error: action.error,
+      };
+
+      // 
+      case DELETE_CMS_REQUEST:
+      return {
+        ...state,
+        loading: true,
+      };
+
+    case DELETE_CMS_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        deleteData: action.payload, 
+        lastUpdated: new Date().toISOString(),
+      };
+      
+
+    case DELETE_CMS_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        error: action.error,
+      };
+
+      // --------------
+
+    case DELETE_MODEL_REQUEST:
+      return {
+        ...state,
+        loading: true,
+      };
+
+    case DELETE_MODEL_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        deleteModelData: action.payload, 
+        lastUpdated: new Date().toISOString(),
+      };
+      
+    case DELETE_MODEL_FAILURE:
       return {
         ...state,
         loading: false,

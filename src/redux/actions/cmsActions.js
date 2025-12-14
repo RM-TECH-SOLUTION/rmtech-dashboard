@@ -8,7 +8,13 @@ import {
   UPDATE_CMS_FAILURE,
   ADD_CMS_FAILURE,
   ADD_CMS_REQUEST,
-  ADD_CMS_SUCCESS
+  ADD_CMS_SUCCESS,
+  DELETE_CMS_REQUEST,
+  DELETE_CMS_SUCCESS,
+  DELETE_CMS_FAILURE,
+  DELETE_MODEL_REQUEST,
+  DELETE_MODEL_SUCCESS,
+  DELETE_MODEL_FAILURE,
 } from '../constants/actionTypes';
 import api from '../../services/api';
 
@@ -55,12 +61,14 @@ export const updateCMSData = (data) => async (dispatch) => {
       ...data,  // include the CMS fields to update
     });
 
+
     // API success check
     if (response?.success) {
       dispatch({
         type: UPDATE_CMS_SUCCESS,
         payload: response.data || [],   // backend should return updated CMS
       });
+       dispatch(fetchCMSData())
 
       return response.data;
     } else {
@@ -81,7 +89,81 @@ export const updateCMSData = (data) => async (dispatch) => {
   }
 };
 
+export const deleteCms = (data) => async (dispatch) => {
+  dispatch({ type: DELETE_CMS_REQUEST });
 
+  try {
+    const response = await api.post(api.Urls.deleteCms, {
+      ...data, 
+    });
+
+    console.log(response?.message,"deleteCmshhh");
+    
+
+    if (response?.success) {
+      dispatch({
+        type: DELETE_CMS_SUCCESS,
+        payload: response || [],  
+      });
+       alert(response.message)
+        dispatch(fetchCMSData())
+      return response;
+    } else {
+      dispatch({
+        type: DELETE_CMS_FAILURE,
+        error: response.message || "Failed to update CMS data",
+      });
+
+      throw new Error(response.message || "Failed to update CMS data");
+    }
+  } catch (error) {
+    dispatch({
+      type: DELETE_CMS_FAILURE,
+      error: error.message || "Network error",
+    });
+
+    throw error;
+  }
+};
+
+
+export const deleteModel = (data) => async (dispatch) => {
+  dispatch({ type: DELETE_MODEL_REQUEST });
+
+  try {
+    const response = await api.post(api.Urls.deleteModel, {
+      ...data, 
+    });
+
+    console.log(response,"deleteModel response");
+    
+
+    if (response?.success) {
+      dispatch({
+        type: DELETE_MODEL_SUCCESS,
+        payload: response || [],  
+      });
+      alert(response.message)
+      dispatch(fetchCMSData())
+
+      return response;
+    } else {
+      dispatch({
+        type: DELETE_MODEL_FAILURE,
+        error: response.message || "Failed to update CMS data",
+      });
+
+      throw new Error(response.message || "Failed to update CMS data");
+    }
+  } catch (error) {
+    dispatch({
+      type: DELETE_MODEL_FAILURE,
+      error: error.message || "Network error",
+    });
+
+    throw error;
+  }
+};
 
 export const addCMSData = (data) => async (dispatch) => {
   console.log(data, "datadatadataggg");

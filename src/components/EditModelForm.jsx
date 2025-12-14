@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Trash2, Edit } from "lucide-react";
 
-const EditModelForm = ({ model, onClose,updateCMSData }) => {
+const EditModelForm = ({ model, onClose,updateCMSData,deleteCms }) => {
   const [formData, setFormData] = useState({
     merchantId: "",
     modelName: "",
@@ -104,12 +104,28 @@ const EditModelForm = ({ model, onClose,updateCMSData }) => {
     setEditField(null);
   };
 
-  const handleDeleteField = (idx) => {
-    setFormData((prev) => ({
-      ...prev,
-      fields: prev.fields.filter((_, i) => i !== idx),
-    }));
-  };
+ const handleDeleteField = (idx) => {
+  const field = formData.fields[idx];
+
+  deleteCms({
+    data: [
+      {
+        merchantId: 1,
+        modelSlug: formData.modelSlug,
+        fieldKey: field.fieldKey,
+        singletonModel: formData.singletonModel ? 1 : 0,
+        singletonModelIndex: 0
+      }
+    ]
+  });
+
+  // 🔥 Update UI immediately
+  setFormData((prev) => ({
+    ...prev,
+    fields: prev.fields.filter((_, i) => i !== idx),
+  }));
+};
+
 
 const handleSubmit = (e) => {
   e.preventDefault();

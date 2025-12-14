@@ -5,6 +5,8 @@ const URLS = {
   addCms: BASE_URL + 'addCms',
   getCms: BASE_URL + 'getCms',
   updateCms: BASE_URL + 'updateCms',
+  deleteCms: BASE_URL + 'deleteCms',
+  deleteModel: BASE_URL + 'deleteModel',
 };
 
 const apiClient = {

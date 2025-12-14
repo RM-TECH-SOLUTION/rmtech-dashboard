@@ -22,6 +22,12 @@ export const UPDATE_CMS_FAILURE = 'cms/UPDATE_CMS_FAILURE';
 export const ADD_CMS_REQUEST = 'cms/ADD_CMS_REQUEST';
 export const ADD_CMS_SUCCESS = 'cms/ADD_CMS_SUCCESS';
 export const ADD_CMS_FAILURE = 'cms/ADD_CMS_FAILURE';
+export const DELETE_CMS_REQUEST = 'cms/DELETE_CMS_REQUEST';
+export const DELETE_CMS_SUCCESS = 'cms/DELETE_CMS_SUCCESS';
+export const DELETE_CMS_FAILURE = 'cms/DELETE_CMS_FAILURE';
+export const DELETE_MODEL_REQUEST = 'cms/DELETE_CMS_REQUEST';
+export const DELETE_MODEL_SUCCESS = 'cms/DELETE_CMS_SUCCESS';
+export const DELETE_MODEL_FAILURE = 'cms/DELETE_CMS_FAILURE';
 
 // Posts Action Types
 export const FETCH_POSTS_REQUEST = 'posts/FETCH_POSTS_REQUEST';
