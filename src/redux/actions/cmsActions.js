@@ -15,6 +15,9 @@ import {
   DELETE_MODEL_REQUEST,
   DELETE_MODEL_SUCCESS,
   DELETE_MODEL_FAILURE,
+  UPLOADCMSIMAGE_CMS_REQUEST,
+  UPLOADCMSIMAGE_CMS_SUCCESS,
+  UPLOADCMSIMAGE_CMS_FAILURE,
 } from '../constants/actionTypes';
 import api from '../../services/api';
 
@@ -88,6 +91,40 @@ export const updateCMSData = (data) => async (dispatch) => {
     throw error;
   }
 };
+
+export const uploadCmsImage = (formData) => async (dispatch) => {
+  dispatch({ type: UPLOADCMSIMAGE_CMS_REQUEST });
+
+  try {
+    const res = await fetch(
+  "https://api.rmtechsolution.com/uploadCmsImage.php",
+  {
+    method: "POST",
+    body: formData,
+  }
+);
+
+    const json = await res.json();
+
+    if (!res.ok || !json.success) {
+      throw new Error(json.message || "Image upload failed");
+    }
+
+    dispatch({
+      type: UPLOADCMSIMAGE_CMS_SUCCESS,
+      payload: json,
+    });
+
+    return json;
+  } catch (error) {
+    dispatch({
+      type: UPLOADCMSIMAGE_CMS_FAILURE,
+      error: error.message,
+    });
+    throw error;
+  }
+};
+
 
 export const deleteCms = (data) => async (dispatch) => {
   dispatch({ type: DELETE_CMS_REQUEST });

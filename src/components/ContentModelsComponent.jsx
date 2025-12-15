@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Plus, Search } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchCMSData, updateCMSData, deleteCms, deleteModel } from "../redux/actions/cmsActions";
+import { fetchCMSData, updateCMSData, deleteCms, deleteModel,uploadCmsImage } from "../redux/actions/cmsActions";
 import ModelCard from "./ModelCard";
 import CreateModelForm from "./CreateModelForm";
 import EditModelForm from "./EditModelForm";
@@ -195,6 +195,7 @@ const ContentModelsComponent = () => {
             // setMode("singleton");
           }}
           setMode={setMode}
+          uploadCmsImage={(data) => dispatch(uploadCmsImage(data))}
         />
       )}
 

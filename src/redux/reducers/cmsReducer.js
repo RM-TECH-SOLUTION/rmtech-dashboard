@@ -14,6 +14,9 @@ import {
   DELETE_MODEL_REQUEST,
   DELETE_MODEL_SUCCESS,
   DELETE_MODEL_FAILURE,
+  UPLOADCMSIMAGE_CMS_REQUEST,
+  UPLOADCMSIMAGE_CMS_SUCCESS,
+  UPLOADCMSIMAGE_CMS_FAILURE,
 } from "../constants/actionTypes";
 
 const initialState = {
@@ -24,7 +27,8 @@ const initialState = {
   addError: null,
   lastUpdated: null,
   deleteData:null,
-  deleteModelData:null
+  deleteModelData:null,
+  uploadCmsImageData:null
 };
 
 
@@ -151,6 +155,30 @@ const cmsReducer = (state = initialState, action) => {
         loading: false,
         error: action.error,
       };
+
+    // ------------
+     case UPLOADCMSIMAGE_CMS_REQUEST:
+      return {
+        ...state,
+        loading: true,
+      };
+
+    case UPLOADCMSIMAGE_CMS_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        uploadCmsImageData: action.payload,
+        lastUpdated: new Date().toISOString(),
+      };
+      
+
+    case UPLOADCMSIMAGE_CMS_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        error: action.error,
+      };
+
 
     // ---------------------------
     default:

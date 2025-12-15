@@ -3,8 +3,10 @@ import { Trash2,Edit } from "lucide-react";
 import { useDispatch } from "react-redux";
 import { addCMSData } from "../redux/actions/cmsActions";
 
-const CreateModelForm = ({ onClose, setMode }) => {
+const CreateModelForm = ({ onClose, setMode,uploadCmsImage }) => {
   const dispatch = useDispatch();
+  const [imageFiles, setImageFiles] = useState({});
+
 
   const [formData, setFormData] = useState({
     merchantId: "",
@@ -114,20 +116,31 @@ const CreateModelForm = ({ onClose, setMode }) => {
           />
         );
 
-      case "image":
-        return (
-          <input
-            type="file"
-            className="border p-2 rounded"
-            accept="image/*"
-            onChange={(e) =>
-              setNewField({
-                ...newField,
-                fieldValue: e.target.files[0]?.name || "",
-              })
-            }
-          />
-        );
+  case "image":
+  return (
+    <input
+      type="file"
+      accept="image/*"
+      className="border p-2 rounded"
+      onChange={(e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        // store actual file
+        setImageFiles((prev) => ({
+          ...prev,
+          [newField.fieldKey]: file,
+        }));
+
+        // store name temporarily for UI
+        setNewField({
+          ...newField,
+          fieldValue: file.name,
+        });
+      }}
+    />
+  );
+
 
       default:
         return (
@@ -143,126 +156,48 @@ const CreateModelForm = ({ onClose, setMode }) => {
     }
   };
 
-  // ----------------------------------------------------
-  // SINGLETON ROW FUNCTIONS
-  // ----------------------------------------------------
-  const addRow = () => {
-    const newRow = {};
-    formData.fields.forEach((f) => {
-      newRow[f.fieldKey] = "";
-    });
-
-    setFormData((prev) => ({
-      ...prev,
-      rows: [...prev.rows, newRow],
-    }));
-  };
-
-  const updateCell = (rowIndex, fieldKey, value) => {
-    const updatedRows = [...formData.rows];
-    updatedRows[rowIndex][fieldKey] = value;
-
-    setFormData((prev) => ({ ...prev, rows: updatedRows }));
-  };
-
-  const deleteRow = (index) => {
-    setFormData((prev) => ({
-      ...prev,
-      rows: prev.rows.filter((_, i) => i !== index),
-    }));
-  };
-
-  // RENDER CELL FOR SINGLETON MODE
-  const renderInput = (field, rowIndex) => {
-    const value = formData.rows[rowIndex][field.fieldKey];
-
-    switch (field.fieldType) {
-      case "string":
-        return (
-          <input
-            className="border p-2 rounded w-full"
-            value={value}
-            onChange={(e) => updateCell(rowIndex, field.fieldKey, e.target.value)}
-          />
-        );
-
-      case "text":
-        return (
-          <textarea
-            className="border p-2 rounded w-full"
-            value={value}
-            onChange={(e) => updateCell(rowIndex, field.fieldKey, e.target.value)}
-          />
-        );
-
-      case "image":
-        return (
-          <input
-            type="file"
-            className="border p-2 rounded"
-            accept="image/*"
-            onChange={(e) =>
-              updateCell(
-                rowIndex,
-                field.fieldKey,
-                e.target.files[0]?.name || ""
-              )
-            }
-          />
-        );
-
-      default:
-        return (
-          <input
-            className="border p-2 rounded w-full"
-            value={value}
-            onChange={(e) => updateCell(rowIndex, field.fieldKey, e.target.value)}
-          />
-        );
-    }
-  };
 
   // ----------------------------------------------------
   // SUBMIT
   // ----------------------------------------------------
-  const handleSubmit = (e) => {
-    e.preventDefault();
+const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    let payload = [];
+  let payload = [];
 
-    if (formData.singletonModel === 1) {
-      formData.rows.forEach((row) => {
-        Object.entries(row).map(([key, value]) => {
-          const field = formData.fields.find((f) => f.fieldKey === key);
+  if (formData.singletonModel === 0) {
+    for (const field of formData.fields) {
+      let fieldValue = field.fieldValue;
 
-          payload.push({
-            merchantId: Number(formData.merchantId),
-            modelSlug: formData.modelSlug,
-            modelName: formData.modelName,
-            fieldName: field.fieldName,
-            fieldKey: key,
-            fieldType: field.fieldType,
-            fieldValue: value,
-            singletonModel: 1,
-          });
-        });
-      });
-    } else {
-      payload = formData.fields.map((f) => ({
+      // ✅ IMAGE UPLOAD
+      if (field.fieldType === "image" && imageFiles[field.fieldKey]) {
+        const fd = new FormData();
+        fd.append("image", imageFiles[field.fieldKey]);
+
+        const res = await uploadCmsImage(fd);
+
+        fieldValue = res.imageUrl; 
+      }
+
+      payload.push({
         merchantId: Number(formData.merchantId),
         modelSlug: formData.modelSlug,
         modelName: formData.modelName,
-        fieldName: f.fieldName,
-        fieldKey: f.fieldKey,
-        fieldType: f.fieldType,
-        fieldValue: f.fieldValue || "",
+        fieldName: field.fieldName,
+        fieldKey: field.fieldKey,
+        fieldType: field.fieldType,
+        fieldValue,
         singletonModel: 0,
-      }));
+      });
     }
+  }
 
-    dispatch(addCMSData(payload));
-    onClose();
-  };
+  await dispatch(addCMSData(payload));
+  onClose();
+};
+
+
+
 
   // ----------------------------------------------------
   // JSX UI

@@ -7,23 +7,28 @@ const URLS = {
   updateCms: BASE_URL + 'updateCms',
   deleteCms: BASE_URL + 'deleteCms',
   deleteModel: BASE_URL + 'deleteModel',
+  uploadCmsImage: BASE_URL + 'uploadCmsImage',
 };
 
 const apiClient = {
   Urls: URLS,
-  headers: {
+
+  jsonHeaders: {
     'Content-Type': 'application/json',
-    'Accept': 'application/json'
+    'Accept': 'application/json',
   },
 
   make(url, method, params = {}) {
-    params.merchantAccessToken = params.merchantAccessToken || window.merchantAccessToken;
-    const reqUrl = method === 'GET' ? `${url}?${new URLSearchParams(params).toString()}` : url;
+    const reqUrl =
+      method === 'GET'
+        ? `${url}?${new URLSearchParams(params).toString()}`
+        : url;
+
     return fetch(reqUrl, {
       method,
-      headers: apiClient.headers,
+      headers: this.jsonHeaders,
       ...(method === 'GET' ? {} : { body: JSON.stringify(params) }),
-    }).then(response => response.json());
+    }).then((res) => res.json());
   },
 
   post(url, params) {
@@ -34,9 +39,15 @@ const apiClient = {
     return this.make(url, 'GET', params);
   },
 
+  // 🔥 NEW: FOR IMAGE UPLOAD
+  postForm(url, formData) {
+    return fetch(url, {
+      method: 'POST',
+      body: formData, // ❌ NO headers
+    }).then((res) => res.json());
+  },
+};
 
-  
-
-}
 
 export default apiClient;
+
