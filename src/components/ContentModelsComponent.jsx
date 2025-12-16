@@ -205,6 +205,7 @@ const ContentModelsComponent = () => {
           baseData={singletonBase}
           onClose={closeForm}
           setMode={setMode}
+           uploadCmsImage={(data) => dispatch(uploadCmsImage(data))}
 
         />
       )}
@@ -230,6 +231,7 @@ const ContentModelsComponent = () => {
           }
           }
           deleteCms={(data) => { dispatch(deleteCms(data)) }}
+          uploadCmsImage={(data) => dispatch(uploadCmsImage(data))}
         />
       )}
     </div>

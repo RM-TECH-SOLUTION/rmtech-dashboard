@@ -3,11 +3,11 @@ import { Trash2 } from "lucide-react";
 import { useDispatch } from "react-redux";
 import { updateCMSData } from "../redux/actions/cmsActions";
 
-const EditSingletonModelForm = ({ model, onClose,deleteCms }) => {
+const EditSingletonModelForm = ({ model, onClose, deleteCms }) => {
   const dispatch = useDispatch();
 
   // -------------------------------
-  // Extract structure (field names, types, keys)
+  // Extract structure
   // -------------------------------
   const structureFields = model.fields[0].fields.map((f) => ({
     fieldKey: f.fieldKey,
@@ -16,131 +16,206 @@ const EditSingletonModelForm = ({ model, onClose,deleteCms }) => {
   }));
 
   // -------------------------------
-  // Extract rows
+  // Extract rows (KEEP IMAGE URL)
   // -------------------------------
   const formattedRows = model.fields.map((row) => {
-    const obj = {};
+    const obj = {
+      singletonModelIndex: row.fields[0].singletonModelIndex,
+    };
+
     row.fields.forEach((f) => {
-      obj[f.fieldKey] = f.fieldValue;
+      obj[f.fieldKey] = f.fieldValue; // URL stays here
     });
+
     return obj;
   });
 
   const [rows, setRows] = useState(formattedRows);
 
   // -------------------------------
-  // Update a cell
+  // Update text/color/etc
   // -------------------------------
-  const updateCell = (rowIndex, fieldKey, value) => {
-    const updated = [...rows];
-    updated[rowIndex][fieldKey] = value;
-    setRows(updated);
+  const updateCell = (rowIndex, key, value) => {
+    setRows((prev) => {
+      const copy = [...prev];
+      copy[rowIndex] = { ...copy[rowIndex], [key]: value };
+      return copy;
+    });
   };
 
   // -------------------------------
-  // DELETE a row
+  // Store image FILE separately
   // -------------------------------
-  const handleDeleteRow = async (rowIndex) => {
-    const singletonIndex = rowIndex + 1;
+  const updateImageFile = (rowIndex, key, file) => {
+    setRows((prev) => {
+      const copy = [...prev];
+      copy[rowIndex] = {
+        ...copy[rowIndex],
+        [`${key}__file`]: file, // ✅ file stored separately
+      };
+      return copy;
+    });
+  };
 
-    // 🔥 CALL DELETE API
+  // -------------------------------
+  // DELETE ROW
+  // -------------------------------
+  const handleDeleteRow = async (singletonModelIndex) => {
     await deleteCms({
       data: [
         {
           merchantId: 1,
           modelSlug: model.modelSlug,
           singletonModel: 1,
-          singletonModelIndex: singletonIndex,
+          singletonModelIndex,
         },
       ],
     });
 
-    // 🔥 REMOVE FROM UI
-    setRows((prev) => prev.filter((_, i) => i !== rowIndex));
+    setRows((prev) =>
+      prev.filter((r) => r.singletonModelIndex !== singletonModelIndex)
+    );
   };
 
   // -------------------------------
-  // Submit → UPDATE API
+  // SUBMIT
   // -------------------------------
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     const payload = [];
 
-    rows.forEach((rowValues, rowIndex) => {
-      const index = rowIndex + 1;
+    for (const row of rows) {
+      for (const field of structureFields) {
+        let fieldValue = row[field.fieldKey];
+        const newFile = row[`${field.fieldKey}__file`];
 
-      structureFields.forEach((field) => {
+        // IMAGE UPDATE
+        if (field.fieldType === "image" && newFile instanceof File) {
+          const fd = new FormData();
+          fd.append("image", newFile);
+          fd.append("merchantId", 1);
+
+          // ✅ OLD IMAGE URL (string)
+          if (typeof fieldValue === "string") {
+            fd.append("oldImageUrl", fieldValue);
+          }
+
+          const res = await fetch(
+            "https://api.rmtechsolution.com/uploadCmsImage",
+            { method: "POST", body: fd }
+          );
+
+          const json = await res.json();
+          if (!json.success) {
+            alert("Image upload failed");
+            return;
+          }
+
+          fieldValue = json.imageUrl; // new URL
+        }
+
         payload.push({
-          merchantId: model.merchantId,
+          merchantId: 1,
           modelSlug: model.modelSlug,
           modelName: model.modelName,
           fieldName: field.fieldName,
           fieldKey: field.fieldKey,
           fieldType: field.fieldType,
-          fieldValue: rowValues[field.fieldKey],
+          fieldValue,
           singletonModel: 1,
-          singletonModelIndex: index,
-          merchantId:1
+          singletonModelIndex: row.singletonModelIndex,
         });
-      });
-    });
+      }
+    }
 
-    // CALL UPDATE API
     await dispatch(updateCMSData({ data: payload }));
-
     onClose();
   };
 
   // -------------------------------
-  // Render input based on field type
+  // RENDER INPUT
   // -------------------------------
   const renderInput = (field, rowIndex) => {
     const value = rows[rowIndex][field.fieldKey];
 
-    switch (field.fieldType) {
-      case "text":
-        return (
-          <textarea
-            className="border p-2 rounded w-full"
-            value={value}
-            onChange={(e) => updateCell(rowIndex, field.fieldKey, e.target.value)}
-          />
-        );
+    if (field.fieldType === "image") {
+      const file = rows[rowIndex][`${field.fieldKey}__file`];
+      const url = rows[rowIndex][field.fieldKey];
 
-      case "color":
-        return (
-          <input
-            type="color"
-            className="border rounded h-10"
-            value={value}
-            onChange={(e) => updateCell(rowIndex, field.fieldKey, e.target.value)}
-          />
-        );
+      let preview = "";
 
-      case "image":
-        return (
+      if (file instanceof File) {
+        preview = URL.createObjectURL(file); // ✅ NEW IMAGE PREVIEW
+      } else if (typeof url === "string" && url.length > 0) {
+        preview = url; // ✅ OLD IMAGE
+      }
+
+      return (
+        <div className="space-y-2">
+          {preview && (
+            <img
+              src={preview}
+              alt="preview"
+              className="w-32 h-32 object-cover rounded border"
+            />
+          )}
+
           <input
             type="file"
             accept="image/*"
+            className="border p-2 rounded w-full"
             onChange={(e) =>
-              updateCell(rowIndex, field.fieldKey, e.target.files?.[0]?.name || "")
+              updateImageFile(
+                rowIndex,
+                field.fieldKey,
+                e.target.files?.[0]
+              )
             }
           />
-        );
-
-      default:
-        return (
-          <input
-            type="text"
-            className="border p-2 rounded w-full"
-            value={value}
-            onChange={(e) => updateCell(rowIndex, field.fieldKey, e.target.value)}
-          />
-        );
+        </div>
+      );
     }
+
+
+    if (field.fieldType === "color") {
+      return (
+        <input
+          type="color"
+          value={value || "#000000"}
+          onChange={(e) =>
+            updateCell(rowIndex, field.fieldKey, e.target.value)
+          }
+        />
+      );
+    }
+
+    if (field.fieldType === "text") {
+      return (
+        <textarea
+          className="border p-2 rounded w-full"
+          value={value || ""}
+          onChange={(e) =>
+            updateCell(rowIndex, field.fieldKey, e.target.value)
+          }
+        />
+      );
+    }
+
+    return (
+      <input
+        type="text"
+        className="border p-2 rounded w-full"
+        value={value || ""}
+        onChange={(e) =>
+          updateCell(rowIndex, field.fieldKey, e.target.value)
+        }
+      />
+    );
   };
 
+  // -------------------------------
+  // UI
+  // -------------------------------
   return (
     <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center p-6">
       <form
@@ -148,41 +223,35 @@ const EditSingletonModelForm = ({ model, onClose,deleteCms }) => {
         className="bg-white w-full max-w-4xl rounded-lg p-6 space-y-6"
       >
         <h2 className="text-2xl font-bold">Edit Singleton Model</h2>
-        <h2 className="text-2xl font-bold">{model.modelName}</h2>
 
-
-              <div
-  className="mt-4 space-y-2 overflow-y-auto"
-  style={{ maxHeight: "400px", paddingRight: "6px" }}
->
-        {rows.map((row, rowIndex) => (
-          <div
-            key={rowIndex}
-            className="border p-4 rounded-lg bg-gray-50 mb-4 relative"
-          >
-            {/* DELETE ROW BUTTON */}
-            <button
-              type="button"
-            onClick={() => handleDeleteRow(rowIndex)}
-              className="absolute top-3 right-3 text-red-600 hover:text-red-800"
+        <div className="space-y-4 max-h-[400px] overflow-y-auto">
+          {rows.map((row, rowIndex) => (
+            <div
+              key={row.singletonModelIndex}
+              className="border p-4 rounded-lg bg-gray-50 relative"
             >
-              <Trash2 size={20} />
-            </button>
+              <button
+                type="button"
+                onClick={() =>
+                  handleDeleteRow(row.singletonModelIndex)
+                }
+                className="absolute top-3 right-3 text-red-600"
+              >
+                <Trash2 size={18} />
+              </button>
 
-            <h3 className="font-semibold mb-3">Row {rowIndex + 1}</h3>
-
-            <div className="grid grid-cols-2 gap-4">
-              {structureFields.map((field) => (
-                <div key={field.fieldKey}>
-                  <label className="block text-sm font-medium mb-1">
-                    {field.fieldName}
-                  </label>
-                  {renderInput(field, rowIndex)}
-                </div>
-              ))}
+              <div className="grid grid-cols-2 gap-4">
+                {structureFields.map((field) => (
+                  <div key={field.fieldKey}>
+                    <label className="block text-sm font-medium mb-1">
+                      {field.fieldName}
+                    </label>
+                    {renderInput(field, rowIndex)}
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
         </div>
 
         <div className="flex justify-end gap-3">
@@ -193,10 +262,9 @@ const EditSingletonModelForm = ({ model, onClose,deleteCms }) => {
           >
             Cancel
           </button>
-
           <button
             type="submit"
-            className="px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:shadow-lg transition-all duration-300 flex items-center shadow-lg"
+            className="px-6 py-2 bg-blue-600 text-white rounded-xl"
           >
             Save Changes
           </button>

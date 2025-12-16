@@ -3,13 +3,15 @@ import { Trash2 } from "lucide-react";
 import { useDispatch } from "react-redux";
 import { addCMSData } from "../redux/actions/cmsActions";
 
-const SingletonModelForm = ({ baseData, onClose, setMode, lastSingletonIndex }) => {
+const SingletonModelForm = ({ baseData, onClose, setMode, lastSingletonIndex, uploadCmsImage }) => {
   const dispatch = useDispatch();
 
   // Generate next singleton index (starts from 1)
   const nextIndex = lastSingletonIndex ? lastSingletonIndex + 1 : 1;
 
   const [singletonIndex] = useState(nextIndex);
+  const [imageFiles, setImageFiles] = useState({});
+
 
   const [formData, setFormData] = useState({
     ...baseData,
@@ -140,15 +142,22 @@ const SingletonModelForm = ({ baseData, onClose, setMode, lastSingletonIndex }) 
             type="file"
             accept="image/*"
             className="border p-2 rounded"
-            onChange={(e) =>
-              updateCell(
-                rowIndex,
-                field.fieldKey,
-                e.target.files?.[0]?.name || ""
-              )
-            }
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (!file) return;
+
+              // store file separately
+              setImageFiles((prev) => ({
+                ...prev,
+                [`${rowIndex}_${field.fieldKey}`]: file,
+              }));
+
+              // temporary value (for UI only)
+              updateCell(rowIndex, field.fieldKey, file.name);
+            }}
           />
         );
+
 
       default:
         return null;
@@ -158,38 +167,72 @@ const SingletonModelForm = ({ baseData, onClose, setMode, lastSingletonIndex }) 
   // -------------------------------------------
   // SUBMIT
   // -------------------------------------------
- // Submit
-const handleSubmit = (e) => {
-  e.preventDefault();
+  // Submit
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  const payload = [];
+    const payload = [];
 
-  formData.rows.forEach((row, rowIndex) => {
-    
-    const index = rowIndex + 1; // ⭐ START FROM 1
+    for (let rowIndex = 0; rowIndex < formData.rows.length; rowIndex++) {
+      const row = formData.rows[rowIndex];
+      const singletonIndex = rowIndex + 1;
 
-    Object.keys(row).forEach((key) => {
-      const field = formData.fields.find((f) => f.fieldKey === key);
+      for (const field of formData.fields) {
+        let fieldValue = row[field.fieldKey] ?? "";
 
-      payload.push({
-        merchantId: Number(formData.merchantId),
-        modelSlug: formData.modelSlug,
-        modelName: formData.modelName,
-        fieldName: field.fieldName,
-        fieldKey: key,
-        fieldType: field.fieldType,
-        fieldValue: row[key],
-        singletonModel: 1,
+        // 🔥 IMAGE UPLOAD (ONLY WHEN FILE EXISTS)
+        if (field.fieldType === "image") {
+          const imageKey = `${rowIndex}_${field.fieldKey}`;
+          const imageFile = imageFiles[imageKey];
 
-        // ⭐ ADD THIS:
-        singletonModelIndex: index,
-      });
-    });
-  });
+          if (imageFile instanceof File) {
+            const fd = new FormData();
+            fd.append("image", imageFile);
+            fd.append("merchantId", Number(formData.merchantId)); // ✅ REQUIRED
 
-  dispatch(addCMSData(payload));
-  onClose();
-};
+            const res = await fetch(
+              "https://api.rmtechsolution.com/uploadCmsImage",
+              {
+                method: "POST",
+                body: fd, // ❌ DO NOT SET HEADERS
+              }
+            );
+
+            const json = await res.json();
+
+            if (!json.success || !json.imageUrl) {
+              alert("Image upload failed");
+              return;
+            }
+
+            // ✅ SAVE FULL URL
+            fieldValue = json.imageUrl;
+          } else {
+            // ❗ No image selected → skip saving empty value
+            continue;
+          }
+        }
+
+        payload.push({
+          merchantId: Number(formData.merchantId),
+          modelSlug: formData.modelSlug,
+          modelName: formData.modelName,
+          fieldName: field.fieldName,
+          fieldKey: field.fieldKey,
+          fieldType: field.fieldType,
+          fieldValue,
+          singletonModel: 1,
+          singletonModelIndex: singletonIndex,
+        });
+      }
+    }
+
+    dispatch(addCMSData(payload));
+    onClose();
+  };
+
+
+
 
 
   // -------------------------------------------
@@ -282,7 +325,7 @@ const handleSubmit = (e) => {
           <button
             type="button"
             onClick={handleAddField}
-            style={{marginTop:20}}
+            style={{ marginTop: 20 }}
             className="px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:shadow-lg transition-all duration-300 flex items-center shadow-lg"
           >
             Add Column
@@ -326,7 +369,7 @@ const handleSubmit = (e) => {
               type="button"
               onClick={addRow}
               className="px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:shadow-lg transition-all duration-300 flex items-center shadow-lg"
-              style={{marginTop:20}}
+              style={{ marginTop: 20 }}
             >
               + Add Row
             </button>
