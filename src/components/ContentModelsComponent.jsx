@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { Plus, Search } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchCMSData, updateCMSData, deleteCms, deleteModel,uploadCmsImage } from "../redux/actions/cmsActions";
+import { fetchCMSData, updateCMSData, deleteCms, deleteModel,uploadCmsImage,createMerchant } from "../redux/actions/cmsActions";
 import ModelCard from "./ModelCard";
 import CreateModelForm from "./CreateModelForm";
 import EditModelForm from "./EditModelForm";
 import SingletonModelForm from "./SingletonModelForm";
 import EditSingletonModelForm from "./EditSingletonModelForm";
+import CreateMerchantForm from "./CreateMerchantForm";
 
 const ContentModelsComponent = () => {
   const dispatch = useDispatch();
@@ -118,16 +119,30 @@ const ContentModelsComponent = () => {
           <p className="text-gray-600">Manage your CMS model structures</p>
         </div>
 
-        <button
-          onClick={() => {
-            setSelectedModel(null);
-            setMode("create");
-          }}
-          className="px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:shadow-lg transition-all duration-300 flex items-center shadow-lg"
-        >
-          <Plus size={18} className="mr-2" />
-          New Model
-        </button>
+        
+<div className="flex gap-3">
+  <button
+    onClick={() => {
+      setSelectedModel(null);
+      setMode("create");
+    }}
+    className="px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl flex items-center"
+  >
+    <Plus size={18} className="mr-2" />
+     New Model
+  </button>
+
+  <button
+    onClick={() => setMode("createMerchant")}
+    className="px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl flex items-center"
+    style={{display:"flex",justifyContent:"center",alignItems:"center"}}
+  >
+    <Plus size={18} className="mr-2" />
+    Create Merchant
+  </button>
+</div>
+
+
       </div>
 
       {/* SEARCH BAR */}
@@ -234,6 +249,22 @@ const ContentModelsComponent = () => {
           uploadCmsImage={(data) => dispatch(uploadCmsImage(data))}
         />
       )}
+      {mode === "createMerchant" && (
+  <CreateMerchantForm
+    onClose={closeForm}
+    onSubmit={(data) => {
+      dispatch(createMerchant(data))
+  .then(() => {
+    alert("Merchant created successfully");
+    closeForm();
+  })
+  .catch((err) => {
+    alert(err.message);
+  });
+
+    }}
+  />
+)}
     </div>
   );
 };

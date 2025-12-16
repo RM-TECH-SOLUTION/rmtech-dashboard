@@ -18,6 +18,12 @@ import {
   UPLOADCMSIMAGE_CMS_REQUEST,
   UPLOADCMSIMAGE_CMS_SUCCESS,
   UPLOADCMSIMAGE_CMS_FAILURE,
+  CREATE_MERCHANT_REQUEST,
+  CREATE_MERCHANT_SUCCESS,
+  CREATE_MERCHANT_FAILURE,
+  MERCHANT_LOGIN_REQUEST,
+  MERCHANT_LOGIN_SUCCESS,
+  MERCHANT_LOGIN_FAILURE,
 } from '../constants/actionTypes';
 import api from '../../services/api';
 
@@ -91,6 +97,73 @@ export const updateCMSData = (data) => async (dispatch) => {
     throw error;
   }
 };
+
+export const createMerchant = (data) => async (dispatch) => {
+  dispatch({ type: CREATE_MERCHANT_REQUEST });
+
+  try {
+    const response = await api.post(api.Urls.createMerchant, data);
+
+    if (response?.success) {
+      dispatch({
+        type: CREATE_MERCHANT_SUCCESS,
+        payload: response, // ✅ ONLY merchant data
+      });
+
+      return response;
+    } else {
+      dispatch({
+        type: CREATE_MERCHANT_FAILURE,
+        error: response.message || "Failed to create merchant",
+      });
+      throw new Error(response.message || "Failed to create merchant");
+    }
+  } catch (error) {
+    dispatch({
+      type: CREATE_MERCHANT_FAILURE,
+      error: error.message || "Network error",
+    });
+    throw error;
+  }
+};
+
+export const merchantLogin = (data) => async (dispatch) => {
+  dispatch({ type: MERCHANT_LOGIN_REQUEST });
+
+  try {
+    const response = await api.post(api.Urls.merchantLogin, data);
+
+    if (response?.success) {
+      dispatch({
+        type: MERCHANT_LOGIN_SUCCESS,
+        payload: response,
+      });
+
+      return response; // ✅ resolve success
+    } else {
+      dispatch({
+        type: MERCHANT_LOGIN_FAILURE,
+        error: response.message || "Merchant not found",
+      });
+      alert(response.message)
+
+      return response; // ✅ RETURN, DO NOT THROW
+    }
+  } catch (error) {
+    dispatch({
+      type: MERCHANT_LOGIN_FAILURE,
+      error: error.message || "Network error",
+    });
+
+    return {
+      success: false,
+      message: error.message || "Network error",
+    };
+  }
+};
+
+
+
 
 export const uploadCmsImage = (formData) => async (dispatch) => {
   dispatch({ type: UPLOADCMSIMAGE_CMS_REQUEST });

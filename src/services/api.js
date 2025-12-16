@@ -8,6 +8,8 @@ const URLS = {
   deleteCms: BASE_URL + 'deleteCms',
   deleteModel: BASE_URL + 'deleteModel',
   uploadCmsImage: BASE_URL + 'uploadCmsImage',
+  createMerchant: BASE_URL + 'createMerchant',
+  merchantLogin: BASE_URL + 'merchantLogin'
 };
 
 const apiClient = {

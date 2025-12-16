@@ -17,6 +17,13 @@ import {
   UPLOADCMSIMAGE_CMS_REQUEST,
   UPLOADCMSIMAGE_CMS_SUCCESS,
   UPLOADCMSIMAGE_CMS_FAILURE,
+  CREATE_MERCHANT_REQUEST,
+  CREATE_MERCHANT_SUCCESS,
+  CREATE_MERCHANT_FAILURE,
+  MERCHANT_LOGIN_REQUEST,
+  MERCHANT_LOGIN_SUCCESS,
+  MERCHANT_LOGIN_FAILURE,
+  
 } from "../constants/actionTypes";
 
 const initialState = {
@@ -28,7 +35,9 @@ const initialState = {
   lastUpdated: null,
   deleteData:null,
   deleteModelData:null,
-  uploadCmsImageData:null
+  uploadCmsImageData:null,
+  createMerchantData:null,
+  loginMerchantData:null
 };
 
 
@@ -173,6 +182,53 @@ const cmsReducer = (state = initialState, action) => {
       
 
     case UPLOADCMSIMAGE_CMS_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        error: action.error,
+      };
+
+      // --------------
+
+      case CREATE_MERCHANT_REQUEST:
+      return {
+        ...state,
+        loading: true,
+      };
+
+    case CREATE_MERCHANT_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        createMerchantData: action.payload,
+        lastUpdated: new Date().toISOString(),
+      };
+      
+
+    case CREATE_MERCHANT_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        error: action.error,
+      };
+
+      // ----
+
+    case MERCHANT_LOGIN_REQUEST:
+      return {
+        ...state,
+        loading: true,
+      };
+
+    case MERCHANT_LOGIN_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loginMerchantData: action.payload,
+      };
+      
+
+    case MERCHANT_LOGIN_FAILURE:
       return {
         ...state,
         loading: false,
