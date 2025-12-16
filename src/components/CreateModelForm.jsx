@@ -173,6 +173,7 @@ const handleSubmit = async (e) => {
       if (field.fieldType === "image" && imageFiles[field.fieldKey]) {
         const fd = new FormData();
         fd.append("image", imageFiles[field.fieldKey]);
+        fd.append("merchantId", Number(formData.merchantId)); 
 
         const res = await uploadCmsImage(fd);
 
@@ -325,7 +326,17 @@ const handleSubmit = async (e) => {
         <div>{f.fieldName}</div>
         <div>{f.fieldKey}</div>
         <div>{f.fieldType}</div>
-        <div>{f.fieldValue}</div>
+        <div>
+  {f.fieldType === "image" && imageFiles[f.fieldKey] ? (
+    <img
+      src={URL.createObjectURL(imageFiles[f.fieldKey])}
+      alt="preview"
+      className="w-16 h-16 object-cover rounded border"
+    />
+  ) : (
+    f.fieldValue
+  )}
+</div>
 
         {/* ACTION BUTTONS */}
         <div className="flex gap-3">

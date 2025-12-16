@@ -77,19 +77,39 @@ const EditModelForm = ({ model, onClose,updateCMSData,deleteCms }) => {
           />
         );
       case "image":
-        return (
-          <input
-            type="file"
-            className="border p-2 rounded"
-            accept="image/*"
-            onChange={(e) =>
-              setField({
-                ...field,
-                fieldValue: e.target.files[0]?.name || "",
-              })
-            }
-          />
-        );
+  return (
+    <div className="space-y-2">
+      {/* IMAGE PREVIEW */}
+      {field.fieldValue && (
+        <img
+          src={
+            field.fieldValue instanceof File
+              ? URL.createObjectURL(field.fieldValue)
+              : field.fieldValue
+          }
+          alt={field.fieldName}
+          className="w-24 h-24 object-cover rounded border"
+        />
+      )}
+
+      {/* FILE INPUT */}
+      <input
+        type="file"
+        className="border p-2 rounded w-full"
+        accept="image/*"
+        onChange={(e) => {
+          const file = e.target.files?.[0];
+          if (!file) return;
+
+          setField({
+            ...field,
+            fieldValue: file, // ✅ store File, not name
+          });
+        }}
+      />
+    </div>
+  );
+
       default:
         return null;
     }
@@ -127,29 +147,60 @@ const EditModelForm = ({ model, onClose,updateCMSData,deleteCms }) => {
 };
 
 
-const handleSubmit = (e) => {
+const handleSubmit = async (e) => {
   e.preventDefault();
 
   const payload = [];
 
-  formData.fields.forEach((field) => {
+  for (const field of formData.fields) {
+    let fieldValue = field.fieldValue;
+
+    // 🔥 IMAGE HANDLING
+    if (field.fieldType === "image" && fieldValue instanceof File) {
+      const fd = new FormData();
+      fd.append("image", fieldValue);
+      fd.append("merchantId", 1);
+
+      // optional: delete old image
+      if (typeof model?.fields?.find(f => f.fieldKey === field.fieldKey)?.fieldValue === "string") {
+        fd.append(
+          "oldImageUrl",
+          model.fields.find(f => f.fieldKey === field.fieldKey).fieldValue
+        );
+      }
+
+      const res = await fetch(
+        "https://api.rmtechsolution.com/uploadCmsImage",
+        { method: "POST", body: fd }
+      );
+
+      const json = await res.json();
+
+      if (!json.success) {
+        alert("Image upload failed");
+        return;
+      }
+
+      fieldValue = json.imageUrl; // ✅ CONVERT FILE → URL
+    }
+
     payload.push({
-      merchantId: formData.merchantId,
+      merchantId: 1,
       modelSlug: formData.modelSlug,
       modelName: formData.modelName,
       fieldKey: field.fieldKey,
       fieldName: field.fieldName,
       fieldType: field.fieldType,
-      fieldValue: field.fieldValue,
+      fieldValue, // ✅ ALWAYS STRING FOR API
       singletonModel: formData.singletonModel ? 1 : 0,
       singletonModelIndex: 0,
-      merchantId:1
     });
-  });
+  }
 
-  updateCMSData({ data: payload });
+  await updateCMSData({ data: payload });
   onClose();
 };
+
 
 
   return (
@@ -232,7 +283,20 @@ const handleSubmit = (e) => {
         }}
       >
         <span style={{ fontWeight: "bold", marginRight: 5 }}>{field.fieldName} - </span>
-        <span style={{ fontWeight: "500" }}>{field.fieldValue}</span>
+        {field.fieldType === "image" && field.fieldValue ? (
+  <img
+    src={
+      field.fieldValue instanceof File
+        ? URL.createObjectURL(field.fieldValue)
+        : field.fieldValue
+    }
+    alt={field.fieldName}
+    className="w-16 h-16 object-cover rounded border"
+  />
+) : (
+  <span style={{ fontWeight: "500" }}>{field.fieldValue}</span>
+)}
+
       </div>
 
       <div className="flex gap-3">
