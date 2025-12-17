@@ -23,6 +23,9 @@ import {
   MERCHANT_LOGIN_REQUEST,
   MERCHANT_LOGIN_SUCCESS,
   MERCHANT_LOGIN_FAILURE,
+  GET_MERCHANT_REQUEST,
+  GET_MERCHANT_SUCCESS,
+  GET_MERCHANT_FAILURE,
   
 } from "../constants/actionTypes";
 
@@ -37,7 +40,8 @@ const initialState = {
   deleteModelData:null,
   uploadCmsImageData:null,
   createMerchantData:null,
-  loginMerchantData:null
+  loginMerchantData:null,
+  merchantList:null
 };
 
 
@@ -234,7 +238,28 @@ const cmsReducer = (state = initialState, action) => {
         loading: false,
         error: action.error,
       };
+    
+    // ------------
+      case GET_MERCHANT_REQUEST:
+      return {
+        ...state,
+        loading: true,
+      };
 
+    case GET_MERCHANT_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        merchantList: action.payload,
+      };
+      
+
+    case GET_MERCHANT_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        error: action.error,
+      };
 
     // ---------------------------
     default:

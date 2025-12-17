@@ -19,6 +19,9 @@ const SingletonModelForm = ({ baseData, onClose, setMode, lastSingletonIndex, up
     rows: [],     // table rows
   });
 
+  console.log(formData,"formDataformDataformData");
+  
+
   const [newField, setNewField] = useState({
     fieldName: "",
     fieldKey: "",
@@ -90,7 +93,7 @@ const SingletonModelForm = ({ baseData, onClose, setMode, lastSingletonIndex, up
         return (
           <input
             type={field.fieldType === "number" ? "number" : "text"}
-            className="border p-2 rounded w-full"
+            className="border p-2 rounded w-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
             value={value}
             onChange={(e) =>
               updateCell(rowIndex, field.fieldKey, e.target.value)
@@ -101,7 +104,7 @@ const SingletonModelForm = ({ baseData, onClose, setMode, lastSingletonIndex, up
       case "text":
         return (
           <textarea
-            className="border p-2 rounded w-full"
+            className="border p-2 rounded w-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
             value={value}
             onChange={(e) =>
               updateCell(rowIndex, field.fieldKey, e.target.value)
@@ -112,7 +115,7 @@ const SingletonModelForm = ({ baseData, onClose, setMode, lastSingletonIndex, up
       case "boolean":
         return (
           <select
-            className="border p-2 rounded w-full"
+            className="border p-2 rounded w-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
             value={value}
             onChange={(e) =>
               updateCell(rowIndex, field.fieldKey, e.target.value)
@@ -128,7 +131,7 @@ const SingletonModelForm = ({ baseData, onClose, setMode, lastSingletonIndex, up
         return (
           <input
             type="color"
-            className="border p-2 rounded h-10 w-full"
+            className="border p-2 rounded h-10 w-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
             value={value || "#000000"}
             onChange={(e) =>
               updateCell(rowIndex, field.fieldKey, e.target.value)
@@ -141,7 +144,7 @@ const SingletonModelForm = ({ baseData, onClose, setMode, lastSingletonIndex, up
           <input
             type="file"
             accept="image/*"
-            className="border p-2 rounded"
+            className="border p-2 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
             onChange={(e) => {
               const file = e.target.files?.[0];
               if (!file) return;
@@ -164,6 +167,8 @@ const SingletonModelForm = ({ baseData, onClose, setMode, lastSingletonIndex, up
     }
   };
 
+  console.log(Number(formData.merchantId),"Number(formData.merchantId)");
+  
   // -------------------------------------------
   // SUBMIT
   // -------------------------------------------
@@ -190,11 +195,14 @@ const SingletonModelForm = ({ baseData, onClose, setMode, lastSingletonIndex, up
             fd.append("image", imageFile);
             fd.append("merchantId", Number(formData.merchantId)); // ✅ REQUIRED
 
+            console.log(fd,"fdfdfd");
+            
+
             const res = await fetch(
               "https://api.rmtechsolution.com/uploadCmsImage",
               {
                 method: "POST",
-                body: fd, // ❌ DO NOT SET HEADERS
+                body: fd, 
               }
             );
 
@@ -249,7 +257,7 @@ const SingletonModelForm = ({ baseData, onClose, setMode, lastSingletonIndex, up
         {/* BASIC INFO */}
         <div className="grid grid-cols-3 gap-4">
           <input
-            className="border p-2 rounded"
+            className="border p-2 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
             value={formData.merchantId}
             onChange={(e) =>
               setFormData({ ...formData, merchantId: e.target.value })
@@ -257,7 +265,7 @@ const SingletonModelForm = ({ baseData, onClose, setMode, lastSingletonIndex, up
             placeholder="Merchant ID"
           />
           <input
-            className="border p-2 rounded"
+            className="border p-2 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
             value={formData.modelName}
             onChange={(e) =>
               setFormData({ ...formData, modelName: e.target.value })
@@ -265,7 +273,7 @@ const SingletonModelForm = ({ baseData, onClose, setMode, lastSingletonIndex, up
             placeholder="Model Name"
           />
           <input
-            className="border p-2 rounded"
+            className="border p-2 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
             value={formData.modelSlug}
             onChange={(e) =>
               setFormData({ ...formData, modelSlug: e.target.value })
@@ -291,7 +299,7 @@ const SingletonModelForm = ({ baseData, onClose, setMode, lastSingletonIndex, up
 
           <div className="grid grid-cols-3 gap-3">
             <input
-              className="border p-2 rounded"
+              className="border p-2 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
               placeholder="Field Name"
               value={newField.fieldName}
               onChange={(e) =>
@@ -299,7 +307,7 @@ const SingletonModelForm = ({ baseData, onClose, setMode, lastSingletonIndex, up
               }
             />
             <input
-              className="border p-2 rounded"
+              className="border p-2 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
               placeholder="Field Key"
               value={newField.fieldKey}
               onChange={(e) =>
@@ -307,7 +315,7 @@ const SingletonModelForm = ({ baseData, onClose, setMode, lastSingletonIndex, up
               }
             />
             <select
-              className="border p-2 rounded"
+              className="border p-2 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
               value={newField.fieldType}
               onChange={(e) =>
                 setNewField({ ...newField, fieldType: e.target.value })

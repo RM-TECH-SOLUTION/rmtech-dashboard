@@ -55,7 +55,7 @@ const CreateModelForm = ({ onClose, setMode,uploadCmsImage }) => {
       case "string":
         return (
           <input
-            className="border p-2 rounded"
+            className="border p-2 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
             placeholder="Value"
             value={newField.fieldValue}
             onChange={(e) =>
@@ -67,7 +67,7 @@ const CreateModelForm = ({ onClose, setMode,uploadCmsImage }) => {
       case "text":
         return (
           <textarea
-            className="border p-2 rounded"
+            className="border p-2 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
             placeholder="Value"
             value={newField.fieldValue}
             onChange={(e) =>
@@ -80,7 +80,7 @@ const CreateModelForm = ({ onClose, setMode,uploadCmsImage }) => {
         return (
           <input
             type="number"
-            className="border p-2 rounded"
+            className="border p-2 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
             value={newField.fieldValue}
             onChange={(e) =>
               setNewField({ ...newField, fieldValue: e.target.value })
@@ -91,7 +91,7 @@ const CreateModelForm = ({ onClose, setMode,uploadCmsImage }) => {
       case "boolean":
         return (
           <select
-            className="border p-2 rounded"
+            className="border p-2 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
             value={newField.fieldValue}
             onChange={(e) =>
               setNewField({ ...newField, fieldValue: e.target.value })
@@ -107,7 +107,7 @@ const CreateModelForm = ({ onClose, setMode,uploadCmsImage }) => {
         return (
           <input
             type="color"
-            className="border p-2 rounded"
+            className="border p-2 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
             style={{width:"100%",height:"100%"}}
             value={newField.fieldValue || "#000000"}
             onChange={(e) =>
@@ -121,7 +121,7 @@ const CreateModelForm = ({ onClose, setMode,uploadCmsImage }) => {
     <input
       type="file"
       accept="image/*"
-      className="border p-2 rounded"
+      className="border p-2 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
       onChange={(e) => {
         const file = e.target.files[0];
         if (!file) return;
@@ -145,7 +145,7 @@ const CreateModelForm = ({ onClose, setMode,uploadCmsImage }) => {
       default:
         return (
           <input
-            className="border p-2 rounded"
+            className="border p-2 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
             placeholder="Value"
             value={newField.fieldValue}
             onChange={(e) =>
@@ -214,7 +214,7 @@ const handleSubmit = async (e) => {
         {/* BASIC INFO */}
         <div className="grid grid-cols-3 gap-4">
           <input
-            className="border p-2 rounded"
+            className="border p-2 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
             placeholder="Merchant ID"
             value={formData.merchantId}
             onChange={(e) =>
@@ -223,7 +223,7 @@ const handleSubmit = async (e) => {
           />
 
           <input
-            className="border p-2 rounded"
+            className="border p-2 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
             placeholder="Model Name"
             value={formData.modelName}
             onChange={(e) =>
@@ -232,7 +232,7 @@ const handleSubmit = async (e) => {
           />
 
           <input
-            className="border p-2 rounded"
+            className="border p-2 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
             placeholder="Model Slug"
             value={formData.modelSlug}
             onChange={(e) =>
@@ -258,7 +258,7 @@ const handleSubmit = async (e) => {
 
           <div className="grid grid-cols-4 gap-3">
             <input
-              className="border p-2 rounded"
+              className="border p-2 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
               placeholder="Field Name"
               value={newField.fieldName}
               onChange={(e) =>
@@ -267,7 +267,7 @@ const handleSubmit = async (e) => {
             />
 
             <input
-              className="border p-2 rounded"
+              className="border p-2 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
               placeholder="Field Key"
               value={newField.fieldKey}
               onChange={(e) =>
@@ -276,7 +276,7 @@ const handleSubmit = async (e) => {
             />
 
             <select
-              className="border p-2 rounded"
+              className="border p-2 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
               value={newField.fieldType}
               onChange={(e) =>
                 setNewField({ ...newField, fieldType: e.target.value })

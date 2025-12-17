@@ -167,10 +167,10 @@ const Sidebar = ({ isMobileOpen, toggleMobileSidebar }) => {
             {!collapsed && (
               <div className="ml-3 flex-1">
                 <p className="text-sm font-medium">{user.name}</p>
-                <p className="text-xs text-gray-400 truncate">{user.email}</p>
               </div>
             )}
           </div>
+            <p className="text-xs text-gray-400 truncate" style={{textAlign:"center"}}>{user.email}</p>
           
           {/* Logout Button */}
           <button

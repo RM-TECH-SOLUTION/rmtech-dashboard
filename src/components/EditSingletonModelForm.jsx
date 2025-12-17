@@ -64,7 +64,7 @@ const EditSingletonModelForm = ({ model, onClose, deleteCms }) => {
     await deleteCms({
       data: [
         {
-          merchantId: 1,
+          merchantId: model.merchantId,
           modelSlug: model.modelSlug,
           singletonModel: 1,
           singletonModelIndex,
@@ -93,7 +93,7 @@ const EditSingletonModelForm = ({ model, onClose, deleteCms }) => {
         if (field.fieldType === "image" && newFile instanceof File) {
           const fd = new FormData();
           fd.append("image", newFile);
-          fd.append("merchantId", 1);
+          fd.append("merchantId", model.merchantId);
 
           // ✅ OLD IMAGE URL (string)
           if (typeof fieldValue === "string") {
@@ -115,7 +115,7 @@ const EditSingletonModelForm = ({ model, onClose, deleteCms }) => {
         }
 
         payload.push({
-          merchantId: 1,
+          merchantId: model.merchantId,
           modelSlug: model.modelSlug,
           modelName: model.modelName,
           fieldName: field.fieldName,
@@ -156,14 +156,14 @@ const EditSingletonModelForm = ({ model, onClose, deleteCms }) => {
             <img
               src={preview}
               alt="preview"
-              className="w-32 h-32 object-cover rounded border"
+              className="w-32 h-32 object-cover rounded border focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
             />
           )}
 
           <input
             type="file"
             accept="image/*"
-            className="border p-2 rounded w-full"
+            className="border p-2 rounded w-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
             onChange={(e) =>
               updateImageFile(
                 rowIndex,
@@ -181,6 +181,7 @@ const EditSingletonModelForm = ({ model, onClose, deleteCms }) => {
       return (
         <input
           type="color"
+          className="border p-2 rounded w-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
           value={value || "#000000"}
           onChange={(e) =>
             updateCell(rowIndex, field.fieldKey, e.target.value)
@@ -192,7 +193,7 @@ const EditSingletonModelForm = ({ model, onClose, deleteCms }) => {
     if (field.fieldType === "text") {
       return (
         <textarea
-          className="border p-2 rounded w-full"
+          className="border p-2 rounded w-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
           value={value || ""}
           onChange={(e) =>
             updateCell(rowIndex, field.fieldKey, e.target.value)
@@ -204,7 +205,7 @@ const EditSingletonModelForm = ({ model, onClose, deleteCms }) => {
     return (
       <input
         type="text"
-        className="border p-2 rounded w-full"
+        className="border p-2 rounded w-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
         value={value || ""}
         onChange={(e) =>
           updateCell(rowIndex, field.fieldKey, e.target.value)
@@ -223,6 +224,12 @@ const EditSingletonModelForm = ({ model, onClose, deleteCms }) => {
         className="bg-white w-full max-w-4xl rounded-lg p-6 space-y-6"
       >
         <h2 className="text-2xl font-bold">Edit Singleton Model</h2>
+
+         <div className="grid grid-cols-3 gap-4 opacity-60 cursor-not-allowed">
+          <input className="border p-2 rounded" value={model.merchantId} disabled />
+          <input className="border p-2 rounded" value={model.modelName} disabled />
+          <input className="border p-2 rounded" value={model.modelSlug} disabled />
+        </div>
 
         <div className="space-y-4 max-h-[400px] overflow-y-auto">
           {rows.map((row, rowIndex) => (

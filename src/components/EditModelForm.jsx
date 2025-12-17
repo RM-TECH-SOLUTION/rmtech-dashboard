@@ -33,7 +33,7 @@ const EditModelForm = ({ model, onClose,updateCMSData,deleteCms }) => {
       case "string":
         return (
           <input
-            className="border p-2 rounded w-full"
+            className="border p-2 rounded w-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
             value={field.fieldValue}
             onChange={(e) => setField({ ...field, fieldValue: e.target.value })}
           />
@@ -41,7 +41,7 @@ const EditModelForm = ({ model, onClose,updateCMSData,deleteCms }) => {
       case "text":
         return (
           <textarea
-            className="border p-2 rounded w-full"
+            className="border p-2 rounded w-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
             value={field.fieldValue}
             onChange={(e) => setField({ ...field, fieldValue: e.target.value })}
           />
@@ -50,7 +50,7 @@ const EditModelForm = ({ model, onClose,updateCMSData,deleteCms }) => {
         return (
           <input
             type="number"
-            className="border p-2 rounded w-full"
+            className="border p-2 rounded w-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
             value={field.fieldValue}
             onChange={(e) => setField({ ...field, fieldValue: e.target.value })}
           />
@@ -58,7 +58,7 @@ const EditModelForm = ({ model, onClose,updateCMSData,deleteCms }) => {
       case "boolean":
         return (
           <select
-            className="border p-2 rounded w-full"
+            className="border p-2 rounded w-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
             value={field.fieldValue}
             onChange={(e) => setField({ ...field, fieldValue: e.target.value })}
           >
@@ -71,7 +71,7 @@ const EditModelForm = ({ model, onClose,updateCMSData,deleteCms }) => {
         return (
           <input
             type="color"
-            className="border p-2 rounded h-10"
+            className="border p-2 rounded h-10 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
             value={field.fieldValue || "#000000"}
             onChange={(e) => setField({ ...field, fieldValue: e.target.value })}
           />
@@ -88,14 +88,14 @@ const EditModelForm = ({ model, onClose,updateCMSData,deleteCms }) => {
               : field.fieldValue
           }
           alt={field.fieldName}
-          className="w-24 h-24 object-cover rounded border"
+          className="w-24 h-24 object-cover rounded border focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
         />
       )}
 
       {/* FILE INPUT */}
       <input
         type="file"
-        className="border p-2 rounded w-full"
+        className="border p-2 rounded w-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
         accept="image/*"
         onChange={(e) => {
           const file = e.target.files?.[0];
@@ -130,7 +130,7 @@ const EditModelForm = ({ model, onClose,updateCMSData,deleteCms }) => {
   deleteCms({
     data: [
       {
-        merchantId: 1,
+        merchantId: formData.merchantId,
         modelSlug: formData.modelSlug,
         fieldKey: field.fieldKey,
         singletonModel: formData.singletonModel ? 1 : 0,
@@ -159,7 +159,7 @@ const handleSubmit = async (e) => {
     if (field.fieldType === "image" && fieldValue instanceof File) {
       const fd = new FormData();
       fd.append("image", fieldValue);
-      fd.append("merchantId", 1);
+      fd.append("merchantId", formData.merchantId);
 
       // optional: delete old image
       if (typeof model?.fields?.find(f => f.fieldKey === field.fieldKey)?.fieldValue === "string") {
@@ -185,7 +185,7 @@ const handleSubmit = async (e) => {
     }
 
     payload.push({
-      merchantId: 1,
+      merchantId: formData.merchantId,
       modelSlug: formData.modelSlug,
       modelName: formData.modelName,
       fieldKey: field.fieldKey,
@@ -334,7 +334,7 @@ const handleSubmit = async (e) => {
             <span style={{fontSize:15,fontWeight:"bold"}}>Edit Field Name</span>
 
             <input
-              className="border p-2 rounded w-full"
+              className="border p-2 rounded w-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
               value={editField.fieldName}
               style={{margin:0,marginBottom:10}}
               onChange={(e) =>
@@ -343,7 +343,7 @@ const handleSubmit = async (e) => {
             />
             <span style={{fontSize:15,fontWeight:"bold"}}>Edit Field Key</span>
             <input
-              className="border p-2 rounded w-full"
+              className="border p-2 rounded w-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
               value={editField.fieldKey}
               style={{margin:0,marginBottom:10}}
               onChange={(e) =>
@@ -352,7 +352,7 @@ const handleSubmit = async (e) => {
             />
             <span style={{fontSize:15,fontWeight:"bold",marginTop:10}}>Edit Field Type</span>
             <select
-              className="border p-2 rounded w-full"
+              className="border p-2 rounded w-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
               style={{margin:0,marginBottom:10}}
               value={editField.fieldType}
               onChange={(e) =>

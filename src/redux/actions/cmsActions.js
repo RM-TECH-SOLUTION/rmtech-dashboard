@@ -24,22 +24,24 @@ import {
   MERCHANT_LOGIN_REQUEST,
   MERCHANT_LOGIN_SUCCESS,
   MERCHANT_LOGIN_FAILURE,
+  GET_MERCHANT_REQUEST,
+  GET_MERCHANT_SUCCESS,
+  GET_MERCHANT_FAILURE,
 } from '../constants/actionTypes';
 import api from '../../services/api';
 
-export const fetchCMSData = () => async (dispatch) => {
+export const fetchCMSData = (merchantId = null) => async (dispatch) => {
   dispatch({ type: FETCH_CMS_REQUEST });
 
   try {
-    const response = await api.get(api.Urls.getCms, { merchantId: 1 });
+    const payload = merchantId ? { merchantId } : {};
 
-    console.log("API RAW RESPONSE:", response);
+    const response = await api.get(api.Urls.getCms, payload);
 
-    // response IS ALREADY an array (your screenshot proves it)
     if (Array.isArray(response)) {
       dispatch({
         type: FETCH_CMS_SUCCESS,
-        payload: response,  // store whole array
+        payload: response,
       });
       return response;
     } else {
@@ -48,7 +50,6 @@ export const fetchCMSData = () => async (dispatch) => {
         error: "Invalid CMS format",
       });
     }
-
   } catch (error) {
     dispatch({
       type: FETCH_CMS_FAILURE,
@@ -59,15 +60,13 @@ export const fetchCMSData = () => async (dispatch) => {
 
 
 
+
 export const updateCMSData = (data) => async (dispatch) => {
   dispatch({ type: UPDATE_CMS_REQUEST });
 
   try {
-    const merchantId = 1;
-
     const response = await api.post(api.Urls.updateCms, {
-      merchantId,
-      ...data,  // include the CMS fields to update
+      ...data, 
     });
 
 
@@ -162,8 +161,44 @@ export const merchantLogin = (data) => async (dispatch) => {
   }
 };
 
+export const getMerchant = (merchantId = null) => async (dispatch) => {
+  dispatch({ type: GET_MERCHANT_REQUEST });
 
+  try {
+    // ✅ Build query dynamically
+    const url = merchantId
+      ? `${api.Urls.getMerchant}?merchantId=${merchantId}`
+      : api.Urls.getMerchant;
 
+    const response = await api.get(url);
+
+    if (response?.success) {
+      dispatch({
+        type: GET_MERCHANT_SUCCESS,
+        payload: response.data, // ✅ ONLY DATA
+      });
+
+      return response;
+    } else {
+      dispatch({
+        type: GET_MERCHANT_FAILURE,
+        error: response?.message || "Merchant not found",
+      });
+
+      return response;
+    }
+  } catch (error) {
+    dispatch({
+      type: GET_MERCHANT_FAILURE,
+      error: error.message || "Network error",
+    });
+
+    return {
+      success: false,
+      message: error.message || "Network error",
+    };
+  }
+};
 
 export const uploadCmsImage = (formData) => async (dispatch) => {
   dispatch({ type: UPLOADCMSIMAGE_CMS_REQUEST });

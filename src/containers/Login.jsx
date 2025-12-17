@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { LogIn, Mail, Lock, Eye, EyeOff, Hash } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
@@ -15,11 +15,12 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [localError, setLocalError] = useState("");
 
   // --------------------
   // REDUX STATE
   // --------------------
-  const { loginLoading, loginError, loginMerchantData } = useSelector(
+  const { loading, error, loginMerchantData } = useSelector(
     (state) => state.cms
   );
 
@@ -28,29 +29,38 @@ const Login = () => {
   // --------------------
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLocalError("");
 
-    dispatch(
-      merchantLogin({
-        merchantId,
-        email,
-        password,
-      })
-    );
-  };
-
-  // --------------------
-  // HANDLE LOGIN SUCCESS
-  // --------------------
-  useEffect(() => {
-    if (loginMerchantData?.success) {
-      localStorage.setItem(
-        "merchant",
-        JSON.stringify(loginMerchantData.data)
+    try {
+      const response = await dispatch(
+        merchantLogin({
+          merchantId,
+          email,
+          password,
+        })
       );
 
-      navigate("/dashboard");
+      console.log(response,"responsejjjkjkjk");
+      
+      if (response?.success) {
+      const { merchant: user } = response;
+      console.log(user,"useruseruser");
+      
+      localStorage.setItem('token', user.merchant_id);
+      localStorage.setItem('user', JSON.stringify({
+        name: user.name,
+        email: user.email,
+        role: user.merchant_id == 0 ? "admin" : "merchant"
+      }));
+
+        navigate("/dashboard");
+      } else {
+        setLocalError(response?.message || "Login failed");
+      }
+    } catch (err) {
+      setLocalError(err.message || "Merchant not found");
     }
-  }, [loginMerchantData, navigate]);
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-gray-100 p-4">
@@ -60,7 +70,7 @@ const Login = () => {
           <img
             src={require("../assets/logo4.png")}
             alt="RM Tech Solution"
-            style={{ height: "90px", width: "200px",objectFit:"cover" }}
+            style={{ height: "90px", width: "200px", objectFit: "cover" }}
           />
           <h2 className="text-gray-600 mt-2 font-bold text-lg">
             Content Management System
@@ -76,9 +86,10 @@ const Login = () => {
             Sign in to your merchant account
           </p>
 
-          {loginError && (
+          {/* ERROR MESSAGE */}
+          {(error || localError) && (
             <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-4">
-              {loginError}
+              {error || localError}
             </div>
           )}
 
@@ -146,10 +157,10 @@ const Login = () => {
             {/* SUBMIT */}
             <button
               type="submit"
-              disabled={loginLoading}
-              className="w-full flex justify-center items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl"
+              disabled={loading}
+              className="w-full flex justify-center items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:shadow-lg transition-all"
             >
-              {loginLoading ? "Signing in..." : (
+              {loading ? "Signing in..." : (
                 <>
                   <LogIn className="w-5 h-5 mr-2" />
                   Sign In
