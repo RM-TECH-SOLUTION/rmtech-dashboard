@@ -11,6 +11,7 @@ import {
   LogOut,
   Layers,
   ShoppingBag,
+  Merchant,
   X
 } from 'lucide-react';
 
@@ -19,6 +20,7 @@ const Sidebar = ({ isMobileOpen, toggleMobileSidebar }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const user = JSON.parse(localStorage.getItem('user')) || { name: 'Admin', email: 'admin@rmtechsolution.com' };
+  const token = JSON.parse(localStorage.getItem('token'))
 
   // Close mobile sidebar when clicking outside on mobile
   useEffect(() => {
@@ -50,13 +52,23 @@ const Sidebar = ({ isMobileOpen, toggleMobileSidebar }) => {
     return () => window.removeEventListener('resize', handleResize);
   }, [isMobileOpen, toggleMobileSidebar]);
 
-  const navItems = [
+  const navItemsUser = [
     { path: '/dashboard', icon: <Home size={20} />, label: 'Dashboard' },
     { path: '/dashboard/posts', icon: <FileText size={20} />, label: 'Posts' },
     { path: '/dashboard/content-models', icon: <Layers size={20} />, label: 'Content Models' },
     { path: '/dashboard/catalogue', icon: <ShoppingBag size={20} />, label: 'Catalogue' },
     { path: '/dashboard/media', icon: <Image size={20} />, label: 'Media' },
     { path: '/dashboard/users', icon: <Users size={20} />, label: 'Users' },
+    { path: '/dashboard/settings', icon: <Settings size={20} />, label: 'Settings' },
+  ];
+
+   const navItemsMerchant = [
+    { path: '/dashboard', icon: <Home size={20} />, label: 'Dashboard' },
+    { path: '/dashboard/posts', icon: <FileText size={20} />, label: 'Posts' },
+    { path: '/dashboard/merchantList', icon: <Users size={20} />, label: 'Merchants' },
+    { path: '/dashboard/content-models', icon: <Layers size={20} />, label: 'Content Models' },
+    { path: '/dashboard/catalogue', icon: <ShoppingBag size={20} />, label: 'Catalogue' },
+    { path: '/dashboard/media', icon: <Image size={20} />, label: 'Media' },
     { path: '/dashboard/settings', icon: <Settings size={20} />, label: 'Settings' },
   ];
 
@@ -137,7 +149,7 @@ const Sidebar = ({ isMobileOpen, toggleMobileSidebar }) => {
 
         {/* Navigation */}
         <nav className="flex-1 px-4 py-6 space-y-2">
-          {navItems.map((item) => (
+          {(token == "0" ?navItemsMerchant : navItemsUser).map((item) => (
             <NavLink
               key={item.path}
               to={item.path}

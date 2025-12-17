@@ -18,6 +18,7 @@ import ContentItemForm from './containers/ContentItemForm';
 import CatalogueModels from './containers/Catalogue/CatalogueModels';
 import CatalogueItems from './containers/Catalogue/CatalogueItems';
 import CatalogueForm from './containers/Catalogue/CatalogueForm';
+import MerchantListContainer from './containers/MerchantListContainer';
 import Home from './containers/Home';
 import './App.css';
 
@@ -61,6 +62,7 @@ function App() {
             <Route path="catalogue/:modelSlug/edit/:itemId" element={<CatalogueForm />} />
             <Route path="media" element={<Media />} />
             <Route path="users" element={<Users />} />
+            <Route path="merchantList" element={<MerchantListContainer/>} />
             <Route path="settings" element={<Settings />} />
           </Route>
 

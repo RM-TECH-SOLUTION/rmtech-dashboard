@@ -18,6 +18,7 @@ import CatalogueModels from './containers/Catalogue/CatalogueModels';
 import CatalogueItems from './containers/Catalogue/CatalogueItems';
 import CatalogueForm from './containers/Catalogue/CatalogueForm';
 import './App.css';
+import MerchantListContainer from './containers/MerchantListContainer';
 
 const PublicLayout = () => {
   return <Outlet />;
@@ -62,6 +63,7 @@ function App() {
           <Route path="catalogue/:modelSlug/edit/:itemId" element={<CatalogueForm />} />
           <Route path="media" element={<Media />} />
           <Route path="users" element={<Users />} />
+          <Route path="merchantList" element={<MerchantListContainer />} />
           <Route path="settings" element={<Settings />} />
         </Route>
 

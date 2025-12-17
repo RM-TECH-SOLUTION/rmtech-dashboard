@@ -96,7 +96,6 @@ export const updateCMSData = (data) => async (dispatch) => {
     throw error;
   }
 };
-
 export const createMerchant = (data) => async (dispatch) => {
   dispatch({ type: CREATE_MERCHANT_REQUEST });
 
@@ -106,25 +105,34 @@ export const createMerchant = (data) => async (dispatch) => {
     if (response?.success) {
       dispatch({
         type: CREATE_MERCHANT_SUCCESS,
-        payload: response, // ✅ ONLY merchant data
+        payload: response,
       });
 
-      return response;
+      return response; // ✅ success
     } else {
       dispatch({
         type: CREATE_MERCHANT_FAILURE,
         error: response.message || "Failed to create merchant",
       });
-      throw new Error(response.message || "Failed to create merchant");
+
+      return {
+        success: false,
+        message: response.message || "Failed to create merchant",
+      }; // ✅ RETURN, NOT THROW
     }
   } catch (error) {
     dispatch({
       type: CREATE_MERCHANT_FAILURE,
       error: error.message || "Network error",
     });
-    throw error;
+
+    return {
+      success: false,
+      message: error.message || "Network error",
+    }; // ✅ RETURN
   }
 };
+
 
 export const merchantLogin = (data) => async (dispatch) => {
   dispatch({ type: MERCHANT_LOGIN_REQUEST });

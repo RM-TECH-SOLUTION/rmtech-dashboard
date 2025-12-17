@@ -162,14 +162,6 @@ console.log(user,"user tokentokentoken");
             <Plus size={18} className="mr-2" />
             New Model
           </button>
-
-          <button
-            onClick={() => setMode("createMerchant")}
-            className="px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl flex items-center"
-          >
-            <Plus size={18} className="mr-2" />
-            Create Merchant
-          </button>
         </div>}
       </div>
 
@@ -187,6 +179,7 @@ console.log(user,"user tokentokentoken");
         </div>
 
         {/* MERCHANT FILTER */}
+        {token == "0" &&
         <select
           value={selectedMerchantId}
           onChange={(e) => setSelectedMerchantId(e.target.value)}
@@ -195,17 +188,17 @@ console.log(user,"user tokentokentoken");
           <option value="ALL">All Merchants</option>
           {token == "0" ? merchantData.map((m) => (
             <option key={m.merchantId} value={m.merchantId}>
-              {m.merchantName} ({m.merchantId})
+              {m.name} ({m.merchantId})
             </option>
           )) :
           merchantData.filter((list)=>list.merchantId == token).map((m) => (
             <option key={m.merchantId} value={m.merchantId}>
-              {m.merchantName} ({m.merchantId})
+              {m.name} ({m.merchantId})
             </option>
           ))
           
           }
-        </select>
+        </select>}
 
         {/* MODEL FILTER */}
         <select

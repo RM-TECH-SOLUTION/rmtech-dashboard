@@ -11,6 +11,8 @@ const CreateMerchantForm = ({ onClose, onSubmit }) => {
     const [password, setPassword] = useState("");
     const [gst, setGst] = useState("");
     const [address, setAddress] = useState("");
+    const [status, setStatus] = useState("active");
+
 
     // ----------------------------
     // SUBMIT
@@ -25,6 +27,7 @@ const CreateMerchantForm = ({ onClose, onSubmit }) => {
             phone,
             password,
             gst,
+            status,
             address,
         };
 
@@ -131,6 +134,21 @@ const CreateMerchantForm = ({ onClose, onSubmit }) => {
                         />
                     </div>
                 </div>
+
+                <div>
+    <label className="block text-sm font-medium text-gray-700 mb-2">
+        Merchant Status
+    </label>
+    <select
+        value={status}
+        onChange={(e) => setStatus(e.target.value)}
+        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+    >
+        <option value="active">Active</option>
+        <option value="inactive">Inactive</option>
+    </select>
+</div>
+
 
                 {/* ADDRESS */}
                 <div>
