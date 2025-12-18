@@ -27,6 +27,9 @@ import {
   GET_MERCHANT_REQUEST,
   GET_MERCHANT_SUCCESS,
   GET_MERCHANT_FAILURE,
+  UPDATE_MERCHANT_REQUEST,
+  UPDATE_MERCHANT_SUCCESS,
+  UPDATE_MERCHANT_FAILURE,
 } from '../constants/actionTypes';
 import api from '../../services/api';
 
@@ -130,6 +133,46 @@ export const createMerchant = (data) => async (dispatch) => {
       success: false,
       message: error.message || "Network error",
     }; // ✅ RETURN
+  }
+};
+
+export const updateMerchantStatus = ({ merchantId, status }) => async (dispatch) => {
+  dispatch({ type: UPDATE_MERCHANT_REQUEST });
+
+  try {
+    const response = await api.post(
+      api.Urls.updateMerchantStatus,
+      { merchantId, status } 
+    );
+
+    if (response?.success) {
+      dispatch({
+        type: UPDATE_MERCHANT_SUCCESS,
+        payload: response,
+      });
+
+      return response;
+    } else {
+      dispatch({
+        type: UPDATE_MERCHANT_FAILURE,
+        error: response.message || "Failed to update merchant",
+      });
+
+      return {
+        success: false,
+        message: response.message || "Failed to update merchant",
+      };
+    }
+  } catch (error) {
+    dispatch({
+      type: UPDATE_MERCHANT_FAILURE,
+      error: error.message || "Network error",
+    });
+
+    return {
+      success: false,
+      message: error.message || "Network error",
+    };
   }
 };
 

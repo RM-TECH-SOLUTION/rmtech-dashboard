@@ -10,7 +10,8 @@ const URLS = {
   uploadCmsImage: BASE_URL + 'uploadCmsImage',
   createMerchant: BASE_URL + 'createMerchant',
   merchantLogin: BASE_URL + 'merchantLogin',
-  getMerchant: BASE_URL + 'getMerchant'
+  getMerchant: BASE_URL + 'getMerchant',
+  updateMerchantStatus: BASE_URL + 'updateMerchantStatus'
 };
 
 const apiClient = {

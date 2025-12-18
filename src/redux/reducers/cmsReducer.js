@@ -26,6 +26,9 @@ import {
   GET_MERCHANT_REQUEST,
   GET_MERCHANT_SUCCESS,
   GET_MERCHANT_FAILURE,
+  UPDATE_MERCHANT_REQUEST,
+  UPDATE_MERCHANT_SUCCESS,
+  UPDATE_MERCHANT_FAILURE,
   
 } from "../constants/actionTypes";
 
@@ -41,7 +44,8 @@ const initialState = {
   uploadCmsImageData:null,
   createMerchantData:null,
   loginMerchantData:null,
-  merchantList:null
+  merchantList:null,
+  merchantUpdateStatus:null
 };
 
 
@@ -255,6 +259,28 @@ const cmsReducer = (state = initialState, action) => {
       
 
     case GET_MERCHANT_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        error: action.error,
+      };
+    // -----------
+
+    case UPDATE_MERCHANT_REQUEST:
+      return {
+        ...state,
+        loading: true,
+      };
+
+    case UPDATE_MERCHANT_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        merchantUpdateStatus: action.payload,
+      };
+      
+
+    case UPDATE_MERCHANT_FAILURE:
       return {
         ...state,
         loading: false,
