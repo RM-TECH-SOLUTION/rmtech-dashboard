@@ -59,14 +59,14 @@ const Topbar = ({ toggleSidebar }) => {
             </button>
           </div>
           {/* Quick Stats */}
-          <div className="hidden md:flex items-center space-x-4 text-sm">
+          {/* <div className="hidden md:flex items-center space-x-4 text-sm">
             <div className="px-3 py-1 bg-green-100 text-green-800 rounded-full">
               <span className="font-medium">24</span> Posts
             </div>
             <div className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full">
               <span className="font-medium">8</span> Users
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
     </header>

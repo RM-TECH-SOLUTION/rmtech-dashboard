@@ -11,7 +11,18 @@ const URLS = {
   createMerchant: BASE_URL + 'createMerchant',
   merchantLogin: BASE_URL + 'merchantLogin',
   getMerchant: BASE_URL + 'getMerchant',
-  updateMerchantStatus: BASE_URL + 'updateMerchantStatus'
+  updateMerchantStatus: BASE_URL + 'updateMerchantStatus',
+  createCatalogueModel: BASE_URL + 'createCatalogueModel',
+  deleteCatalogueModel: BASE_URL + 'deleteCatalogueModel',
+  getCatalogueItems: BASE_URL + 'getCatalogueItems',
+  createCatalogueItem: BASE_URL + 'createCatalogueItem',
+  updateCatalogueItemStatus: BASE_URL + 'updateCatalogueItemStatus',
+  getCatalogueModels: BASE_URL + 'getCatalogueModels',
+  createItemVariant:BASE_URL + 'createItemVariant',
+  getItemVariants:BASE_URL + 'getItemVariants',
+  deleteCatalogueItem:BASE_URL + 'deleteCatalogueItem',
+  updateCatalogItem: BASE_URL + 'updateCatalogItem',
+  updateItemVariant:BASE_URL + 'updateItemVariant'
 };
 
 const apiClient = {

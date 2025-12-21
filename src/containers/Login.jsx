@@ -44,13 +44,14 @@ const Login = () => {
       
       if (response?.success) {
       const { merchant: user } = response;
-      console.log(user,"useruseruser");
+      console.log(user,"useruseruserttt");
       
       localStorage.setItem('token', user.merchant_id);
       localStorage.setItem('user', JSON.stringify({
         name: user.name,
         email: user.email,
-        role: user.merchant_id == 0 ? "admin" : "merchant"
+        role: user.merchant_id == 0 ? "admin" : "merchant",
+        status:user.status
       }));
 
         navigate("/dashboard");

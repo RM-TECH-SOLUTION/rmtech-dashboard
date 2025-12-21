@@ -17,7 +17,7 @@ import ContentItems from './containers/ContentItems';
 import ContentItemForm from './containers/ContentItemForm';
 import CatalogueModels from './containers/Catalogue/CatalogueModels';
 import CatalogueItems from './containers/Catalogue/CatalogueItems';
-import CatalogueForm from './containers/Catalogue/CatalogueForm';
+import CatalogueItemForm from './containers/Catalogue/CatalogueItemForm';
 import MerchantListContainer from './containers/MerchantListContainer';
 import Home from './containers/Home';
 import './App.css';
@@ -57,9 +57,9 @@ function App() {
             <Route path="content-models/:modelSlug/create" element={<ContentItemForm />} />
             <Route path="content-models/:modelSlug/edit/:itemId" element={<ContentItemForm />} />
             <Route path="catalogue" element={<CatalogueModels />} />
-            <Route path="catalogue/:modelSlug" element={<CatalogueItems />} />
-            <Route path="catalogue/:modelSlug/create" element={<CatalogueForm />} />
-            <Route path="catalogue/:modelSlug/edit/:itemId" element={<CatalogueForm />} />
+            <Route path="catalogue/:modelId" element={<CatalogueItems />} />
+            <Route path="catalogue/:modelId/create" element={<CatalogueItemForm />} />
+            <Route path="catalogue/:modelId/edit/:itemId" element={<CatalogueItemForm />} />
             <Route path="media" element={<Media />} />
             <Route path="users" element={<Users />} />
             <Route path="merchantList" element={<MerchantListContainer/>} />

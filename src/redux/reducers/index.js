@@ -2,18 +2,19 @@
 import { combineReducers } from 'redux';
 import authReducer from './authReducer';
 import cmsReducer from './cmsReducer';
-import postReducer from './postReducer';
+// import postReducer from './postReducer';
 import mediaReducer from './mediaReducer';
 import userReducer from './userReducer';
-import catalogueReducer from './catalogueSlice';
+import catalogReducer from './catalogReducer';
 
 const rootReducer = combineReducers({
   auth: authReducer,
   cms: cmsReducer,
-  posts: postReducer,
+  // posts: postReducer,
   media: mediaReducer,
   users: userReducer,
-  catalogue: catalogueReducer,
+  catalog: catalogReducer,
+  // catalogue: catalogueReducer,
 });
 
 export default rootReducer;

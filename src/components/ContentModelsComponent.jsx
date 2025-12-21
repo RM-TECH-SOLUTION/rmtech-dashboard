@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Plus, Search } from "lucide-react";
+import { Plus, Search,AlertCircle } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 
 import {
@@ -142,6 +142,18 @@ console.log(user,"user tokentokentoken");
     setSingletonBase(null);
   };
 
+
+    if (cmsData.length <= 0 ) {
+
+    return(
+       <div className="text-center py-12">
+              <AlertCircle className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+              <p className="text-xl font-semibold text-gray-900 mb-2">Merchant Inactive</p>
+              <p className="text-gray-600 mb-6">The Content model you're looking for doesn't exist.</p>
+            </div>
+    )
+    
+  }
   // -----------------------------
   // UI
   // -----------------------------

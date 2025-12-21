@@ -1115,7 +1115,7 @@ const Home = (props) => {
                   <div className="bg-gray-900 rounded-lg shadow-2xl overflow-hidden">
                     {/* Top Bar */}
                     <div className="bg-gray-800 p-4 flex justify-between items-center">
-                      <div className="text-white font-bold">RM Tech CMS</div>
+                      <div className="text-white font-bold">RM Tech Solution</div>
                       <div className="flex items-center space-x-4">
                         <Bell className="w-5 h-5 text-gray-300" />
                         <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white">
