@@ -252,7 +252,7 @@ const CatalogueModels = () => {
                 <img
                   src={model.image}
                   alt="img"
-                  style={{ width: 50, height: 50, objectFit: "cover", borderRadius: 100, marginRight: 15 }}
+                  style={{ width: 50, height: 50, objectFit: "cover", borderRadius: 100, marginRight: 15,backgroundColor:"gray",display:"flex",justifyContent:"center",alignItems:"center" ,color:"#fff"}}
                 />
                 <div>
                   <h3 className="text-lg font-semibold line-clamp-1">{model.name}</h3>
