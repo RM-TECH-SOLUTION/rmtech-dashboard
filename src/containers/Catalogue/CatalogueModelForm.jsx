@@ -177,7 +177,7 @@ const CatalogueModelForm = ({ onClose }) => {
           </div>
 
           {/* STATUS */}
-          <div>
+          {/* <div>
             <label className="block text-sm font-medium mb-1">
               Status
             </label>
@@ -191,7 +191,7 @@ const CatalogueModelForm = ({ onClose }) => {
               <option value="active">Active</option>
               <option value="inactive">Inactive</option>
             </select>
-          </div>
+          </div> */}
 
           {/* SINGLE IMAGE */}
           <div>
@@ -250,7 +250,7 @@ const CatalogueModelForm = ({ onClose }) => {
           <button
             onClick={handleSubmit}
             disabled={saving}
-            className="px-6 py-2 bg-blue-600 text-white rounded-lg"
+            className="px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl flex items-center"
           >
             {saving ? "Saving..." : "Create Catalogue"}
           </button>
