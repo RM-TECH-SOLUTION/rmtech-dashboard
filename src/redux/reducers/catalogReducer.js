@@ -46,6 +46,8 @@ import {
   UPDATE_ITEM_VARIANT_REQUEST,
   UPDATE_ITEM_VARIANT_SUCCESS,
   UPDATE_ITEM_VARIANT_FAILURE,
+
+  SET_MERCHANT_STATUS
 } from "../constants/actionTypes";
 
 const initialState = {

@@ -30,8 +30,15 @@ import {
   UPDATE_MERCHANT_REQUEST,
   UPDATE_MERCHANT_SUCCESS,
   UPDATE_MERCHANT_FAILURE,
+  SET_MERCHANT_STATUS
 } from '../constants/actionTypes';
 import api from '../../services/api';
+
+
+export const setMerchantStatus = (payload) => ({
+  type: SET_MERCHANT_STATUS,
+  payload,
+});
 
 export const fetchCMSData = (merchantId = null) => async (dispatch) => {
   dispatch({ type: FETCH_CMS_REQUEST });

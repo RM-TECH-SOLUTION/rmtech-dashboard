@@ -18,13 +18,13 @@ import EditModelForm from "./EditModelForm";
 import SingletonModelForm from "./SingletonModelForm";
 import EditSingletonModelForm from "./EditSingletonModelForm";
 import CreateMerchantForm from "./CreateMerchantForm";
+import {setMerchantStatus} from "../redux/actions/cmsActions"
 
 const ContentModelsComponent = () => {
   const dispatch = useDispatch();
   const token = localStorage.getItem("token");
 console.log(token,typeof token,"tokentokentokentoken");
 const user = JSON.parse(localStorage.getItem("user"));
-console.log(user,"user tokentokentoken");
 
 
   // -----------------------------
@@ -32,6 +32,7 @@ console.log(user,"user tokentokentoken");
   // -----------------------------
   const cmsData = useSelector((state) => state.cms.data);
   const merchantData = useSelector((state) => state.cms.merchantList || []);
+  const merchantStatus  = useSelector((state) => state.cms.merchantStatus || []);
 
   // -----------------------------
   // LOCAL STATE
@@ -48,8 +49,17 @@ console.log(user,"user tokentokentoken");
   // FETCH MERCHANT LIST (ONCE)
   // -----------------------------
   useEffect(() => {
-    dispatch(getMerchant()); // fetch all merchants
+    dispatch(getMerchant()); 
   }, [dispatch]);
+
+    useEffect(()=>{
+        if (merchantData) {
+           const merchantDatas =  merchantData.find((list)=>list.id == token)
+           if (merchantDatas) {
+            setMerchantStatus(merchantDatas)
+           }
+        }
+      },[merchantData])
 
   // -----------------------------
   // FETCH CMS BASED ON MERCHANT
@@ -143,7 +153,7 @@ console.log(user,"user tokentokentoken");
   };
 
 
-    if (cmsData.length <= 0 ) {
+    if (merchantStatus.status == "inactive" ) {
 
     return(
        <div className="text-center py-12">

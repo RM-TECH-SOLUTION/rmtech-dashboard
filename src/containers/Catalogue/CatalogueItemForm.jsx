@@ -422,9 +422,9 @@ const handleSubmit = async () => {
               </div>
             ))}
 
-            <button onClick={addVariant} className="px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl flex items-center">
+            {!itemId && <button onClick={addVariant} className="px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl flex items-center">
               <Plus size={14} /> Add Variant
-            </button>
+            </button>}
           </div>
         );
 

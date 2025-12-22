@@ -29,6 +29,7 @@ import {
   UPDATE_MERCHANT_REQUEST,
   UPDATE_MERCHANT_SUCCESS,
   UPDATE_MERCHANT_FAILURE,
+  SET_MERCHANT_STATUS
   
 } from "../constants/actionTypes";
 
@@ -45,7 +46,8 @@ const initialState = {
   createMerchantData:null,
   loginMerchantData:null,
   merchantList:null,
-  merchantUpdateStatus:null
+  merchantUpdateStatus:null,
+  merchantStatus:null
 };
 
 
@@ -286,6 +288,13 @@ const cmsReducer = (state = initialState, action) => {
         loading: false,
         error: action.error,
       };
+
+      // 
+        case SET_MERCHANT_STATUS:
+        return{
+          ...state,
+          merchantStatus:action.payload
+        }
 
     // ---------------------------
     default:

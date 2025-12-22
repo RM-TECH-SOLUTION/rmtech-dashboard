@@ -21,11 +21,12 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   getCatalogModels,
   deleteCatalogModel,
-  getCatalogItems
+  getCatalogItems,
 } from "../../redux/actions/catalogActions";
+import { getMerchant } from '../../redux/actions/cmsActions'
 import { useNavigate } from "react-router-dom";
-
 import CatalogueModelForm from "./CatalogueModelForm";
+import { setMerchantStatus } from "../../redux/actions/cmsActions"
 
 const CatalogueModels = () => {
   const dispatch = useDispatch();
@@ -38,6 +39,9 @@ const CatalogueModels = () => {
 
   // ✅ CORRECT SELECTOR
   const { models, loading } = useSelector((state) => state.catalog);
+   const merchantData = useSelector((state) => state.cms.merchantList || []);
+   const merchantStatus  = useSelector((state) => state.cms.merchantStatus || []);
+  
 
   const [viewMode, setViewMode] = useState("grid");
   const [searchTerm, setSearchTerm] = useState("");
@@ -53,8 +57,21 @@ const CatalogueModels = () => {
 
   /* ---------------- FETCH MODELS ---------------- */
   useEffect(() => {
+    dispatch(getMerchant()); 
     dispatch(getCatalogModels(token));
   }, [dispatch]);
+
+    useEffect(()=>{
+      if (merchantData) {
+         const merchantDatas =  merchantData.find((list)=>list.id == token)
+         console.log(merchantDatas,"merchantDatashhhghgg");
+         
+         if (merchantDatas) {
+          dispatch(setMerchantStatus(merchantDatas))
+         }
+      }
+  
+    },[merchantData])
 
   /* ---------------- ACTIONS ---------------- */
   const handleDeleteModel = (id) => {
@@ -110,11 +127,11 @@ const CatalogueModels = () => {
   }, [models, dispatch, token]);
 
 
-  console.log(itemCounts, "itemCountsitemCounts");
+  console.log(merchantStatus, "itemCountsitemCounts");
 
 
 
-  if (models.length <= 0) {
+  if (merchantStatus.status ==  "inactive") {
 
     return (
       <div className="text-center py-12">
@@ -268,7 +285,7 @@ const CatalogueModels = () => {
                 <span>{itemCounts[model.id] || 0} items</span>
                 <span
                   className={`px-2 py-1 text-xs line-clamp-1`}
-                  style={{ fontWeight: "bold", fontSize: 15, color: model.status != "active" ? "red" : "green" }}
+                  style={{ fontWeight: "bold", fontSize: 15, color: itemCounts[model.id] == 0  ? "red" : "green" }}
                 >
                   {itemCounts[model.id] == 0 ? "inactive" : "active"}
                 </span>

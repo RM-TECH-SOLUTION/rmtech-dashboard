@@ -45,6 +45,8 @@ import {
   UPDATE_ITEM_VARIANT_REQUEST,
   UPDATE_ITEM_VARIANT_SUCCESS,
   UPDATE_ITEM_VARIANT_FAILURE,
+
+  SET_MERCHANT_STATUS
 } from "../constants/actionTypes";
 
 /* ======================================================
@@ -58,10 +60,10 @@ export const setGetItemsVariantsResponse = (payload) => ({
   payload,
 });
 
-
 /* GET ITEMS */
 export const getCatalogItems = ({ catalogueModelId, merchantId }) => async (dispatch) => {
   dispatch({ type: GET_CATALOG_ITEMS_REQUEST });
+  
 
   try {
     const res = await api.get(api.Urls.getCatalogueItems, {
