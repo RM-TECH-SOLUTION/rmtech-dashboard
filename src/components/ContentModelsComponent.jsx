@@ -54,10 +54,12 @@ const user = JSON.parse(localStorage.getItem("user"));
 
     useEffect(()=>{
         if (merchantData) {
-           const merchantDatas =  merchantData.find((list)=>list.id == token)
+           const merchantDatas =  merchantData.find((list)=>list.merchantId == token)
            if (merchantDatas) {
             setMerchantStatus(merchantDatas)
            }
+           console.log(merchantDatas,"merchantDatasmerchantDatas",merchantData);
+           
         }
       },[merchantData])
 

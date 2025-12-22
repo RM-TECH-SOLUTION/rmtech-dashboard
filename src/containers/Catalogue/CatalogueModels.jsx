@@ -63,7 +63,7 @@ const CatalogueModels = () => {
 
     useEffect(()=>{
       if (merchantData) {
-         const merchantDatas =  merchantData.find((list)=>list.id == token)
+         const merchantDatas =  merchantData.find((list)=>list.merchantId == token)
          console.log(merchantDatas,"merchantDatashhhghgg");
          
          if (merchantDatas) {
