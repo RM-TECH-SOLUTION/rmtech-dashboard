@@ -67,12 +67,15 @@ const user = JSON.parse(localStorage.getItem("user"));
   useEffect(() => {
     if (selectedMerchantId === "ALL") {
       if (token == "0") {
+         dispatch(getMerchant()); 
         dispatch(fetchCMSData()); 
       }else{
         dispatch(fetchCMSData(token)); 
+         dispatch(getMerchant()); 
       }
     } else {
       dispatch(fetchCMSData(selectedMerchantId)); 
+       dispatch(getMerchant()); 
     }
   }, [dispatch, selectedMerchantId, mode,]);
 
