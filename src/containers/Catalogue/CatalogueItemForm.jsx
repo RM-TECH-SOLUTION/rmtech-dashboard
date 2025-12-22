@@ -475,8 +475,12 @@ const handleSubmit = async () => {
           {"<"}
         </Link>
         <div>
-          <h1 className="text-2xl font-bold">{itemId ? "Edit" : "Create New"} Item</h1>
-          <p className="text-gray-500">Add new item to your catalogue</p>
+          <h1 className="text-2xl font-bold"
+          style={{fontSize:20}}
+          >{itemId ? "Edit" : "Create New"} Item</h1>
+          <p className="text-gray-500"
+          style={{fontSize:15}}
+          >Add new item to your catalogue</p>
         </div>
       </div>
 

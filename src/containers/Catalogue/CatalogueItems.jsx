@@ -116,10 +116,14 @@ const outOfStockCount = totalItems - inStockCount;
         </Link>
         </div>
         <div>
-        <h1 className="text-3xl font-bold capitalize">
+        <h1 className="text-3xl font-bold capitalize"
+        style={{fontSize:20}}
+        >
           {selectedCatalogue.name} Items
         </h1>
-        <p className="text-gray-600">Manage your items</p>
+        <p className="text-gray-600"
+        style={{fontSize:15}}
+        >Manage your items</p>
         </div>
         </div>
         <Link
