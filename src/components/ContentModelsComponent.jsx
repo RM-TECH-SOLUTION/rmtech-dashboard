@@ -180,7 +180,7 @@ const user = JSON.parse(localStorage.getItem("user"));
           <h1 className="text-3xl font-bold">Content Models</h1>
           <p className="text-gray-600">Manage CMS models by merchant</p>
         </div>
-        {token == "0" &&
+        {token == "0" || token == "1"  &&
         <div className="flex gap-3">
           <button
             onClick={() => setMode("create")}
