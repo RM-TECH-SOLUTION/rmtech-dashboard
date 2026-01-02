@@ -1969,7 +1969,7 @@ const Home = (props) => {
       </section>
 
       {/* Testimonials */}
-      <section className="py-20 bg-gradient-to-b from-blue-50 to-white">
+      {/* <section className="py-20 bg-gradient-to-b from-blue-50 to-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <span className="inline-block px-4 py-2 bg-yellow-100 text-yellow-600 rounded-full text-sm font-semibold mb-4">
@@ -2008,7 +2008,7 @@ const Home = (props) => {
             ))}
           </div>
         </div>
-      </section>
+      </section> */}
 
   
       {/* CTA Section (Enhanced) */}
