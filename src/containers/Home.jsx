@@ -94,6 +94,7 @@ import {
   Pause,
   Maximize2,
   Minimize2,
+  ChevronUp
 } from 'lucide-react';
 
 const Home = (props) => {
@@ -102,6 +103,10 @@ const Home = (props) => {
   const [activeShowcase, setActiveShowcase] = useState('web');
   const [autoRotate, setAutoRotate] = useState(true);
   const navigate = useNavigate();
+  const [openPolicy, setOpenPolicy] = useState(null);
+  const togglePolicy = (policy) => {
+  setOpenPolicy(openPolicy === policy ? null : policy);
+};
 
   useEffect(() => {
     props.fetchCMSData();
@@ -1843,130 +1848,121 @@ const Home = (props) => {
         </div>
       </section>
 
-      {/* Contact Section */}
-      <section id="contact" className="py-20 bg-gradient-to-b from-white to-blue-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <span className="inline-block px-4 py-2 bg-pink-100 text-pink-600 rounded-full text-sm font-semibold mb-4">
-              📞 Contact Us
-            </span>
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-              Get in{' '}
-              <span className="bg-gradient-to-r from-pink-600 to-orange-600 bg-clip-text text-transparent">
-                Touch
-              </span>
-            </h2>
-            <p className="text-gray-600 text-xl max-w-3xl mx-auto">
-              Have questions? We'd love to hear from you.
-            </p>
-          </div>
+{/* Contact Section */}
+<section id="contact" className="py-20 bg-gradient-to-b from-white to-blue-50">
+  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="text-center mb-16">
+      <span className="inline-block px-4 py-2 bg-pink-100 text-pink-600 rounded-full text-sm font-semibold mb-4">
+        📞 Contact Us
+      </span>
+      <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+        Get in{' '}
+        <span className="bg-gradient-to-r from-pink-600 to-orange-600 bg-clip-text text-transparent">
+          Touch
+        </span>
+      </h2>
+      <p className="text-gray-600 text-xl max-w-3xl mx-auto">
+        Reach out to us for any questions or project inquiries
+      </p>
+    </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-            <div className="space-y-8">
-              <div className="flex items-start space-x-6 p-6 bg-white rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-shadow">
-                <div className="w-14 h-14 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center">
-                  <Phone className="w-7 h-7 text-white" />
-                </div>
-                <div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-2">Phone</h3>
-                  <p className="text-gray-600">+1 (555) 123-4567</p>
-                  <p className="text-sm text-gray-500">Mon-Fri from 8am to 6pm</p>
-                </div>
+    <div className="max-w-4xl mx-auto">
+      <div className="bg-white rounded-3xl shadow-2xl p-8 border border-gray-100">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {/* Left Column - Contact Info */}
+          <div className="space-y-8">
+            <div className="flex items-start space-x-6 p-6 bg-blue-50 rounded-2xl">
+              <div className="w-14 h-14 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center flex-shrink-0">
+                <Mail className="w-7 h-7 text-white" />
               </div>
-
-              <div className="flex items-start space-x-6 p-6 bg-white rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-shadow">
-                <div className="w-14 h-14 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl flex items-center justify-center">
-                  <Mail className="w-7 h-7 text-white" />
-                </div>
-                <div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-2">Email</h3>
-                  <p className="text-gray-600">hello@rmtechsolution.com</p>
-                  <p className="text-sm text-gray-500">We'll reply within 24 hours</p>
-                </div>
-              </div>
-
-              <div className="flex items-start space-x-6 p-6 bg-white rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-shadow">
-                <div className="w-14 h-14 bg-gradient-to-r from-green-500 to-teal-500 rounded-xl flex items-center justify-center">
-                  <MapPin className="w-7 h-7 text-white" />
-                </div>
-                <div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-2">Office</h3>
-                  <p className="text-gray-600">123 Tech Street</p>
-                  <p className="text-gray-600">San Francisco, CA 94107</p>
-                </div>
-              </div>
-
-              {/* Social Links */}
-              <div className="pt-8">
-                <h4 className="text-lg font-semibold text-gray-900 mb-4">Follow Us</h4>
-                <div className="flex space-x-4">
-                  {[
-                    { icon: <Facebook className="w-6 h-6" />, color: 'from-blue-500 to-blue-600' },
-                    { icon: <Twitter className="w-6 h-6" />, color: 'from-sky-500 to-cyan-500' },
-                    { icon: <Linkedin className="w-6 h-6" />, color: 'from-blue-700 to-blue-800' },
-                    { icon: <Instagram className="w-6 h-6" />, color: 'from-pink-500 to-rose-500' },
-                    { icon: <Github className="w-6 h-6" />, color: 'from-gray-700 to-gray-900' },
-                  ].map((social, index) => (
-                    <a
-                      key={index}
-                      href="#"
-                      className={`w-12 h-12 bg-gradient-to-r ${social.color} rounded-xl flex items-center justify-center text-white shadow-lg hover:shadow-xl transition-all`}
-                    >
-                      {social.icon}
-                    </a>
-                  ))}
-                </div>
+              <div>
+                <h3 className="text-xl font-bold text-gray-900 mb-2">Email</h3>
+                <p className="text-gray-600 mb-2">support@rmtechsolution.com</p>
+                <p className="text-gray-600">rmtechsolutions@gmail.com</p>
+                <p className="text-sm text-gray-500 mt-2">We'll reply within 24 hours</p>
               </div>
             </div>
 
-            <div className="bg-white rounded-3xl shadow-2xl p-8 border border-gray-100">
-              <h3 className="text-2xl font-bold text-gray-900 mb-6">Send us a message</h3>
-              <form className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">First Name</label>
-                    <input
-                      type="text"
-                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
-                      placeholder="John"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
-                    <input
-                      type="text"
-                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
-                      placeholder="Doe"
-                    />
-                  </div>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
-                  <input
-                    type="email"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
-                    placeholder="john@example.com"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Message</label>
-                  <textarea
-                    rows={5}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
-                    placeholder="Tell us about your project..."
-                  ></textarea>
-                </div>
-                <button
-                  type="submit"
-                  className="w-full px-6 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:shadow-xl text-lg font-semibold shadow-lg transition-all"
-                >
-                  Send Message
-                </button>
-              </form>
+            <div className="flex items-start space-x-6 p-6 bg-purple-50 rounded-2xl">
+              <div className="w-14 h-14 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl flex items-center justify-center flex-shrink-0">
+                <Phone className="w-7 h-7 text-white" />
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-gray-900 mb-2">Phone</h3>
+                <p className="text-gray-600 mb-2">+91 8777370341 / 7013608102</p>
+                <p className="text-sm text-gray-500">Mon-Fri: 9 AM - 6 PM IST</p>
+              </div>
+            </div>
+
+            <div className="flex items-start space-x-6 p-6 bg-green-50 rounded-2xl">
+              <div className="w-14 h-14 bg-gradient-to-r from-green-500 to-teal-500 rounded-xl flex items-center justify-center flex-shrink-0">
+                <Building className="w-7 h-7 text-white" />
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-gray-900 mb-2">Company</h3>
+                <p className="text-gray-600 mb-1">RM Tech Solution</p>
+                <p className="text-sm text-gray-500">Registered Digital Agency</p>
+              </div>
+            </div>
+
+            {/* Social Links */}
+            <div className="pt-4">
+              <h4 className="text-lg font-semibold text-gray-900 mb-4">Connect With Us</h4>
+              <div className="flex space-x-4">
+                {[
+                  { icon: <Facebook className="w-6 h-6" />, label: 'Facebook', color: 'from-blue-500 to-blue-600' },
+                  { icon: <Twitter className="w-6 h-6" />, label: 'Twitter', color: 'from-sky-500 to-cyan-500' },
+                  { icon: <Linkedin className="w-6 h-6" />, label: 'LinkedIn', color: 'from-blue-700 to-blue-800' },
+                  { icon: <Instagram className="w-6 h-6" />, label: 'Instagram', color: 'from-pink-500 to-rose-500' },
+                  { icon: <Github className="w-6 h-6" />, label: 'GitHub', color: 'from-gray-700 to-gray-900' },
+                ].map((social, index) => (
+                  <a
+                    key={index}
+                    href="#"
+                    className={`w-12 h-12 bg-gradient-to-r ${social.color} rounded-xl flex items-center justify-center text-white shadow-lg hover:shadow-xl transition-all hover:scale-110`}
+                    title={social.label}
+                  >
+                    {social.icon}
+                  </a>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column - Business Hours */}
+          <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl p-8 text-white">
+            <h3 className="text-2xl font-bold mb-6">Business Hours</h3>
+            <div className="space-y-4 mb-8">
+              <div className="flex justify-between items-center pb-3 border-b border-gray-700">
+                <span className="text-gray-300">Monday - Friday</span>
+                <span className="font-semibold">9:00 AM - 6:00 PM</span>
+              </div>
+              <div className="flex justify-between items-center pb-3 border-b border-gray-700">
+                <span className="text-gray-300">Saturday</span>
+                <span className="font-semibold">10:00 AM - 4:00 PM</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-gray-300">Sunday</span>
+                <span className="font-semibold text-yellow-400">Closed</span>
+              </div>
+            </div>
+            
+            <div className="bg-gray-800/50 rounded-xl p-6">
+              <h4 className="text-lg font-semibold mb-4">Quick Response</h4>
+              <p className="text-gray-300 mb-4">
+                For urgent inquiries, please email us at <span className="text-blue-400">support@rmtechsolution.com</span> with "URGENT" in the subject line.
+              </p>
+              <div className="flex items-center text-green-400">
+                <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse mr-2"></div>
+                <span>Typically respond within 2 hours</span>
+              </div>
             </div>
           </div>
         </div>
-      </section>
+      </div>
+    </div>
+  </div>
+</section>
 
       {/* Testimonials */}
       {/* <section className="py-20 bg-gradient-to-b from-blue-50 to-white">
@@ -2010,6 +2006,86 @@ const Home = (props) => {
         </div>
       </section> */}
 
+<section id="privacy-policy"  className="py-12 bg-gray-50">
+  <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">Legal & Policies</h2>
+    
+    {/* Privacy Policy */}
+    <div  id="privacy-policy"  className="mb-6 bg-white rounded-xl shadow-md border border-gray-200">
+      <button
+        onClick={() => togglePolicy('privacy')}
+        className="w-full px-6 py-4 text-left flex justify-between items-center hover:bg-gray-50 rounded-t-xl"
+      >
+        <span className="text-lg font-semibold text-gray-900">Privacy Policy</span>
+        {openPolicy === 'privacy' ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+      </button>
+      {openPolicy === 'privacy' && (
+        <div className="px-6 py-4 border-t border-gray-200">
+          <p className="text-gray-600 mb-4">
+            <strong>What data we collect:</strong> We collect your name, email address, and payment information for processing your orders.
+          </p>
+          <p className="text-gray-600 mb-4">
+            <strong>Payment Processing:</strong> All payments are securely handled by Razorpay, a PCI-DSS compliant payment gateway. We do not store your payment card details on our servers.
+          </p>
+          <p className="text-gray-600">
+            <strong>Data Protection:</strong> We do not misuse, sell, or share your personal data with third parties except as necessary to provide our services. Your data is protected according to industry standards.
+          </p>
+        </div>
+      )}
+    </div>
+
+    {/* Terms & Conditions */}
+    <div  id="terms-conditions"  className="mb-6 bg-white rounded-xl shadow-md border border-gray-200">
+      <button
+        onClick={() => togglePolicy('terms')}
+        className="w-full px-6 py-4 text-left flex justify-between items-center hover:bg-gray-50"
+      >
+        <span className="text-lg font-semibold text-gray-900">Terms & Conditions</span>
+        {openPolicy === 'terms' ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+      </button>
+      {openPolicy === 'terms' && (
+        <div className="px-6 py-4 border-t border-gray-200">
+          <p className="text-gray-600 mb-4">
+            <strong>Service Nature:</strong> We provide digital services including website development, mobile apps, and CMS solutions. No physical products are delivered.
+          </p>
+          <p className="text-gray-600 mb-4">
+            <strong>Service Delivery:</strong> Services commence only after successful payment confirmation. Project timelines begin upon receipt of all required materials from the client.
+          </p>
+          <p className="text-gray-600">
+            <strong>Intellectual Property:</strong> All code, designs, and content created remain the property of RM Tech Solution until full payment is received. Upon final payment, rights are transferred to the client as per the agreement.
+          </p>
+        </div>
+      )}
+    </div>
+
+    {/* Refund Policy */}
+    <div  id="refund-policy"  className="bg-white rounded-xl shadow-md border border-gray-200">
+      <button
+        onClick={() => togglePolicy('refund')}
+        className="w-full px-6 py-4 text-left flex justify-between items-center hover:bg-gray-50 rounded-t-xl"
+      >
+        <span className="text-lg font-semibold text-gray-900">Refund Policy</span>
+        {openPolicy === 'refund' ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+      </button>
+      {openPolicy === 'refund' && (
+        <div className="px-6 py-4 border-t border-gray-200">
+          <p className="text-gray-600 mb-4">
+            Due to the digital nature of our services, refunds are generally not applicable once development work has commenced or the service has been delivered.
+          </p>
+          <p className="text-gray-600 mb-4">
+            <strong>Payment Issues:</strong> In case of payment failure or duplicate payment, refunds will be processed within 5-7 business days after verification.
+          </p>
+          <p className="text-gray-600 mb-4">
+            <strong>Project Cancellation:</strong> If a project is cancelled before work begins, 90% of the payment will be refunded (10% retained as processing fee).
+          </p>
+          <p className="text-gray-600">
+            <strong>Dispute Resolution:</strong> Any disputes regarding services will be addressed through mutual discussion. We are committed to client satisfaction and will work to resolve any legitimate concerns.
+          </p>
+        </div>
+      )}
+    </div>
+  </div>
+</section>
   
       {/* CTA Section (Enhanced) */}
       <section className="py-20">
@@ -2097,29 +2173,49 @@ const Home = (props) => {
             </div>
             
             {[
-              {
-                title: 'Product',
-                links: ['Features', 'Pricing', 'API', 'Documentation']
-              },
+
               {
                 title: 'Company',
-                links: ['About Us', 'Blog', 'Careers', 'Partners']
+                 links: [
+        { name: 'About Us', href: '#about' },
+        { name: 'Blog', href: '#' },
+        { name: 'Careers', href: '#' },
+        { name: 'Partners', href: '#' }
+      ]
               },
               {
                 title: 'Support',
-                links: ['Help Center', 'Contact Us', 'Status', 'Community']
+                  links: [
+    { name: 'Contact Us', href: '#contact' },
+    { name: 'Privacy Policy', href: '#privacy-policy' },
+    { name: 'Terms & Conditions', href: '#terms-conditions' },
+    { name: 'Refund Policy', href: '#refund-policy' }
+  ]
               }
             ].map((column, colIndex) => (
-              <div key={colIndex}>
-                <h4 className="text-lg font-semibold mb-6">{column.title}</h4>
-                <ul className="space-y-3">
-                  {column.links.map((link, linkIndex) => (
-                    <li key={linkIndex}>
-                      <a href="#" className="text-gray-400 hover:text-white transition-colors">
-                        {link}
-                      </a>
-                    </li>
-                  ))}
+    <div key={colIndex}>
+      <h4 className="text-lg font-semibold mb-6">{column.title}</h4>
+      <ul className="space-y-3">
+        {column.links.map((link, linkIndex) => (
+          <li key={linkIndex}>
+            <a 
+              href={link.href} 
+              className="text-gray-400 hover:text-white transition-colors"
+              onClick={(e) => {
+                if (link.href.startsWith('#')) {
+                  e.preventDefault();
+                  // Smooth scroll to section
+                  const element = document.querySelector(link.href);
+                  if (element) {
+                    element.scrollIntoView({ behavior: 'smooth' });
+                  }
+                }
+              }}
+            >
+              {link.name}
+            </a>
+          </li>
+        ))}
                 </ul>
               </div>
             ))}
@@ -2129,11 +2225,6 @@ const Home = (props) => {
             <p className="text-gray-400 mb-4 md:mb-0">
               © {new Date().getFullYear()} RM Tech Solution. All rights reserved.
             </p>
-            <div className="flex items-center space-x-6 text-gray-400">
-              <a href="#" className="hover:text-white">Privacy Policy</a>
-              <a href="#" className="hover:text-white">Terms of Service</a>
-              <a href="#" className="hover:text-white">Cookie Policy</a>
-            </div>
           </div>
 
           <div className="mt-8 text-center text-gray-500 text-sm">
