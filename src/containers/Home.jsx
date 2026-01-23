@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { fetchCMSData } from '../redux/actions/cmsActions';
 import { connect } from 'react-redux';
+import logo from '../assets/logo4.png';
 import {
   Menu,
   X,
@@ -114,6 +115,31 @@ const Home = (props) => {
       setScrolled(window.scrollY > 50);
     };
     window.addEventListener('scroll', handleScroll);
+
+  useEffect(() => {
+  // Handle hash changes for smooth scrolling
+  const handleHashChange = () => {
+    const hash = window.location.hash;
+    if (hash) {
+      const element = document.querySelector(hash);
+      if (element) {
+        setTimeout(() => {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }, 100);
+      }
+    }
+  };
+
+  // Handle initial hash
+  handleHashChange();
+
+  // Listen for hash changes
+  window.addEventListener('hashchange', handleHashChange);
+  
+  return () => {
+    window.removeEventListener('hashchange', handleHashChange);
+  };
+}, []);
     
     // Auto-rotate showcase
     let interval;
@@ -424,7 +450,7 @@ const Home = (props) => {
             <div className="flex items-center">
               <Link to="/" className="flex items-center">
                 <img 
-                  src={require('../assets/logo4.png')}
+                   src={logo}
                   className="object-cover"
                   style={{ height: '90px', width: '200px' }}
                   alt="RM Tech Solution"
@@ -2006,7 +2032,7 @@ const Home = (props) => {
         </div>
       </section> */}
 
-<section  className="py-12 bg-gray-50">
+<section  id="legal-policies" className="py-12 bg-gray-50">
   <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
     <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">Legal & Policies</h2>
     
@@ -2177,20 +2203,20 @@ const Home = (props) => {
               {
                 title: 'Company',
                  links: [
-        { name: 'About Us', href: '#about' },
-        { name: 'Blog', href: '#' },
-        { name: 'Careers', href: '#' },
-        { name: 'Partners', href: '#' }
-      ]
+                    { name: 'About Us', href: '#about' },
+                    { name: 'Blog', href: '#' },
+                    { name: 'Careers', href: '#' },
+                    { name: 'Partners', href: '#' }
+                  ]
               },
               {
                 title: 'Support',
                   links: [
-    { name: 'Contact Us', href: '#contact' },
-    { name: 'Privacy Policy', href: '#privacy-policy' },
-    { name: 'Terms & Conditions', href: '#terms-conditions' },
-    { name: 'Refund Policy', href: '#refund-policy' }
-  ]
+                    { name: 'Contact Us', href: '#contact' },
+                    { name: 'Privacy Policy', href: '#privacy-policy' },
+                    { name: 'Terms & Conditions', href: '#terms-conditions' },
+                    { name: 'Refund Policy', href: '#refund-policy' }
+                  ]
               }
             ].map((column, colIndex) => (
     <div key={colIndex}>
