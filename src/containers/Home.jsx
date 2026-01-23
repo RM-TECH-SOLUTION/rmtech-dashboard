@@ -1939,7 +1939,7 @@ const Home = (props) => {
               </div>
               <div className="flex justify-between items-center pb-3 border-b border-gray-700">
                 <span className="text-gray-300">Saturday</span>
-                <span className="font-semibold">10:00 AM - 4:00 PM</span>
+                <span className="font-semibold">9:00 AM - 4:00 PM</span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-gray-300">Sunday</span>
