@@ -116,7 +116,26 @@ const Home = (props) => {
     };
     window.addEventListener('scroll', handleScroll);
 
-  useEffect(() => {
+    
+    // Auto-rotate showcase
+    let interval;
+    if (autoRotate) {
+      interval = setInterval(() => {
+        const showcases = ['web', 'mobile', 'cms', 'catalog'];
+        setActiveShowcase(current => {
+          const currentIndex = showcases.indexOf(current);
+          return showcases[(currentIndex + 1) % showcases.length];
+        });
+      }, 4000);
+    }
+    
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      if (interval) clearInterval(interval);
+    };
+  }, [autoRotate]);
+
+   useEffect(() => {
   // Handle hash changes for smooth scrolling
   const handleHashChange = () => {
     const hash = window.location.hash;
@@ -140,24 +159,6 @@ const Home = (props) => {
     window.removeEventListener('hashchange', handleHashChange);
   };
 }, []);
-    
-    // Auto-rotate showcase
-    let interval;
-    if (autoRotate) {
-      interval = setInterval(() => {
-        const showcases = ['web', 'mobile', 'cms', 'catalog'];
-        setActiveShowcase(current => {
-          const currentIndex = showcases.indexOf(current);
-          return showcases[(currentIndex + 1) % showcases.length];
-        });
-      }, 4000);
-    }
-    
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-      if (interval) clearInterval(interval);
-    };
-  }, [autoRotate]);
 
   const features = [
     { 
