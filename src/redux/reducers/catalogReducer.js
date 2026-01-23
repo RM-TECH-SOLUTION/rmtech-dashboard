@@ -47,7 +47,6 @@ import {
   UPDATE_ITEM_VARIANT_SUCCESS,
   UPDATE_ITEM_VARIANT_FAILURE,
 
-  SET_MERCHANT_STATUS
 } from "../constants/actionTypes";
 
 const initialState = {
@@ -165,6 +164,12 @@ const catalogReducer = (state = initialState, action) => {
     case CREATE_CATALOG_ITEM_FAILURE:
     case UPDATE_CATALOG_ITEM_FAILURE:
     case UPDATE_CATALOG_ITEM_STATUS_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        error: action.error,
+      };
+
 
       /* ================= ITEM VARIANTS ================= */
 

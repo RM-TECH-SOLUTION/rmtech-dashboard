@@ -7,9 +7,7 @@ import {
   Edit,
   Trash2,
   Shield,
-  Mail,
   Calendar,
-  MoreVertical
 } from 'lucide-react';
 
 const Users = () => {
