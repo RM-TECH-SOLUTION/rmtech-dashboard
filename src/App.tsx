@@ -3,7 +3,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import Layout from './components/Layout';
 import Dashboard from './containers/Dashboard';
-import PostsList from './containers/PostsList';
+import OrdersList from './containers/OrdersList';
 import CreatePost from './containers/CreatePost';
 import EditPost from './containers/EditPost';
 import Media from './containers/Media';
@@ -50,7 +50,7 @@ function App() {
           </ProtectedRoute>
         }>
           <Route index element={<Dashboard />} />
-          <Route path="posts" element={<PostsList />} />
+          <Route path="posts" element={<OrdersList />} />
           <Route path="posts/create" element={<CreatePost />} />
           <Route path="posts/edit/:id" element={<EditPost />} />
           <Route path="content-models" element={<ContentModels />} />

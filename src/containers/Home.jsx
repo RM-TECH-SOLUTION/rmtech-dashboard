@@ -99,15 +99,15 @@ import {
 } from 'lucide-react';
 
 const Home = (props) => {
-   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [activeShowcase, setActiveShowcase] = useState('web');
   const [autoRotate, setAutoRotate] = useState(true);
   const navigate = useNavigate();
   const [openPolicy, setOpenPolicy] = useState(null);
   const togglePolicy = (policy) => {
-  setOpenPolicy(openPolicy === policy ? null : policy);
-};
+    setOpenPolicy(openPolicy === policy ? null : policy);
+  };
 
   useEffect(() => {
     props.fetchCMSData();
@@ -128,7 +128,7 @@ const Home = (props) => {
         });
       }, 4000);
     }
-    
+
     return () => {
       window.removeEventListener('scroll', handleScroll);
       if (interval) clearInterval(interval);
@@ -161,63 +161,63 @@ const Home = (props) => {
 }, []);
 
   const features = [
-    { 
-      icon: <Rocket className="w-8 h-8" />, 
-      title: 'Lightning Fast', 
+    {
+      icon: <Rocket className="w-8 h-8" />,
+      title: 'Lightning Fast',
       description: 'Built with  for maximum performance',
       color: 'from-purple-500 to-pink-500'
     },
-    { 
-      icon: <ShieldCheck className="w-8 h-8" />, 
-      title: 'Secure', 
+    {
+      icon: <ShieldCheck className="w-8 h-8" />,
+      title: 'Secure',
       description: 'JWT authentication & role-based access',
       color: 'from-green-500 to-teal-500'
     },
-    { 
-      icon: <Palette className="w-8 h-8" />, 
-      title: 'Customizable', 
+    {
+      icon: <Palette className="w-8 h-8" />,
+      title: 'Customizable',
       description: 'Fully customizable themes and layouts',
       color: 'from-blue-500 to-cyan-500'
     },
-    { 
-      icon: <Database className="w-8 h-8" />, 
-      title: 'Scalable', 
+    {
+      icon: <Database className="w-8 h-8" />,
+      title: 'Scalable',
       description: 'Handles thousands of posts and users',
       color: 'from-orange-500 to-red-500'
     },
   ];
 
   const testimonials = [
-    { 
-      name: 'Mujibuddin Ansari', 
-      role: 'Co-Founder, RM Tech Solution', 
+    {
+      name: 'Mujibuddin Ansari',
+      role: 'Co-Founder, RM Tech Solution',
       content: 'RM Tech CMS transformed our content workflow!',
       rating: 5,
       avatar: 'MA'
     },
-    { 
-      name: 'Ram Mohan Rao', 
-      role: 'Co-Founder, RM Tech Solution', 
+    {
+      name: 'Ram Mohan Rao',
+      role: 'Co-Founder, RM Tech Solution',
       content: 'Intuitive interface with powerful features.',
       rating: 5,
       avatar: 'RM'
     },
     {
-      name: 'Shahil ', 
+      name: 'Shahil ',
       role: 'Product Head, RM Tech Solution',
       content: 'The best CMS I have ever used for my projects.',
       rating: 4,
       avatar: 'S'
     },
-      {
-      name: 'Alim Abdul', 
+    {
+      name: 'Alim Abdul',
       role: 'Marketing Manager, RM Tech Solution',
       content: 'Streamlined our content operations significantly.',
       rating: 4,
       avatar: 'AA'
     },
-      {
-      name: 'Adil Abdul', 
+    {
+      name: 'Adil Abdul',
       role: 'Tech Support, RM Tech Solution',
       content: 'Reliable and efficient CMS platform.',
       rating: 4,
@@ -277,7 +277,7 @@ const Home = (props) => {
     },
   ];
 
-  
+
   // Pricing Plans
   const pricingPlans = [
     {
@@ -339,7 +339,7 @@ const Home = (props) => {
     },
   ];
 
-    // Our Services
+  // Our Services
   const services = [
     {
       title: 'Web Development',
@@ -385,7 +385,7 @@ const Home = (props) => {
     },
   ];
 
-    // Industry Solutions
+  // Industry Solutions
   const industries = [
     { icon: <Store className="w-8 h-8" />, name: 'Retail Stores', color: 'from-blue-500 to-cyan-500' },
     { icon: <Utensils className="w-8 h-8" />, name: 'Restaurants', color: 'from-red-500 to-orange-500' },
@@ -397,7 +397,7 @@ const Home = (props) => {
     { icon: <Camera className="w-8 h-8" />, name: 'Photography', color: 'from-pink-500 to-rose-500' },
   ];
 
-    // Process Steps
+  // Process Steps
   const processSteps = [
     { step: '01', title: 'Consultation', description: 'Understand your business needs', icon: <MessageSquare /> },
     { step: '02', title: 'Planning', description: 'Create detailed project roadmap', icon: <Calendar /> },
@@ -407,14 +407,14 @@ const Home = (props) => {
     { step: '06', title: 'Launch', description: 'Deployment & training', icon: <Rocket /> },
   ];
 
-    const successMetrics = [
+  const successMetrics = [
     { metric: '2x', description: 'Average Business Growth', icon: <TrendingUp /> },
     { metric: '40%', description: 'Increase in Customer Reach', icon: <Globe /> },
     { metric: '60%', description: 'Reduction in Manual Work', icon: <Zap /> },
     { metric: '85%', description: 'Customer Satisfaction Rate', icon: <Star /> },
   ];
 
-    // Portfolio Projects
+  // Portfolio Projects
   const portfolioProjects = [
     {
       title: 'Restaurant Management',
@@ -441,11 +441,10 @@ const Home = (props) => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 via-white to-blue-50">
       {/* Navigation */}
-      <nav className={`fixed w-full z-50 transition-all duration-300 ${
-        scrolled 
-          ? 'bg-white/90 backdrop-blur-md shadow-lg py-3' 
+      <nav className={`fixed w-full z-50 transition-all duration-300 ${scrolled
+          ? 'bg-white/90 backdrop-blur-md shadow-lg py-3'
           : 'bg-transparent py-5'
-      }`}>
+        }`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center">
             <div className="flex items-center">
@@ -459,9 +458,9 @@ const Home = (props) => {
               </Link>
             </div>
 
-         {/* Desktop Menu */}
+            {/* Desktop Menu */}
             <div className="hidden md:flex items-center space-x-8">
-              {['Home','Showcase', "Features",'Industries','Services','Pricing', 'Portfolio', 'About'].map((item) => (
+              {['Home', 'Showcase', "Features", 'Industries', 'Services', 'Pricing', 'Portfolio', 'About'].map((item) => (
                 <a
                   key={item}
                   href={`#${item.toLowerCase()}`}
@@ -470,7 +469,7 @@ const Home = (props) => {
                   {item}
                 </a>
               ))}
-              
+
               <button
                 onClick={() => navigate('/dashboard')}
                 className="px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:shadow-lg transition-all duration-300 flex items-center shadow-lg"
@@ -489,7 +488,7 @@ const Home = (props) => {
           </div>
         </div>
 
-            {/* Mobile Menu */}
+        {/* Mobile Menu */}
         {isMenuOpen && (
           <div className="md:hidden absolute top-full left-0 right-0 bg-white/95 backdrop-blur-md border-t shadow-xl">
             <div className="px-4 pt-4 pb-6 space-y-3">
@@ -517,18 +516,18 @@ const Home = (props) => {
         )}
       </nav>
 
-     {/* Hero Section */}
+      {/* Hero Section */}
       <section id="home" className="relative pt-24 pb-32 md:pt-32 md:pb-48 overflow-hidden">
         {/* Background Gradient */}
         <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-white to-purple-50"></div>
-        
+
         {/* Animated Background Elements */}
         <div className="absolute top-0 left-0 right-0 h-96 bg-gradient-to-r from-blue-500/10 to-purple-500/10 transform -skew-y-6"></div>
-        
+
         {/* Floating Elements */}
         <div className="absolute top-20 left-10 w-72 h-72 bg-blue-400/10 rounded-full blur-3xl"></div>
         <div className="absolute bottom-20 right-10 w-96 h-96 bg-purple-400/10 rounded-full blur-3xl"></div>
-        
+
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col lg:flex-row items-center justify-between gap-12">
             {/* Left Content */}
@@ -539,16 +538,16 @@ const Home = (props) => {
                   🚀 2X Business Growth Guaranteed
                 </span>
               </div>
-              
+
               <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
                 <span className="block text-gray-900">From ₹1 Lakh to</span>
                 <span className="block bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent animate-gradient">
                   10X Revenue Growth
                 </span>
               </h1>
-              
+
               <p className="text-xl text-gray-600 mb-10 max-w-lg">
-                Complete <span className="font-semibold text-blue-600">CMS + E-commerce + Mobile App</span> solutions for small businesses. 
+                Complete <span className="font-semibold text-blue-600">CMS + E-commerce + Mobile App</span> solutions for small businesses.
                 Get your professional digital presence in 30 days or less.
               </p>
 
@@ -563,11 +562,11 @@ const Home = (props) => {
                   </span>
                   <div className="absolute inset-0 bg-gradient-to-r from-blue-700 to-purple-700 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
                 </button>
-                
+
                 <button className="group px-8 py-4 bg-white/80 backdrop-blur-sm border-2 border-gray-200 text-gray-700 rounded-2xl hover:border-blue-600 hover:text-blue-600 text-lg font-semibold transition-all duration-300 hover:scale-105 shadow-lg">
                   <a href="#showcase" className="flex items-center justify-center">
                     <Video className="mr-3 w-5 h-5" />
-                    Watch Demo 
+                    Watch Demo
                     <span className="ml-2 px-2 py-1 bg-blue-100 text-blue-600 rounded-full text-xs">3 min</span>
                   </a>
                 </button>
@@ -586,7 +585,7 @@ const Home = (props) => {
                     <div className="text-sm text-gray-500">Happy Clients</div>
                   </div>
                 </div>
-                
+
                 <div className="flex items-center">
                   <div className="mr-3">
                     <div className="w-10 h-10 bg-gradient-to-r from-green-500 to-teal-500 rounded-lg flex items-center justify-center">
@@ -598,7 +597,7 @@ const Home = (props) => {
                     <div className="text-sm text-gray-500">Success Rate</div>
                   </div>
                 </div>
-                
+
                 <div className="flex items-center">
                   <div className="mr-3">
                     <div className="w-10 h-10 bg-gradient-to-r from-orange-500 to-red-500 rounded-lg flex items-center justify-center">
@@ -658,7 +657,7 @@ const Home = (props) => {
                         <div className="w-3 h-3 bg-green-400 rounded-full"></div>
                       </div>
                     </div>
-                    
+
                     {/* Stats Row */}
                     <div className="grid grid-cols-3 gap-4 mb-6">
                       {[
@@ -674,7 +673,7 @@ const Home = (props) => {
                       ))}
                     </div>
                   </div>
-                  
+
                   {/* Card Content */}
                   <div className="p-6">
                     {/* Chart Preview */}
@@ -691,18 +690,17 @@ const Home = (props) => {
                           {[40, 60, 80, 100, 120, 140, 160].map((height, idx) => (
                             <div
                               key={idx}
-                              className={`flex-1 rounded-t-lg transition-all duration-300 hover:opacity-80 ${
-                                idx % 2 === 0 
-                                  ? 'bg-gradient-to-t from-blue-500 to-blue-400' 
+                              className={`flex-1 rounded-t-lg transition-all duration-300 hover:opacity-80 ${idx % 2 === 0
+                                  ? 'bg-gradient-to-t from-blue-500 to-blue-400'
                                   : 'bg-gradient-to-t from-purple-500 to-purple-400'
-                              }`}
+                                }`}
                               style={{ height: `${height}px` }}
                             ></div>
                           ))}
                         </div>
                       </div>
                     </div>
-                    
+
                     {/* Recent Activity */}
                     <div>
                       <div className="text-lg font-semibold text-gray-900 mb-4">Recent Activity</div>
@@ -727,13 +725,13 @@ const Home = (props) => {
                     </div>
                   </div>
                 </div>
-                
+
                 {/* Floating Mobile Preview */}
                 <div className="absolute -bottom-8 -right-8 transform hover:scale-110 transition-transform duration-300">
                   <div className="relative bg-gray-900 rounded-3xl p-3 shadow-2xl border-2 border-white">
                     {/* Mobile Notch */}
                     <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-24 h-5 bg-gray-900 rounded-b-xl"></div>
-                    
+
                     {/* Mobile Screen */}
                     <div className="bg-white rounded-2xl w-40 h-80 overflow-hidden">
                       <div className="bg-gradient-to-r from-blue-500 to-purple-500 p-4 text-white">
@@ -755,7 +753,7 @@ const Home = (props) => {
                     </div>
                   </div>
                 </div>
-                
+
                 {/* Floating Badge */}
                 <div className="absolute -top-4 -left-4">
                   <div className="px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl shadow-lg flex items-center">
@@ -764,7 +762,7 @@ const Home = (props) => {
                   </div>
                 </div>
               </div>
-              
+
               {/* Callout Cards */}
               <div className="absolute -left-20 top-1/4 hidden xl:block">
                 <div className="bg-white rounded-xl p-4 shadow-lg border border-gray-100 w-64 transform -rotate-3">
@@ -777,7 +775,7 @@ const Home = (props) => {
                   <div className="text-sm text-gray-600">Get your complete solution in just 30 days</div>
                 </div>
               </div>
-              
+
               <div className="absolute -right-20 bottom-1/4 hidden xl:block">
                 <div className="bg-white rounded-xl p-4 shadow-lg border border-gray-100 w-64 transform rotate-3">
                   <div className="flex items-center mb-3">
@@ -801,9 +799,9 @@ const Home = (props) => {
           </div>
         </div>
       </section>
-      
 
-        <section id="showcase" className="py-20 bg-gradient-to-b from-gray-50 to-white">
+
+      <section id="showcase" className="py-20 bg-gradient-to-b from-gray-50 to-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <span className="inline-block px-4 py-2 bg-indigo-100 text-indigo-600 rounded-full text-sm font-semibold mb-4">
@@ -834,11 +832,10 @@ const Home = (props) => {
                   setActiveShowcase(tab.id);
                   setAutoRotate(false);
                 }}
-                className={`flex items-center px-6 py-3 rounded-xl font-medium transition-all ${
-                  activeShowcase === tab.id
+                className={`flex items-center px-6 py-3 rounded-xl font-medium transition-all ${activeShowcase === tab.id
                     ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg'
                     : 'bg-white text-gray-700 hover:bg-gray-100 shadow'
-                }`}
+                  }`}
               >
                 {tab.icon}
                 <span className="ml-2">{tab.label}</span>
@@ -874,7 +871,7 @@ const Home = (props) => {
                 <div>
                   <h3 className="text-3xl font-bold text-gray-900 mb-4">Modern Web Application</h3>
                   <p className="text-gray-600 mb-6">
-                    Responsive web applications that work seamlessly on all devices. 
+                    Responsive web applications that work seamlessly on all devices.
                     Built with React, Tailwind CSS, and modern frameworks for optimal performance.
                   </p>
                   <div className="space-y-4 mb-8">
@@ -896,7 +893,7 @@ const Home = (props) => {
                     View Web Demo
                   </button>
                 </div>
-                
+
                 <div className="relative">
                   {/* Web Browser Frame */}
                   <div className="bg-gray-800 rounded-t-xl p-3 shadow-2xl">
@@ -908,7 +905,7 @@ const Home = (props) => {
                         https://yourbusiness.rmtechsolution.com
                       </div>
                     </div>
-                    
+
                     {/* Web App Mockup */}
                     <div className="bg-white rounded-lg overflow-hidden">
                       {/* Header */}
@@ -923,7 +920,7 @@ const Home = (props) => {
                           </div>
                         </div>
                       </div>
-                      
+
                       {/* Hero Section */}
                       <div className="p-6 bg-gradient-to-r from-blue-50 to-purple-50">
                         <h2 className="text-2xl font-bold text-gray-900 mb-2">Welcome to Our Store</h2>
@@ -935,7 +932,7 @@ const Home = (props) => {
                           </div>
                         </div>
                       </div>
-                      
+
                       {/* Products Grid */}
                       <div className="p-6">
                         <div className="grid grid-cols-3 gap-4 mb-4">
@@ -947,7 +944,7 @@ const Home = (props) => {
                             </div>
                           ))}
                         </div>
-                        
+
                         {/* Featured Section */}
                         <div className="bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg p-4 text-white">
                           <div className="flex justify-between items-center">
@@ -973,7 +970,7 @@ const Home = (props) => {
                 <div>
                   <h3 className="text-3xl font-bold text-gray-900 mb-4">Native Mobile Applications</h3>
                   <p className="text-gray-600 mb-6">
-                    iOS and Android apps with native performance. Push notifications, 
+                    iOS and Android apps with native performance. Push notifications,
                     offline capabilities, and seamless user experience.
                   </p>
                   <div className="space-y-4 mb-8">
@@ -994,25 +991,25 @@ const Home = (props) => {
                   <div className="flex space-x-4">
                     <button className="px-6 py-3 bg-black text-white rounded-xl hover:shadow-lg transition-all flex items-center">
                       <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
-                        <path fill="currentColor" d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.31-2.33 1.05-3.11z"/>
+                        <path fill="currentColor" d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.31-2.33 1.05-3.11z" />
                       </svg>
                       iOS App
                     </button>
                     <button className="px-6 py-3 bg-green-600 text-white rounded-xl hover:shadow-lg transition-all flex items-center">
                       <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
-                        <path fill="currentColor" d="M17.523 15.3414c-.5511 0-.9993-.4486-.9993-.9997s.4483-.9993.9993-.9993c.5511 0 .9993.4483.9993.9993.0001.5511-.4482.9997-.9993.9997m-11.046 0c-.5511 0-.9993-.4486-.9993-.9997s.4482-.9993.9993-.9993c.5511 0 .9993.4483.9993.9993 0 .5511-.4483.9997-.9993.9997m11.4045-6.02l1.9973-3.4592a.416.416 0 00-.1521-.5676.416.416 0 00-.5676.1521l-1.6747 2.8997C16.5901 7.0889 15.8533 7 15.047 7c-2.17 0-3.8732 1.2954-4.5487 3.2425C9.8262 8.2954 8.123 7 5.953 7c-.8063 0-1.5431.0889-2.2223.2566l-1.6747-2.8997a.416.416 0 00-.5676-.1521.4157.4157 0 00-.1521.5676l1.9973 3.4592C2.4355 8.7354 2 9.8857 2 11.1589 2 15.6246 5.4354 19 9.9062 19c.8063 0 1.6116-.135 2.3808-.3376.6236-.1692 1.2089-.1692 1.8325 0 .7692.2026 1.5745.3376 2.3808.3376C18.5646 19 22 15.6246 22 11.1589c0-1.2732-.4355-2.4235-1.1185-3.8375"/>
+                        <path fill="currentColor" d="M17.523 15.3414c-.5511 0-.9993-.4486-.9993-.9997s.4483-.9993.9993-.9993c.5511 0 .9993.4483.9993.9993.0001.5511-.4482.9997-.9993.9997m-11.046 0c-.5511 0-.9993-.4486-.9993-.9997s.4482-.9993.9993-.9993c.5511 0 .9993.4483.9993.9993 0 .5511-.4483.9997-.9993.9997m11.4045-6.02l1.9973-3.4592a.416.416 0 00-.1521-.5676.416.416 0 00-.5676.1521l-1.6747 2.8997C16.5901 7.0889 15.8533 7 15.047 7c-2.17 0-3.8732 1.2954-4.5487 3.2425C9.8262 8.2954 8.123 7 5.953 7c-.8063 0-1.5431.0889-2.2223.2566l-1.6747-2.8997a.416.416 0 00-.5676-.1521.4157.4157 0 00-.1521.5676l1.9973 3.4592C2.4355 8.7354 2 9.8857 2 11.1589 2 15.6246 5.4354 19 9.9062 19c.8063 0 1.6116-.135 2.3808-.3376.6236-.1692 1.2089-.1692 1.8325 0 .7692.2026 1.5745.3376 2.3808.3376C18.5646 19 22 15.6246 22 11.1589c0-1.2732-.4355-2.4235-1.1185-3.8375" />
                       </svg>
                       Android App
                     </button>
                   </div>
                 </div>
-                
+
                 <div className="flex justify-center">
                   {/* Mobile Frame */}
                   <div className="relative bg-gray-900 rounded-3xl p-3 shadow-2xl w-72">
                     {/* Mobile Notch */}
                     <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-32 h-6 bg-gray-900 rounded-b-xl"></div>
-                    
+
                     {/* Mobile Screen */}
                     <div className="bg-white rounded-2xl overflow-hidden h-[500px]">
                       {/* Status Bar */}
@@ -1027,7 +1024,7 @@ const Home = (props) => {
                           </div>
                         </div>
                       </div>
-                      
+
                       {/* App Content */}
                       <div className="p-4">
                         {/* Header */}
@@ -1038,29 +1035,28 @@ const Home = (props) => {
                             <CartIcon className="w-5 h-5 text-gray-600" />
                           </div>
                         </div>
-                        
+
                         {/* Search */}
                         <div className="flex items-center bg-gray-100 rounded-lg p-3 mb-6">
                           <Search className="w-5 h-5 text-gray-400 mr-2" />
                           <div className="text-gray-400">Search products...</div>
                         </div>
-                        
+
                         {/* Categories */}
                         <div className="flex overflow-x-auto space-x-3 mb-6 pb-2">
                           {['All', 'Popular', 'New', 'Sale', 'Featured'].map((cat, idx) => (
                             <div
                               key={idx}
-                              className={`px-4 py-2 rounded-full whitespace-nowrap ${
-                                idx === 0
+                              className={`px-4 py-2 rounded-full whitespace-nowrap ${idx === 0
                                   ? 'bg-blue-600 text-white'
                                   : 'bg-gray-100 text-gray-700'
-                              }`}
+                                }`}
                             >
                               {cat}
                             </div>
                           ))}
                         </div>
-                        
+
                         {/* Products */}
                         <div className="space-y-4">
                           {[1, 2].map((i) => (
@@ -1079,7 +1075,7 @@ const Home = (props) => {
                             </div>
                           ))}
                         </div>
-                        
+
                         {/* Bottom Navigation */}
                         <div className="absolute bottom-0 left-0 right-0 bg-white border-t p-3">
                           <div className="flex justify-around">
@@ -1102,7 +1098,7 @@ const Home = (props) => {
                         </div>
                       </div>
                     </div>
-                    
+
                     {/* Home Button */}
                     <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2 w-12 h-1 bg-gray-700 rounded-full"></div>
                   </div>
@@ -1116,7 +1112,7 @@ const Home = (props) => {
                 <div>
                   <h3 className="text-3xl font-bold text-gray-900 mb-4">Powerful CMS Dashboard</h3>
                   <p className="text-gray-600 mb-6">
-                    Complete content management system with intuitive interface. 
+                    Complete content management system with intuitive interface.
                     Manage posts, users, media, and settings with ease.
                   </p>
                   <div className="space-y-4 mb-8">
@@ -1141,7 +1137,7 @@ const Home = (props) => {
                     Try CMS Demo
                   </button>
                 </div>
-                
+
                 <div className="relative">
                   {/* CMS Dashboard Frame */}
                   <div className="bg-gray-900 rounded-lg shadow-2xl overflow-hidden">
@@ -1155,7 +1151,7 @@ const Home = (props) => {
                         </div>
                       </div>
                     </div>
-                    
+
                     <div className="flex">
                       {/* Sidebar */}
                       <div className="w-16 bg-gray-800 min-h-[400px] py-4">
@@ -1169,24 +1165,23 @@ const Home = (props) => {
                         ].map((item, idx) => (
                           <div
                             key={idx}
-                            className={`flex items-center justify-center p-3 ${
-                              idx === 0
+                            className={`flex items-center justify-center p-3 ${idx === 0
                                 ? 'text-blue-400 border-r-2 border-blue-400'
                                 : 'text-gray-400 hover:text-white'
-                            }`}
+                              }`}
                           >
                             {item.icon}
                           </div>
                         ))}
                       </div>
-                      
+
                       {/* Main Content */}
                       <div className="flex-1 bg-gray-900 p-6">
                         <div className="mb-6">
                           <h2 className="text-xl font-bold text-white mb-2">Dashboard Overview</h2>
                           <div className="text-gray-400">Welcome back, Admin</div>
                         </div>
-                        
+
                         {/* Stats Grid */}
                         <div className="grid grid-cols-2 gap-4 mb-6">
                           {[
@@ -1201,7 +1196,7 @@ const Home = (props) => {
                             </div>
                           ))}
                         </div>
-                        
+
                         {/* Recent Activity */}
                         <div className="bg-gray-800 rounded-lg p-4">
                           <h3 className="text-lg font-semibold text-white mb-4">Recent Activity</h3>
@@ -1232,7 +1227,7 @@ const Home = (props) => {
                 <div>
                   <h3 className="text-3xl font-bold text-gray-900 mb-4">Advanced Catalog System</h3>
                   <p className="text-gray-600 mb-6">
-                    Complete product catalog management with inventory tracking, 
+                    Complete product catalog management with inventory tracking,
                     variant management, and bulk operations.
                   </p>
                   <div className="space-y-4 mb-8">
@@ -1251,116 +1246,115 @@ const Home = (props) => {
                     ))}
                   </div>
 
-                    <button
-                      onClick={() => navigate('/dashboard/catalogue')}
-                      className="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:shadow-lg transition-all"
-                    >
-                      View Catalog Demo
-                    </button>
-                  </div>
-                  
-                  <div className="relative">
-                    {/* Catalog Dashboard Frame */}
-                    <div className="bg-gray-900 rounded-lg shadow-2xl overflow-hidden">
-                      {/* Top Bar */}
-                      <div className="bg-gray-800 p-4 flex justify-between items-center">
-                        <div className="text-white font-bold">Product Catalog</div>
-                        <div className="flex items-center space-x-4">
-                          <div className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm">
-                            + Add Product
+                  <button
+                    onClick={() => navigate('/dashboard/catalogue')}
+                    className="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:shadow-lg transition-all"
+                  >
+                    View Catalog Demo
+                  </button>
+                </div>
+
+                <div className="relative">
+                  {/* Catalog Dashboard Frame */}
+                  <div className="bg-gray-900 rounded-lg shadow-2xl overflow-hidden">
+                    {/* Top Bar */}
+                    <div className="bg-gray-800 p-4 flex justify-between items-center">
+                      <div className="text-white font-bold">Product Catalog</div>
+                      <div className="flex items-center space-x-4">
+                        <div className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm">
+                          + Add Product
+                        </div>
+                        <Filter className="w-5 h-5 text-gray-300" />
+                      </div>
+                    </div>
+
+                    {/* Catalog Content */}
+                    <div className="p-6">
+                      {/* Filters */}
+                      <div className="flex space-x-4 mb-6">
+                        <div className="flex-1 bg-gray-800 rounded-lg p-3">
+                          <div className="text-gray-400 text-sm mb-2">Search Products</div>
+                          <div className="flex items-center">
+                            <Search className="w-5 h-5 text-gray-500 mr-2" />
+                            <div className="text-gray-500">Type to search...</div>
                           </div>
-                          <Filter className="w-5 h-5 text-gray-300" />
+                        </div>
+                        <div className="w-48 bg-gray-800 rounded-lg p-3">
+                          <div className="text-gray-400 text-sm mb-2">Category</div>
+                          <div className="text-gray-300">All Products</div>
                         </div>
                       </div>
-                      
-                      {/* Catalog Content */}
-                      <div className="p-6">
-                        {/* Filters */}
-                        <div className="flex space-x-4 mb-6">
-                          <div className="flex-1 bg-gray-800 rounded-lg p-3">
-                            <div className="text-gray-400 text-sm mb-2">Search Products</div>
-                            <div className="flex items-center">
-                              <Search className="w-5 h-5 text-gray-500 mr-2" />
-                              <div className="text-gray-500">Type to search...</div>
-                            </div>
-                          </div>
-                          <div className="w-48 bg-gray-800 rounded-lg p-3">
-                            <div className="text-gray-400 text-sm mb-2">Category</div>
-                            <div className="text-gray-300">All Products</div>
-                          </div>
+
+                      {/* Products Table */}
+                      <div className="bg-gray-800 rounded-lg overflow-hidden">
+                        {/* Table Header */}
+                        <div className="grid grid-cols-12 gap-4 p-4 bg-gray-700 text-gray-300 text-sm">
+                          <div className="col-span-1">#</div>
+                          <div className="col-span-4">Product Name</div>
+                          <div className="col-span-2">Category</div>
+                          <div className="col-span-2">Price</div>
+                          <div className="col-span-2">Stock</div>
+                          <div className="col-span-1">Actions</div>
                         </div>
-                        
-                        {/* Products Table */}
-                        <div className="bg-gray-800 rounded-lg overflow-hidden">
-                          {/* Table Header */}
-                          <div className="grid grid-cols-12 gap-4 p-4 bg-gray-700 text-gray-300 text-sm">
-                            <div className="col-span-1">#</div>
-                            <div className="col-span-4">Product Name</div>
-                            <div className="col-span-2">Category</div>
-                            <div className="col-span-2">Price</div>
-                            <div className="col-span-2">Stock</div>
-                            <div className="col-span-1">Actions</div>
-                          </div>
-                          
-                          {/* Table Rows */}
-                          <div className="divide-y divide-gray-700">
-                            {[
-                              { name: 'Premium Laptop', category: 'Electronics', price: '₹89,999', stock: '12' },
-                              { name: 'Wireless Headphones', category: 'Audio', price: '₹7,499', stock: '45' },
-                              { name: 'Fitness Tracker', category: 'Wearables', price: '₹3,999', stock: '89' },
-                              { name: 'Smart Watch', category: 'Wearables', price: '₹12,999', stock: '23' }
-                            ].map((product, idx) => (
-                              <div key={idx} className="grid grid-cols-12 gap-4 p-4 text-gray-300 hover:bg-gray-750">
-                                <div className="col-span-1">{idx + 1}</div>
-                                <div className="col-span-4 flex items-center">
-                                  <div className="w-8 h-8 bg-gradient-to-r from-blue-400 to-purple-400 rounded mr-3"></div>
-                                  {product.name}
-                                </div>
-                                <div className="col-span-2">
-                                  <span className="px-2 py-1 bg-gray-700 rounded text-xs">{product.category}</span>
-                                </div>
-                                <div className="col-span-2 font-medium">{product.price}</div>
-                                <div className="col-span-2">
-                                  <span className={`px-2 py-1 rounded text-xs ${
-                                    parseInt(product.stock) > 20
-                                      ? 'bg-green-900 text-green-300'
-                                      : 'bg-yellow-900 text-yellow-300'
-                                  }`}>
-                                    {product.stock} in
-                                  </span>
-                                </div>
-                                <div className="col-span-1 flex space-x-2">
-                                  <button className="text-blue-400 hover:text-blue-300">
-                                    <Eye className="w-4 h-4" />
-                                  </button>
-                                  <button className="text-green-400 hover:text-green-300">
-                                    <FileText className="w-4 h-4" />
-                                  </button>
-                                </div>
+
+                        {/* Table Rows */}
+                        <div className="divide-y divide-gray-700">
+                          {[
+                            { name: 'Premium Laptop', category: 'Electronics', price: '₹89,999', stock: '12' },
+                            { name: 'Wireless Headphones', category: 'Audio', price: '₹7,499', stock: '45' },
+                            { name: 'Fitness Tracker', category: 'Wearables', price: '₹3,999', stock: '89' },
+                            { name: 'Smart Watch', category: 'Wearables', price: '₹12,999', stock: '23' }
+                          ].map((product, idx) => (
+                            <div key={idx} className="grid grid-cols-12 gap-4 p-4 text-gray-300 hover:bg-gray-750">
+                              <div className="col-span-1">{idx + 1}</div>
+                              <div className="col-span-4 flex items-center">
+                                <div className="w-8 h-8 bg-gradient-to-r from-blue-400 to-purple-400 rounded mr-3"></div>
+                                {product.name}
                               </div>
-                            ))}
-                          </div>
+                              <div className="col-span-2">
+                                <span className="px-2 py-1 bg-gray-700 rounded text-xs">{product.category}</span>
+                              </div>
+                              <div className="col-span-2 font-medium">{product.price}</div>
+                              <div className="col-span-2">
+                                <span className={`px-2 py-1 rounded text-xs ${parseInt(product.stock) > 20
+                                    ? 'bg-green-900 text-green-300'
+                                    : 'bg-yellow-900 text-yellow-300'
+                                  }`}>
+                                  {product.stock} in
+                                </span>
+                              </div>
+                              <div className="col-span-1 flex space-x-2">
+                                <button className="text-blue-400 hover:text-blue-300">
+                                  <Eye className="w-4 h-4" />
+                                </button>
+                                <button className="text-green-400 hover:text-green-300">
+                                  <FileText className="w-4 h-4" />
+                                </button>
+                              </div>
+                            </div>
+                          ))}
                         </div>
-                        
-                        {/* Pagination */}
-                        <div className="flex justify-between items-center mt-6 text-gray-400">
-                          <div>Showing 1-4 of 128 products</div>
-                          <div className="flex space-x-2">
-                            <button className="px-3 py-1 bg-gray-800 rounded hover:bg-gray-700">←</button>
-                            <button className="px-3 py-1 bg-blue-600 text-white rounded">1</button>
-                            <button className="px-3 py-1 bg-gray-800 rounded hover:bg-gray-700">2</button>
-                            <button className="px-3 py-1 bg-gray-800 rounded hover:bg-gray-700">3</button>
-                            <button className="px-3 py-1 bg-gray-800 rounded hover:bg-gray-700">→</button>
-                          </div>
+                      </div>
+
+                      {/* Pagination */}
+                      <div className="flex justify-between items-center mt-6 text-gray-400">
+                        <div>Showing 1-4 of 128 products</div>
+                        <div className="flex space-x-2">
+                          <button className="px-3 py-1 bg-gray-800 rounded hover:bg-gray-700">←</button>
+                          <button className="px-3 py-1 bg-blue-600 text-white rounded">1</button>
+                          <button className="px-3 py-1 bg-gray-800 rounded hover:bg-gray-700">2</button>
+                          <button className="px-3 py-1 bg-gray-800 rounded hover:bg-gray-700">3</button>
+                          <button className="px-3 py-1 bg-gray-800 rounded hover:bg-gray-700">→</button>
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
-             
+              </div>
+
             )}
           </div>
-          
+
           {/* Platform Support */}
           <div className="mt-16 bg-white rounded-2xl shadow-lg border border-gray-100 p-8">
             <div className="text-center mb-8">
@@ -1404,7 +1398,7 @@ const Home = (props) => {
               Everything you need to manage your content efficiently
             </p>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {features.map((feature, index) => (
               <div
@@ -1446,7 +1440,7 @@ const Home = (props) => {
                 to manage their digital content efficiently. Our CMS platform combines cutting-edge
                 technology with intuitive design.
               </p>
-              
+
               <div className="space-y-6">
                 {[
                   { icon: <Target className="w-6 h-6" />, text: 'Mission-driven development' },
@@ -1476,7 +1470,7 @@ const Home = (props) => {
                       <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
                       <div className="w-3 h-3 bg-green-500 rounded-full"></div>
                     </div>
-                    
+
                     <div className="mb-8">
                       <h4 className="text-white font-semibold mb-4">Our Tech Stack</h4>
                       <div className="flex flex-wrap gap-3">
@@ -1490,7 +1484,7 @@ const Home = (props) => {
                         ))}
                       </div>
                     </div>
-                    
+
                     <div className="grid grid-cols-2 gap-4">
                       {[1, 2, 3, 4].map((item) => (
                         <div
@@ -1510,21 +1504,21 @@ const Home = (props) => {
         </div>
       </section>
 
-        {/* Hero Section */}
+      {/* Hero Section */}
       <section id="home" className="pt-32 pb-20 md:pt-40 md:pb-32">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <span className="inline-block px-4 py-2 bg-blue-100 text-blue-600 rounded-full text-sm font-semibold mb-6">
               🚀 2x Your Business Growth
             </span>
-            
+
             <h1 className="text-5xl md:text-7xl font-bold mb-6">
               <span className="block text-gray-900">Digital Solutions for</span>
               <span className="block bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
                 Small Businesses
               </span>
             </h1>
-            
+
             <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-10">
               Transform your business with custom web & mobile apps. From ₹1 Lakh - Get a professional online presence that drives growth and increases revenue.
             </p>
@@ -1543,7 +1537,7 @@ const Home = (props) => {
               </button>
             </div>
 
-             {/* Success Metrics */}
+            {/* Success Metrics */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto">
               {successMetrics.map((metric, index) => (
                 <div
@@ -1562,7 +1556,7 @@ const Home = (props) => {
         </div>
       </section>
 
-        {/* Industries We Serve */}
+      {/* Industries We Serve */}
       <section id="industries" className="py-20 bg-gradient-to-b from-white to-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
@@ -1579,7 +1573,7 @@ const Home = (props) => {
               Custom digital solutions tailored for your industry needs
             </p>
           </div>
-          
+
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {industries.map((industry, index) => (
               <div
@@ -1598,7 +1592,7 @@ const Home = (props) => {
         </div>
       </section>
 
-      
+
       {/* Services Section */}
       <section id="services" className="py-20 bg-gradient-to-b from-gray-50 to-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -1616,7 +1610,7 @@ const Home = (props) => {
               End-to-end development services for your business growth
             </p>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {services.map((service, index) => (
               <div
@@ -1629,7 +1623,7 @@ const Home = (props) => {
                   </div>
                   <h3 className="text-2xl font-bold text-gray-900 mb-3">{service.title}</h3>
                   <p className="text-gray-600 mb-6">{service.description}</p>
-                  
+
                   <div className="space-y-3 mb-6">
                     {service.features.map((feature, idx) => (
                       <div key={idx} className="flex items-center">
@@ -1638,7 +1632,7 @@ const Home = (props) => {
                       </div>
                     ))}
                   </div>
-                  
+
                   <div className="mt-6">
                     <div className={`w-12 h-1 bg-gradient-to-r ${service.color} rounded-full`}></div>
                   </div>
@@ -1649,7 +1643,7 @@ const Home = (props) => {
         </div>
       </section>
 
-        {/* Pricing Plans */}
+      {/* Pricing Plans */}
       <section id="pricing" className="py-20 bg-gradient-to-b from-white to-blue-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
@@ -1671,28 +1665,27 @@ const Home = (props) => {
             {pricingPlans.map((plan, index) => (
               <div
                 key={index}
-                className={`relative ${
-                  plan.highlight
+                className={`relative ${plan.highlight
                     ? 'scale-105 shadow-2xl border-2 border-purple-500'
                     : 'shadow-lg'
-                } bg-white rounded-3xl overflow-hidden`}
+                  } bg-white rounded-3xl overflow-hidden`}
               >
                 {plan.highlight && (
                   <div className="absolute top-0 left-0 right-0 bg-gradient-to-r from-purple-600 to-pink-600 text-white text-center py-2 text-sm font-semibold">
                     🏆 Most Popular
                   </div>
                 )}
-                
+
                 <div className="p-8 pt-12">
                   <div className={`inline-block px-4 py-2 rounded-full bg-gradient-to-r ${plan.color} text-white text-sm font-semibold mb-4`}>
                     {plan.name}
                   </div>
-                  
+
                   <div className="mb-6">
                     <div className="text-5xl font-bold text-gray-900">{plan.price}</div>
                     <p className="text-gray-600 mt-2">{plan.description}</p>
                   </div>
-                  
+
                   <div className="space-y-4 mb-8">
                     {plan.features.map((feature, idx) => (
                       <div key={idx} className="flex items-center">
@@ -1707,14 +1700,13 @@ const Home = (props) => {
                       </div>
                     ))}
                   </div>
-                  
+
                   <button
                     onClick={() => navigate('/login')}
-                    className={`w-full py-4 rounded-xl font-semibold text-lg transition-all ${
-                      plan.highlight
+                    className={`w-full py-4 rounded-xl font-semibold text-lg transition-all ${plan.highlight
                         ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:shadow-xl'
                         : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
-                    }`}
+                      }`}
                   >
                     {plan.highlight ? 'Start Business Plan' : 'Get Started'}
                   </button>
@@ -1734,7 +1726,7 @@ const Home = (props) => {
         </div>
       </section>
 
-       {/* Our Process */}
+      {/* Our Process */}
       <section className="py-20 bg-gradient-to-b from-gray-50 to-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
@@ -1748,10 +1740,10 @@ const Home = (props) => {
               </span>
             </h2>
           </div>
-          
+
           <div className="relative">
             <div className="hidden md:block absolute top-1/2 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 transform -translate-y-1/2"></div>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-6 gap-8">
               {processSteps.map((step, index) => (
                 <div key={index} className="relative">
@@ -1772,7 +1764,7 @@ const Home = (props) => {
         </div>
       </section>
 
-      
+
       {/* Portfolio Section */}
       <section id="portfolio" className="py-20 bg-gradient-to-b from-white to-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -1790,7 +1782,7 @@ const Home = (props) => {
               See how we've helped businesses transform digitally
             </p>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {portfolioProjects.map((project, index) => (
               <div
@@ -1803,10 +1795,10 @@ const Home = (props) => {
                     <div className={`inline-block px-3 py-1 rounded-full bg-gradient-to-r ${project.color} bg-opacity-10 text-gray-700 text-xs font-semibold mb-4`}>
                       {project.category}
                     </div>
-                    
+
                     <h3 className="text-2xl font-bold text-gray-900 mb-3">{project.title}</h3>
                     <p className="text-gray-600 mb-6">{project.description}</p>
-                    
+
                     <div className="space-y-3">
                       {project.features.map((feature, idx) => (
                         <div key={idx} className="flex items-center">
@@ -1815,7 +1807,7 @@ const Home = (props) => {
                         </div>
                       ))}
                     </div>
-                    
+
                     <div className="mt-8">
                       <span className="text-sm text-gray-500">Result:</span>
                       <div className="flex items-center mt-2">
@@ -1828,7 +1820,7 @@ const Home = (props) => {
               </div>
             ))}
           </div>
-          
+
           <div className="text-center mt-12">
             <button className="px-8 py-4 border-2 border-gray-300 text-gray-700 rounded-2xl hover:border-blue-600 hover:text-blue-600 text-lg font-semibold transition-all">
               View More Case Studies
@@ -1837,7 +1829,7 @@ const Home = (props) => {
         </div>
       </section>
 
-       {/* FAQ Section */}
+      {/* FAQ Section */}
       <section className="py-20 bg-gradient-to-b from-gray-50 to-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
@@ -1851,7 +1843,7 @@ const Home = (props) => {
               </span>
             </h2>
           </div>
-          
+
           <div className="space-y-6">
             {faqs.map((faq, index) => (
               <div
@@ -1863,7 +1855,7 @@ const Home = (props) => {
               </div>
             ))}
           </div>
-          
+
           <div className="text-center mt-12">
             <p className="text-gray-600">
               Still have questions?{' '}
@@ -1875,121 +1867,121 @@ const Home = (props) => {
         </div>
       </section>
 
-{/* Contact Section */}
-<section id="contact" className="py-20 bg-gradient-to-b from-white to-blue-50">
-  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div className="text-center mb-16">
-      <span className="inline-block px-4 py-2 bg-pink-100 text-pink-600 rounded-full text-sm font-semibold mb-4">
-        📞 Contact Us
-      </span>
-      <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-        Get in{' '}
-        <span className="bg-gradient-to-r from-pink-600 to-orange-600 bg-clip-text text-transparent">
-          Touch
-        </span>
-      </h2>
-      <p className="text-gray-600 text-xl max-w-3xl mx-auto">
-        Reach out to us for any questions or project inquiries
-      </p>
-    </div>
-
-    <div className="max-w-4xl mx-auto">
-      <div className="bg-white rounded-3xl shadow-2xl p-8 border border-gray-100">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {/* Left Column - Contact Info */}
-          <div className="space-y-8">
-            <div className="flex items-start space-x-6 p-6 bg-blue-50 rounded-2xl">
-              <div className="w-14 h-14 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center flex-shrink-0">
-                <Mail className="w-7 h-7 text-white" />
-              </div>
-              <div>
-                <h3 className="text-xl font-bold text-gray-900 mb-2">Email</h3>
-                <p className="text-gray-600 mb-2">support@rmtechsolution.com</p>
-                <p className="text-gray-600">rmtechsolutions@gmail.com</p>
-                <p className="text-sm text-gray-500 mt-2">We'll reply within 24 hours</p>
-              </div>
-            </div>
-
-            <div className="flex items-start space-x-6 p-6 bg-purple-50 rounded-2xl">
-              <div className="w-14 h-14 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl flex items-center justify-center flex-shrink-0">
-                <Phone className="w-7 h-7 text-white" />
-              </div>
-              <div>
-                <h3 className="text-xl font-bold text-gray-900 mb-2">Phone</h3>
-                <p className="text-gray-600 mb-2">+91 8777370341 / 7013608102</p>
-                <p className="text-sm text-gray-500">Mon-Fri: 9 AM - 6 PM IST</p>
-              </div>
-            </div>
-
-            <div className="flex items-start space-x-6 p-6 bg-green-50 rounded-2xl">
-              <div className="w-14 h-14 bg-gradient-to-r from-green-500 to-teal-500 rounded-xl flex items-center justify-center flex-shrink-0">
-                <Building className="w-7 h-7 text-white" />
-              </div>
-              <div>
-                <h3 className="text-xl font-bold text-gray-900 mb-2">Company</h3>
-                <p className="text-gray-600 mb-1">RM Tech Solution</p>
-                <p className="text-sm text-gray-500">Registered Digital Agency</p>
-              </div>
-            </div>
-
-            {/* Social Links */}
-            <div className="pt-4">
-              <h4 className="text-lg font-semibold text-gray-900 mb-4">Connect With Us</h4>
-              <div className="flex space-x-4">
-                {[
-                  { icon: <Facebook className="w-6 h-6" />, label: 'Facebook', color: 'from-blue-500 to-blue-600' },
-                  { icon: <Twitter className="w-6 h-6" />, label: 'Twitter', color: 'from-sky-500 to-cyan-500' },
-                  { icon: <Linkedin className="w-6 h-6" />, label: 'LinkedIn', color: 'from-blue-700 to-blue-800' },
-                  { icon: <Instagram className="w-6 h-6" />, label: 'Instagram', color: 'from-pink-500 to-rose-500' },
-                  { icon: <Github className="w-6 h-6" />, label: 'GitHub', color: 'from-gray-700 to-gray-900' },
-                ].map((social, index) => (
-                  <a
-                    key={index}
-                    href="#"
-                    className={`w-12 h-12 bg-gradient-to-r ${social.color} rounded-xl flex items-center justify-center text-white shadow-lg hover:shadow-xl transition-all hover:scale-110`}
-                    title={social.label}
-                  >
-                    {social.icon}
-                  </a>
-                ))}
-              </div>
-            </div>
+      {/* Contact Section */}
+      <section id="contact" className="py-20 bg-gradient-to-b from-white to-blue-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <span className="inline-block px-4 py-2 bg-pink-100 text-pink-600 rounded-full text-sm font-semibold mb-4">
+              📞 Contact Us
+            </span>
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+              Get in{' '}
+              <span className="bg-gradient-to-r from-pink-600 to-orange-600 bg-clip-text text-transparent">
+                Touch
+              </span>
+            </h2>
+            <p className="text-gray-600 text-xl max-w-3xl mx-auto">
+              Reach out to us for any questions or project inquiries
+            </p>
           </div>
 
-          {/* Right Column - Business Hours */}
-          <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl p-8 text-white">
-            <h3 className="text-2xl font-bold mb-6">Business Hours</h3>
-            <div className="space-y-4 mb-8">
-              <div className="flex justify-between items-center pb-3 border-b border-gray-700">
-                <span className="text-gray-300">Monday - Friday</span>
-                <span className="font-semibold">9:00 AM - 6:00 PM</span>
-              </div>
-              <div className="flex justify-between items-center pb-3 border-b border-gray-700">
-                <span className="text-gray-300">Saturday</span>
-                <span className="font-semibold">9:00 AM - 4:00 PM</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-gray-300">Sunday</span>
-                <span className="font-semibold text-yellow-400">Closed</span>
-              </div>
-            </div>
-            
-            <div className="bg-gray-800/50 rounded-xl p-6">
-              <h4 className="text-lg font-semibold mb-4">Quick Response</h4>
-              <p className="text-gray-300 mb-4">
-                For urgent inquiries, please email us at <span className="text-blue-400">support@rmtechsolution.com</span> with "URGENT" in the subject line.
-              </p>
-              <div className="flex items-center text-green-400">
-                <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse mr-2"></div>
-                <span>Typically respond within 2 hours</span>
+          <div className="max-w-4xl mx-auto">
+            <div className="bg-white rounded-3xl shadow-2xl p-8 border border-gray-100">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                {/* Left Column - Contact Info */}
+                <div className="space-y-8">
+                  <div className="flex items-start space-x-6 p-6 bg-blue-50 rounded-2xl">
+                    <div className="w-14 h-14 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center flex-shrink-0">
+                      <Mail className="w-7 h-7 text-white" />
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-bold text-gray-900 mb-2">Email</h3>
+                      <p className="text-gray-600 mb-2">support@rmtechsolution.com</p>
+                      <p className="text-gray-600">rmtechsolutions@gmail.com</p>
+                      <p className="text-sm text-gray-500 mt-2">We'll reply within 24 hours</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start space-x-6 p-6 bg-purple-50 rounded-2xl">
+                    <div className="w-14 h-14 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl flex items-center justify-center flex-shrink-0">
+                      <Phone className="w-7 h-7 text-white" />
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-bold text-gray-900 mb-2">Phone</h3>
+                      <p className="text-gray-600 mb-2">+91 8777370341 / 7013608102</p>
+                      <p className="text-sm text-gray-500">Mon-Fri: 9 AM - 6 PM IST</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start space-x-6 p-6 bg-green-50 rounded-2xl">
+                    <div className="w-14 h-14 bg-gradient-to-r from-green-500 to-teal-500 rounded-xl flex items-center justify-center flex-shrink-0">
+                      <Building className="w-7 h-7 text-white" />
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-bold text-gray-900 mb-2">Company</h3>
+                      <p className="text-gray-600 mb-1">RM Tech Solution</p>
+                      <p className="text-sm text-gray-500">Registered Digital Agency</p>
+                    </div>
+                  </div>
+
+                  {/* Social Links */}
+                  <div className="pt-4">
+                    <h4 className="text-lg font-semibold text-gray-900 mb-4">Connect With Us</h4>
+                    <div className="flex space-x-4">
+                      {[
+                        { icon: <Facebook className="w-6 h-6" />, label: 'Facebook', color: 'from-blue-500 to-blue-600' },
+                        { icon: <Twitter className="w-6 h-6" />, label: 'Twitter', color: 'from-sky-500 to-cyan-500' },
+                        { icon: <Linkedin className="w-6 h-6" />, label: 'LinkedIn', color: 'from-blue-700 to-blue-800' },
+                        { icon: <Instagram className="w-6 h-6" />, label: 'Instagram', color: 'from-pink-500 to-rose-500' },
+                        { icon: <Github className="w-6 h-6" />, label: 'GitHub', color: 'from-gray-700 to-gray-900' },
+                      ].map((social, index) => (
+                        <a
+                          key={index}
+                          href="#"
+                          className={`w-12 h-12 bg-gradient-to-r ${social.color} rounded-xl flex items-center justify-center text-white shadow-lg hover:shadow-xl transition-all hover:scale-110`}
+                          title={social.label}
+                        >
+                          {social.icon}
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Right Column - Business Hours */}
+                <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl p-8 text-white">
+                  <h3 className="text-2xl font-bold mb-6">Business Hours</h3>
+                  <div className="space-y-4 mb-8">
+                    <div className="flex justify-between items-center pb-3 border-b border-gray-700">
+                      <span className="text-gray-300">Monday - Friday</span>
+                      <span className="font-semibold">9:00 AM - 6:00 PM</span>
+                    </div>
+                    <div className="flex justify-between items-center pb-3 border-b border-gray-700">
+                      <span className="text-gray-300">Saturday</span>
+                      <span className="font-semibold">9:00 AM - 4:00 PM</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-300">Sunday</span>
+                      <span className="font-semibold text-yellow-400">Closed</span>
+                    </div>
+                  </div>
+
+                  <div className="bg-gray-800/50 rounded-xl p-6">
+                    <h4 className="text-lg font-semibold mb-4">Quick Response</h4>
+                    <p className="text-gray-300 mb-4">
+                      For urgent inquiries, please email us at <span className="text-blue-400">support@rmtechsolution.com</span> with "URGENT" in the subject line.
+                    </p>
+                    <div className="flex items-center text-green-400">
+                      <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse mr-2"></div>
+                      <span>Typically respond within 2 hours</span>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-    </div>
-  </div>
-</section>
+      </section>
 
       {/* Testimonials */}
       {/* <section className="py-20 bg-gradient-to-b from-blue-50 to-white">
@@ -2061,66 +2053,66 @@ const Home = (props) => {
       )}
     </div>
 
-    {/* Terms & Conditions */}
-    <div  id="terms-conditions"  className="mb-6 bg-white rounded-xl shadow-md border border-gray-200">
-      <button
-        onClick={() => togglePolicy('terms')}
-        className="w-full px-6 py-4 text-left flex justify-between items-center hover:bg-gray-50"
-      >
-        <span className="text-lg font-semibold text-gray-900">Terms & Conditions</span>
-        {openPolicy === 'terms' ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
-      </button>
-      {openPolicy === 'terms' && (
-        <div className="px-6 py-4 border-t border-gray-200">
-          <p className="text-gray-600 mb-4">
-            <strong>Service Nature:</strong> We provide digital services including website development, mobile apps, and CMS solutions. No physical products are delivered.
-          </p>
-          <p className="text-gray-600 mb-4">
-            <strong>Service Delivery:</strong> Services commence only after successful payment confirmation. Project timelines begin upon receipt of all required materials from the client.
-          </p>
-          <p className="text-gray-600">
-            <strong>Intellectual Property:</strong> All code, designs, and content created remain the property of RM Tech Solution until full payment is received. Upon final payment, rights are transferred to the client as per the agreement.
-          </p>
-        </div>
-      )}
-    </div>
+          {/* Terms & Conditions */}
+          <div id="terms-conditions" className="mb-6 bg-white rounded-xl shadow-md border border-gray-200">
+            <button
+              onClick={() => togglePolicy('terms')}
+              className="w-full px-6 py-4 text-left flex justify-between items-center hover:bg-gray-50"
+            >
+              <span className="text-lg font-semibold text-gray-900">Terms & Conditions</span>
+              {openPolicy === 'terms' ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+            </button>
+            {openPolicy === 'terms' && (
+              <div className="px-6 py-4 border-t border-gray-200">
+                <p className="text-gray-600 mb-4">
+                  <strong>Service Nature:</strong> We provide digital services including website development, mobile apps, and CMS solutions. No physical products are delivered.
+                </p>
+                <p className="text-gray-600 mb-4">
+                  <strong>Service Delivery:</strong> Services commence only after successful payment confirmation. Project timelines begin upon receipt of all required materials from the client.
+                </p>
+                <p className="text-gray-600">
+                  <strong>Intellectual Property:</strong> All code, designs, and content created remain the property of RM Tech Solution until full payment is received. Upon final payment, rights are transferred to the client as per the agreement.
+                </p>
+              </div>
+            )}
+          </div>
 
-    {/* Refund Policy */}
-    <div  id="refund-policy"  className="bg-white rounded-xl shadow-md border border-gray-200">
-      <button
-        onClick={() => togglePolicy('refund')}
-        className="w-full px-6 py-4 text-left flex justify-between items-center hover:bg-gray-50 rounded-t-xl"
-      >
-        <span className="text-lg font-semibold text-gray-900">Refund Policy</span>
-        {openPolicy === 'refund' ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
-      </button>
-      {openPolicy === 'refund' && (
-        <div className="px-6 py-4 border-t border-gray-200">
-          <p className="text-gray-600 mb-4">
-            Due to the digital nature of our services, refunds are generally not applicable once development work has commenced or the service has been delivered.
-          </p>
-          <p className="text-gray-600 mb-4">
-            <strong>Payment Issues:</strong> In case of payment failure or duplicate payment, refunds will be processed within 5-7 business days after verification.
-          </p>
-          <p className="text-gray-600 mb-4">
-            <strong>Project Cancellation:</strong> If a project is cancelled before work begins, 90% of the payment will be refunded (10% retained as processing fee).
-          </p>
-          <p className="text-gray-600">
-            <strong>Dispute Resolution:</strong> Any disputes regarding services will be addressed through mutual discussion. We are committed to client satisfaction and will work to resolve any legitimate concerns.
-          </p>
+          {/* Refund Policy */}
+          <div id="refund-policy" className="bg-white rounded-xl shadow-md border border-gray-200">
+            <button
+              onClick={() => togglePolicy('refund')}
+              className="w-full px-6 py-4 text-left flex justify-between items-center hover:bg-gray-50 rounded-t-xl"
+            >
+              <span className="text-lg font-semibold text-gray-900">Refund Policy</span>
+              {openPolicy === 'refund' ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+            </button>
+            {openPolicy === 'refund' && (
+              <div className="px-6 py-4 border-t border-gray-200">
+                <p className="text-gray-600 mb-4">
+                  Due to the digital nature of our services, refunds are generally not applicable once development work has commenced or the service has been delivered.
+                </p>
+                <p className="text-gray-600 mb-4">
+                  <strong>Payment Issues:</strong> In case of payment failure or duplicate payment, refunds will be processed within 5-7 business days after verification.
+                </p>
+                <p className="text-gray-600 mb-4">
+                  <strong>Project Cancellation:</strong> If a project is cancelled before work begins, 90% of the payment will be refunded (10% retained as processing fee).
+                </p>
+                <p className="text-gray-600">
+                  <strong>Dispute Resolution:</strong> Any disputes regarding services will be addressed through mutual discussion. We are committed to client satisfaction and will work to resolve any legitimate concerns.
+                </p>
+              </div>
+            )}
+          </div>
         </div>
-      )}
-    </div>
-  </div>
-</section>
-  
+      </section>
+
       {/* CTA Section (Enhanced) */}
       <section className="py-20">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 p-12 text-center">
             <div className="absolute top-0 right-0 -mt-20 -mr-20 w-40 h-40 bg-white/10 rounded-full"></div>
             <div className="absolute bottom-0 left-0 -mb-20 -ml-20 w-40 h-40 bg-white/10 rounded-full"></div>
-            
+
             <h2 className="text-4xl md:text-5xl font-bold text-white mb-6 relative z-10">
               Ready to 2X Your Business?
             </h2>
@@ -2141,7 +2133,7 @@ const Home = (props) => {
                 </a>
               </button>
             </div>
-            
+
             <div className="mt-12 grid grid-cols-2 md:grid-cols-4 gap-6 relative z-10">
               <div className="text-center">
                 <div className="text-3xl font-bold text-white">24/7</div>
@@ -2173,10 +2165,10 @@ const Home = (props) => {
                 {/* <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl flex items-center justify-center mr-3">
                   <Sparkles className="w-6 h-6 text-white" />
                 </div> */}
-                  <img 
+                <img
                   src={require('../assets/logo4.png')}
                   className="object-cover"
-                  style={{  height: '90px',width: '200px' }}
+                  style={{ height: '90px', width: '200px' }}
                 />
                 {/* <div>
                   <span className="text-2xl font-bold">RM Tech</span>
@@ -2198,7 +2190,7 @@ const Home = (props) => {
                 ))}
               </div>
             </div>
-            
+
             {[
 
               {
@@ -2220,34 +2212,34 @@ const Home = (props) => {
                   ]
               }
             ].map((column, colIndex) => (
-    <div key={colIndex}>
-      <h4 className="text-lg font-semibold mb-6">{column.title}</h4>
-      <ul className="space-y-3">
-        {column.links.map((link, linkIndex) => (
-          <li key={linkIndex}>
-            <a 
-              href={link.href} 
-              className="text-gray-400 hover:text-white transition-colors"
-              onClick={(e) => {
-                if (link.href.startsWith('#')) {
-                  e.preventDefault();
-                  // Smooth scroll to section
-                  const element = document.querySelector(link.href);
-                  if (element) {
-                    element.scrollIntoView({ behavior: 'smooth' });
-                  }
-                }
-              }}
-            >
-              {link.name}
-            </a>
-          </li>
-        ))}
+              <div key={colIndex}>
+                <h4 className="text-lg font-semibold mb-6">{column.title}</h4>
+                <ul className="space-y-3">
+                  {column.links.map((link, linkIndex) => (
+                    <li key={linkIndex}>
+                      <a
+                        href={link.href}
+                        className="text-gray-400 hover:text-white transition-colors"
+                        onClick={(e) => {
+                          if (link.href.startsWith('#')) {
+                            e.preventDefault();
+                            // Smooth scroll to section
+                            const element = document.querySelector(link.href);
+                            if (element) {
+                              element.scrollIntoView({ behavior: 'smooth' });
+                            }
+                          }
+                        }}
+                      >
+                        {link.name}
+                      </a>
+                    </li>
+                  ))}
                 </ul>
               </div>
             ))}
           </div>
-          
+
           <div className="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center">
             <p className="text-gray-400 mb-4 md:mb-0">
               © {new Date().getFullYear()} RM Tech Solution. All rights reserved.

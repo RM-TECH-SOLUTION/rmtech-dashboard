@@ -29,7 +29,7 @@ import {
   CheckCircle
 } from 'lucide-react';
 
-const Dashboard = () => {
+const Dashboard1 = () => {
 const user = JSON.parse(localStorage.getItem('user'));
 
   const postData = [
@@ -251,4 +251,4 @@ const user = JSON.parse(localStorage.getItem('user'));
   );
 };
 
-export default Dashboard;
+export default Dashboard1;
