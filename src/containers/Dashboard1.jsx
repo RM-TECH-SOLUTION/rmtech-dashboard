@@ -21,9 +21,7 @@ import {
   PackageCheck,
   Truck,
   CheckCircle,
-  Users,
-  Clock,
-  FileText
+  Users
 } from 'lucide-react';
 
 const Dashboard1 = () => {
@@ -43,9 +41,9 @@ const Dashboard1 = () => {
         `https://api.rmtechsolution.com/getPaymentTransactions.php?merchantId=${token}`
       );
       const json = await res.json();
-      if (!json.success) return;
 
-      const orders = json.data || [];
+      // ✅ Always fallback to empty array
+      const orders = json.success ? json.data || [] : [];
 
       /* ================= DATES ================= */
 
@@ -63,27 +61,23 @@ const Dashboard1 = () => {
         0
       );
 
-  const creditAmount = orders
-  .filter(o => o.payment_status === 'captured')
-  .reduce((sum, o) => {
-    const amount = Number(o.amount || 0);
-    const credit = amount * 0.98; // remove 2%
-    return sum + credit;
-  }, 0);
-
-const creditAmountFixed = creditAmount.toFixed(2);
+      // ✅ 98% credit (remove 2%) + 2 decimals
+      const creditAmount = orders
+        .filter(o => o.payment_status === 'captured')
+        .reduce((sum, o) => sum + Number(o.amount || 0) * 0.98, 0)
+        .toFixed(2);
 
       const todayOrders = orders.filter(o =>
-        o.created_at.startsWith(today)
+        o.created_at?.startsWith(today)
       );
 
       const yesterdayOrdersCount = orders.filter(o =>
-        o.created_at.startsWith(yesterday)
+        o.created_at?.startsWith(yesterday)
       ).length;
 
       const growthRate =
         yesterdayOrdersCount === 0
-          ? '100%'
+          ? '0%'
           : `${Math.round(
               ((todayOrders.length - yesterdayOrdersCount) /
                 yesterdayOrdersCount) *
@@ -117,7 +111,7 @@ const creditAmountFixed = creditAmount.toFixed(2);
         },
         {
           title: 'Credit Amount',
-          value: `₹${creditAmountFixed}`,
+          value: `₹${creditAmount}`,
           icon: <IndianRupee />,
           color: 'bg-purple-500'
         },
@@ -166,18 +160,17 @@ const creditAmountFixed = creditAmount.toFixed(2);
 
       const chartData = months.map(m => {
         const monthlyOrders = orders.filter(o =>
-          o.created_at.startsWith(m.key)
+          o.created_at?.startsWith(m.key)
         );
 
-       return {
-  month: m.label,
-  totalOrders: monthlyOrders.length,
-  totalAmount: monthlyOrders.reduce(
-    (sum, o) => sum + Number(o.amount || 0),
-    0
-  )
-};
-
+        return {
+          month: m.label,
+          totalOrders: monthlyOrders.length,
+          totalAmount: monthlyOrders.reduce(
+            (sum, o) => sum + Number(o.amount || 0),
+            0
+          )
+        };
       });
 
       setPostData(chartData);
@@ -186,7 +179,7 @@ const creditAmountFixed = creditAmount.toFixed(2);
     }
   };
 
-  /* ================= STATIC PIE DATA (UNCHANGED) ================= */
+  /* ================= STATIC PIE DATA ================= */
 
   const categoryData = [
     { name: 'Technology', value: 25, color: '#3b82f6' },
@@ -203,7 +196,7 @@ const creditAmountFixed = creditAmount.toFixed(2);
         <h1 className="text-2xl md:text-3xl font-bold text-gray-900">
           Dashboard
         </h1>
-        <p className="text-gray-600 mt-1">Welcome back! {user.name}</p>
+        <p className="text-gray-600 mt-1">Welcome back! {user?.name}</p>
       </div>
 
       {/* Stats */}
@@ -227,90 +220,76 @@ const creditAmountFixed = creditAmount.toFixed(2);
 
       {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* BAR */}
         <div className="bg-white p-6 rounded-xl shadow-sm border">
           <h3 className="text-lg font-semibold mb-4">
             Orders & Amount (Last 6 Months)
           </h3>
           <div className="h-80">
             <ResponsiveContainer width="100%" height="100%">
-  <BarChart data={postData}>
-  <CartesianGrid strokeDasharray="3 3" />
-
-  <XAxis dataKey="month" />
-
-  {/* LEFT AXIS → ORDERS */}
-  <YAxis
-    yAxisId="orders"
-    orientation="left"
-    allowDecimals={false}
-  />
-
-  {/* RIGHT AXIS → AMOUNT */}
-  <YAxis
-    yAxisId="amount"
-    orientation="right"
-    tickFormatter={(v) => `₹${v}`}
-  />
-
-  <Tooltip
-    formatter={(value, name) =>
-      name === "totalAmount"
-        ? [`₹${value}`, "Total Amount"]
-        : [value, "Total Orders"]
-    }
-  />
-
-  <Legend />
-
-  {/* 🔵 BLUE → TOTAL ORDERS */}
-  <Bar
-    yAxisId="orders"
-    dataKey="totalOrders"
-    fill="#3b82f6"
-    name="Total Orders"
-  />
-
-  {/* 🟢 GREEN → TOTAL AMOUNT */}
-  <Bar
-    yAxisId="amount"
-    dataKey="totalAmount"
-    fill="#10b981"
-    name="Total Amount"
-  />
-</BarChart>
-
-
+              <BarChart data={postData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="month" />
+                <YAxis yAxisId="orders" allowDecimals={false} />
+                <YAxis
+                  yAxisId="amount"
+                  orientation="right"
+                  tickFormatter={(v) => `₹${v}`}
+                />
+                <Tooltip
+                  formatter={(value, name) =>
+                    name === 'totalAmount'
+                      ? [`₹${value}`, 'Total Amount']
+                      : [value, 'Total Orders']
+                  }
+                />
+                <Legend />
+                <Bar
+                  yAxisId="orders"
+                  dataKey="totalOrders"
+                  fill="#3b82f6"
+                  name="Total Orders"
+                />
+                <Bar
+                  yAxisId="amount"
+                  dataKey="totalAmount"
+                  fill="#10b981"
+                  name="Total Amount"
+                />
+              </BarChart>
             </ResponsiveContainer>
           </div>
         </div>
 
+        {/* PIE */}
         <div className="bg-white p-6 rounded-xl shadow-sm border">
-          <h3 className="text-lg font-semibold mb-4">
-            Content by Category
-          </h3>
+          <h3 className="text-lg font-semibold mb-4">Content by Category</h3>
           <div className="h-80">
-                      <ResponsiveContainer width="100%" height="100%">
-                        <PieChart>
-                          <Pie
-                            data={categoryData}
-                            cx="50%"
-                            cy="50%"
-                            labelLine={false}
-                            label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
-                            outerRadius={80}
-                            fill="#8884d8"
-                            dataKey="value"
-                          >
-                            {categoryData.map((entry, index) => (
-                              <Cell key={`cell-${index}`} fill={entry.color} />
-                            ))}
-                          </Pie>
-                          <Tooltip />
-                        </PieChart>
-                      </ResponsiveContainer>
-                    </div>
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie
+                  data={categoryData}
+                  cx="50%"
+                  cy="50%"
+                  outerRadius={80}
+                  labelLine={false}
+                  label={({ name, percent }) =>
+                    `${name}: ${(percent * 100).toFixed(0)}%`
+                  }
+                  dataKey="value"
+                >
+                  {categoryData.map((e, i) => (
+                    <Cell key={i} fill={e.color} />
+                  ))}
+                </Pie>
+                <Tooltip />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
         </div>
       </div>
+
+      {/* Active Users */}
       <div className="grid grid-cols-1 gap-6">
         <div className="bg-white p-6 rounded-xl shadow-sm border">
           <div className="flex items-center justify-between">
