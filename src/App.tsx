@@ -19,6 +19,7 @@ import CatalogueItems from './containers/Catalogue/CatalogueItems';
 import CatalogueItemForm from './containers/Catalogue/CatalogueItemForm';
 import './App.css';
 import MerchantListContainer from './containers/MerchantListContainer';
+import Dashboard1 from './containers/Dashboard1';
 
 const PublicLayout = () => {
   return <Outlet />;
@@ -49,7 +50,7 @@ function App() {
             <Layout />
           </ProtectedRoute>
         }>
-          <Route index element={<Dashboard />} />
+          <Route index element={<Dashboard1 />} />
           <Route path="posts" element={<OrdersList />} />
           <Route path="posts/create" element={<CreatePost />} />
           <Route path="posts/edit/:id" element={<EditPost />} />

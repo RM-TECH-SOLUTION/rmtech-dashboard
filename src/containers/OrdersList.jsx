@@ -51,7 +51,9 @@ const OrdersList = () => {
             phone: item.phone || "-",
             date: item.created_at.split(" ")[0],
             amount: `₹${item.amount}`,
+            discount:`₹${item.discount}`,
             items: item.items,
+            address:item.address,
             order_status: item.order_status || "pending",
           }))
         );
@@ -148,53 +150,81 @@ const OrdersList = () => {
         </select>
       </div>
 
-      {/* ================= MOBILE CARDS ================= */}
-      <div className="sm:hidden space-y-4">
-        {paginatedOrders.map((order) => (
-          <div
-            key={order.id}
-            className="bg-white p-4 rounded-xl border shadow-sm"
-          >
-            <div className="font-semibold">{order.id}</div>
-            <div className="text-sm text-gray-600">{order.customer}</div>
-            <div className="text-xs text-gray-400">{order.phone}</div>
+   {/* ================= MOBILE CARDS ================= */}
+<div className="sm:hidden space-y-4">
+  {paginatedOrders.map((order) => (
+    <div
+      key={order.id}
+      className="bg-white p-4 rounded-xl border shadow-sm"
+    >
+      {/* Order ID */}
+      <div className="font-semibold text-sm break-all">
+        {order.id}
+      </div>
 
-            {/* ITEM */}
-            <div className="mt-2 text-sm">
-              <span className="text-gray-500">Item:</span>{" "}
-              <span className="font-medium">
-                {Array.isArray(order.items)
-                  ? order.items.map((i) => i.name).join(", ")
-                  : order.items}
-              </span>
-            </div>
+      {/* Customer */}
+      <div className="text-sm text-gray-600 mt-1">
+        {order.customer}
+      </div>
 
-            <div className="flex justify-between mt-3 text-sm">
-              <span>{order.date}</span>
-              <span className="font-semibold">{order.amount}</span>
-            </div>
+      <div className="text-xs text-gray-400">
+        {order.phone}
+      </div>
 
-            <div className="mt-3 flex items-center justify-between">
-              <span
-                className={`px-2 py-1 text-xs rounded-full ${STATUS_STYLES[order.order_status]}`}
-              >
-                {order.order_status}
-              </span>
+      {/* ITEM */}
+      <div className="mt-2 text-sm">
+        <span className="text-gray-500">Item:</span>{" "}
+        <span className="font-medium">
+          {Array.isArray(order.items)
+            ? order.items.map((i) => i.name).join(", ")
+            : order.items || "-"}
+        </span>
+      </div>
 
-              {order.order_status !== "delivered" ? (
-                <button
-                  onClick={() => handleStatusUpdate(order)}
-                  className="text-xs bg-blue-600 text-white px-3 py-1 rounded"
-                >
-                  Mark {STATUS_FLOW[order.order_status]}
-                </button>
-              ) : (
-                <span className="text-xs text-gray-400">Completed</span>
-              )}
+      {/* ADDRESS */}
+      {order.address && typeof order.address === "object" && (
+        <div className="mt-2 text-sm">
+          <span className="text-gray-500">Address:</span>
+          <div className="text-gray-700 leading-snug mt-1">
+            {order.address.name && <div>{order.address.name}</div>}
+            {order.address.street && <div>{order.address.street}</div>}
+            <div>
+              {order.address.city}{" "}
+              {order.address.pincode && `- ${order.address.pincode}`}
             </div>
           </div>
-        ))}
+        </div>
+      )}
+
+      {/* DATE + AMOUNT */}
+      <div className="flex justify-between mt-3 text-sm">
+        <span>{order.date}</span>
+        <span className="font-semibold">{order.amount}</span>
       </div>
+
+      {/* STATUS + ACTION */}
+      <div className="mt-3 flex items-center justify-between">
+        <span
+          className={`px-2 py-1 text-xs rounded-full ${STATUS_STYLES[order.order_status]}`}
+        >
+          {order.order_status}
+        </span>
+
+        {order.order_status !== "delivered" ? (
+          <button
+            onClick={() => handleStatusUpdate(order)}
+            className="text-xs bg-blue-600 text-white px-3 py-1 rounded"
+          >
+            Mark {STATUS_FLOW[order.order_status]}
+          </button>
+        ) : (
+          <span className="text-xs text-gray-400">Completed</span>
+        )}
+      </div>
+    </div>
+  ))}
+</div>
+
 
       {/* ================= DESKTOP TABLE ================= */}
       <div className="hidden sm:block bg-white border rounded-xl overflow-hidden">
@@ -205,7 +235,9 @@ const OrdersList = () => {
               <th className="px-6 py-3 text-left">Customer</th>
               <th className="px-6 py-3 text-left">Date</th>
               <th className="px-6 py-3 text-left">Amount</th>
+              <th className="px-6 py-3 text-left">Discount</th>
               <th className="px-6 py-3 text-left">Item</th>
+              <th className="px-6 py-3 text-left">Address</th>
               <th className="px-6 py-3 text-left">Status</th>
               <th className="px-6 py-3 text-left">Action</th>
             </tr>
@@ -221,11 +253,29 @@ const OrdersList = () => {
                 </td>
                 <td className="px-6 py-4">{order.date}</td>
                 <td className="px-6 py-4 font-semibold">{order.amount}</td>
+                <td className="px-6 py-4 font-semibold">{order.discount}</td>
                 <td className="px-6 py-4">
                   {Array.isArray(order.items)
                     ? order.items.map((i) => i.name).join(", ")
                     : order.items}
                 </td>
+                <td className="px-6 py-4 text-sm text-gray-700">
+  {order.address && typeof order.address === "object" ? (
+    <div className="leading-snug">
+      {order.address.name && (
+        <div className="font-medium">{order.address.name}</div>
+      )}
+      {order.address.street && <div>{order.address.street}</div>}
+      <div>
+        {order.address.city}
+        {order.address.pincode && ` - ${order.address.pincode}`}
+      </div>
+    </div>
+  ) : (
+    <span className="text-gray-400">-</span>
+  )}
+</td>
+
                 <td className="px-6 py-4">
                   <span
                     className={`px-2 py-1 text-xs rounded-full ${STATUS_STYLES[order.order_status]}`}
