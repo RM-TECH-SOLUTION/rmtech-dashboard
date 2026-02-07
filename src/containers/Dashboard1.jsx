@@ -37,7 +37,7 @@ const Dashboard1 = () => {
     fetchTotalUsers()
   }, []);
 
-    const fetchTotalUsers = async () => {
+  const fetchTotalUsers = async () => {
     try {
       const res = await fetch(
         `https://api.rmtechsolution.com/getUsers.php?merchant_id=${token}`
@@ -96,10 +96,10 @@ const Dashboard1 = () => {
         yesterdayOrdersCount === 0
           ? '0%'
           : `${Math.round(
-              ((todayOrders.length - yesterdayOrdersCount) /
-                yesterdayOrdersCount) *
-                100
-            )}%`;
+            ((todayOrders.length - yesterdayOrdersCount) /
+              yesterdayOrdersCount) *
+            100
+          )}%`;
 
       const todayAccepted = todayOrders.filter(
         o => o.order_status === 'accepted'
@@ -254,12 +254,17 @@ const Dashboard1 = () => {
                   tickFormatter={(v) => `₹${v}`}
                 />
                 <Tooltip
-                  formatter={(value, name) =>
-                    name === 'totalAmount'
-                      ? [`₹${value}`, 'Total Amount']
-                      : [value, 'Total Orders']
-                  }
+                  formatter={(value, dataKey) => {
+                    if (dataKey === "totalAmount") {
+                      return [`₹${value}`, "Total Amount"];
+                    }
+                    if (dataKey === "totalOrders") {
+                      return [value, "Total Orders"];
+                    }
+                    return value;
+                  }}
                 />
+
                 <Legend />
                 <Bar
                   yAxisId="orders"
