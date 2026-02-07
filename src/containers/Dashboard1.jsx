@@ -30,10 +30,27 @@ const Dashboard1 = () => {
 
   const [stats, setStats] = useState([]);
   const [postData, setPostData] = useState([]);
+  const [totalUsers, setTotalUsers] = useState(0);
 
   useEffect(() => {
     fetchDashboardStats();
+    fetchTotalUsers()
   }, []);
+
+    const fetchTotalUsers = async () => {
+    try {
+      const res = await fetch(
+        `https://api.rmtechsolution.com/getUsers.php?merchant_id=${token}`
+      );
+      const json = await res.json();
+
+      if (json.success) {
+        setTotalUsers(json.total || 0);
+      }
+    } catch (err) {
+      console.error("Users API Error:", err);
+    }
+  };
 
   const fetchDashboardStats = async () => {
     try {
@@ -295,8 +312,8 @@ const Dashboard1 = () => {
           <div className="flex items-center justify-between">
             <div>
               <h4 className="font-medium text-gray-900">Active Users</h4>
-              <p className="text-2xl font-bold mt-2">428</p>
-              <p className="text-green-600 text-sm mt-1">+12 this week</p>
+              <p className="text-2xl font-bold mt-2">{totalUsers}</p>
+              {/* <p className="text-green-600 text-sm mt-1">+12 this week</p> */}
             </div>
             <Users className="text-blue-500" size={32} />
           </div>
