@@ -22,6 +22,9 @@ const Sidebar = ({ isMobileOpen, toggleMobileSidebar }) => {
   const user = JSON.parse(localStorage.getItem('user')) || { name: 'Admin', email: 'admin@rmtechsolution.com' };
   const token = JSON.parse(localStorage.getItem('token'))
 
+  console.log(user,"useruseruserhhhh");
+  
+
   // Close mobile sidebar when clicking outside on mobile
   useEffect(() => {
     const handleClickOutside = (event) => {

@@ -38,6 +38,11 @@ const OrdersList = () => {
   const [selectedOrder, setSelectedOrder] = useState(null);
 
   const token = localStorage.getItem("token");
+ const user = JSON.parse(localStorage.getItem("user") || "{}");
+const merchantData = user.merchantData;
+
+console.log(user, "user");
+console.log(merchantData, "merchantData");
 
 
   /* ================= FETCH ================= */
@@ -118,6 +123,8 @@ const OrdersList = () => {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             payment_id: order.payment_id,
+            keyId:merchantData?.key_id,
+            keySecret:merchantData?.key_secret
           }),
         }
       );

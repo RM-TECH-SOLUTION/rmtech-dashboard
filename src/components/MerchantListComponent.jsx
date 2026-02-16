@@ -29,6 +29,8 @@ const MerchantListComponent = () => {
     const merchantData = useSelector(
         (state) => state.cms.merchantList || []
     );
+    console.log(merchantData,"merchantDatajjj");
+    
 
     // --------------------
     // LOCAL STATE
@@ -242,72 +244,25 @@ const MerchantListComponent = () => {
                 />
             )}
 
-            {showEditModal && selectedMerchant && (
-                <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center p-6 z-50">
-                    <div className="bg-white w-full max-w-md rounded-lg p-6 space-y-4">
-                        <h2 className="text-xl font-bold">Update Merchant Status</h2>
+           {showEditModal && selectedMerchant && (
+  <CreateMerchantForm
+    isEdit={true}
+    initialData={selectedMerchant}
+    onClose={() => setShowEditModal(false)}
+    onSubmit={(data) => {
+      dispatch(updateMerchantStatus(data)).then((res) => {
+        if (res.success) {
+          alert("Merchant updated successfully");
+          setShowEditModal(false);
+          dispatch(getMerchant());
+        } else {
+          alert(res.message);
+        }
+      });
+    }}
+  />
+)}
 
-                        {/* Merchant ID (readonly) */}
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Merchant ID
-                            </label>
-                            <input
-                                value={selectedMerchant.merchantId}
-                                disabled
-                                className="w-full px-4 py-2 border rounded-lg bg-gray-100"
-                            />
-                        </div>
-
-                        {/* Status */}
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Status
-                            </label>
-                            <select
-                                value={editStatus}
-                                onChange={(e) => setEditStatus(e.target.value)}
-                                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-                            >
-                                <option value="active">Active</option>
-                                <option value="inactive">Inactive</option>
-                            </select>
-                        </div>
-
-                        {/* ACTIONS */}
-                        <div className="flex justify-end gap-3 pt-4 rounded-xl">
-                            <button
-                                onClick={() => setShowEditModal(false)}
-                                className="px-4 py-2 border rounded-lg"
-                            >
-                                Cancel
-                            </button>
-
-                            <button
-                                className="px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl flex items-center"
-                                onClick={() => {
-                                    dispatch(
-                                        updateMerchantStatus({
-                                            merchantId: selectedMerchant.merchantId,
-                                            status: editStatus,
-                                        })
-                                    ).then((res) => {
-                                        if (res.success) {
-                                            alert("Status updated successfully");
-                                            setShowEditModal(false);
-                                            dispatch(getMerchant());
-                                        } else {
-                                            alert(res.message);
-                                        }
-                                    });
-                                }}
-                            >
-                                Save
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
 
         </div>
     );

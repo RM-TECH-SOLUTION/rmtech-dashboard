@@ -46,13 +46,22 @@ const Login = () => {
       const { merchant: user } = response;
       console.log(user,"useruseruserttt");
       
-      localStorage.setItem('token', user.merchant_id);
-      localStorage.setItem('user', JSON.stringify({
-        name: user.name,
-        email: user.email,
-        role: user.merchant_id == 0 ? "admin" : "merchant",
-        status:user.status
-      }));
+     localStorage.setItem("token", user.merchant_id || user.merchantId);
+
+localStorage.setItem(
+  "user",
+  JSON.stringify({
+    name: user.name,
+    email: user.email,
+    role:
+      (user.merchant_id || user.merchantId) == 0
+        ? "admin"
+        : "merchant",
+    status: user.status,
+    merchantData: user
+  })
+);
+
 
         navigate("/dashboard");
       } else {
