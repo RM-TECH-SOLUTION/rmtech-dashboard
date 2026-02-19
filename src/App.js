@@ -25,6 +25,7 @@ import Dashboard1 from './containers/Dashboard1';
 import Campaign from "./containers/Campaign"
 
 const PublicLayout = () => {
+  
   return <Outlet />;
 };
 
