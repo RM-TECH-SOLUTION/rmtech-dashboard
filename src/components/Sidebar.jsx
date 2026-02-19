@@ -12,7 +12,8 @@ import {
   Layers,
   ShoppingBag,
   Merchant,
-  X
+  X,
+  Megaphone
 } from 'lucide-react';
 
 const Sidebar = ({ isMobileOpen, toggleMobileSidebar }) => {
@@ -58,6 +59,7 @@ const Sidebar = ({ isMobileOpen, toggleMobileSidebar }) => {
   const navItemsUser = [
     { path: '/dashboard', icon: <Home size={20} />, label: 'Dashboard' },
     { path: '/dashboard/posts', icon: <FileText size={20} />, label: 'Order Status' },
+    { path: '/dashboard/campaign', icon: <Megaphone size={20} />, label: 'Campaign' },
     { path: '/dashboard/content-models', icon: <Layers size={20} />, label: 'Content Models' },
     { path: '/dashboard/catalogue', icon: <ShoppingBag size={20} />, label: 'Catalogue' },
     { path: '/dashboard/media', icon: <Image size={20} />, label: 'Media' },
@@ -68,6 +70,7 @@ const Sidebar = ({ isMobileOpen, toggleMobileSidebar }) => {
    const navItemsMerchant = [
     { path: '/dashboard', icon: <Home size={20} />, label: 'Dashboard' },
     { path: '/dashboard/posts', icon: <FileText size={20} />, label: 'Order Status' },
+    { path: '/dashboard/campaign', icon: <Megaphone size={20} />, label: 'Campaign' },
     { path: '/dashboard/merchantList', icon: <Users size={20} />, label: 'Merchants' },
     { path: '/dashboard/content-models', icon: <Layers size={20} />, label: 'Content Models' },
     { path: '/dashboard/catalogue', icon: <ShoppingBag size={20} />, label: 'Catalogue' },
