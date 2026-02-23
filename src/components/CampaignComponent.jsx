@@ -1,234 +1,228 @@
-import React, { useEffect, useState } from "react";
-import { Search } from "lucide-react";
+import React, { useEffect ,useState } from "react";
+import { Search, Smile, ChevronLeft, ChevronRight } from "lucide-react";
+import EmojiPicker from "emoji-picker-react";
 
 export default function CampaignComponent() {
 
-  /* ================= TEMPLATES ================= */
+  /* ---------------- STATES ---------------- */
 
-  const templates = [
-    {
-      name: "order_confirmation",
-      body:
-        "Hello {{1}},\nYour order {{2}} is confirmed.\nAmount: ₹{{3}}",
-      fields: ["Customer Name", "Order ID", "Amount"]
-    },
-    {
-      name: "special_offer",
-      body:
-        "Hi {{1}},\nGet {{2}}% OFF.\nValid till {{3}}",
-      fields: ["Customer Name", "Discount %", "Valid Till"]
-    }
-  ];
-
-  /* ================= STATES ================= */
-
-  const [selectedTemplate, setSelectedTemplate] = useState(templates[0]);
-  const [formValues, setFormValues] = useState({});
   const [users, setUsers] = useState([]);
-  const [selectedUsers, setSelectedUsers] = useState([]);
   const [search, setSearch] = useState("");
+  const [showEmoji, setShowEmoji] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
 
-  /* ================= LOAD USERS ================= */
+  const [message, setMessage] = useState(
+  );
+
+  // Pagination
+  const [page, setPage] = useState(0);
+  const pageSize = 8;
+
+  /* ---------------- LOAD USERS ---------------- */
 
   useEffect(() => {
     setUsers([
-      { id: 1, name: "Ramesh", phone: "919876543210" },
+      { id: 1, name: "Ram", phone: "918981937900" },
       { id: 2, name: "Suresh", phone: "919812345678" },
       { id: 3, name: "Mahesh", phone: "919800112233" },
-      { id: 4, name: "Naresh", phone: "919822334455" }
+      { id: 4, name: "Naresh", phone: "919822334455" },
+      { id: 5, name: "Ravi", phone: "919811122233" },
+      { id: 6, name: "Kiran", phone: "919833344455" },
+      { id: 7, name: "Vijay", phone: "919844455566" },
+      { id: 8, name: "Anil", phone: "919855566677" },
+      { id: 9, name: "Manoj", phone: "919866677788" },
+      { id: 10, name: "Sanjay", phone: "919877788899" }
     ]);
   }, []);
 
-  /* ================= HELPERS ================= */
-
-  const handleValueChange = (k, v) => {
-    setFormValues(p => ({ ...p, [k]: v }));
-  };
-
-  const toggleUser = (phone) => {
-    setSelectedUsers(prev =>
-      prev.includes(phone)
-        ? prev.filter(p => p !== phone)
-        : [...prev, phone]
-    );
-  };
-
-  const toggleSelectAll = () => {
-    if (selectedUsers.length === users.length) {
-      setSelectedUsers([]);
-    } else {
-      setSelectedUsers(users.map(u => u.phone));
-    }
-  };
-
-  const generatePreview = () => {
-    let msg = selectedTemplate.body;
-    selectedTemplate.fields.forEach((f, i) => {
-      msg = msg.replace(`{{${i + 1}}}`, formValues[f] || "");
-    });
-    return msg;
-  };
-
-  const sendCampaign = () => {
-    if (!selectedUsers.length)
-      return alert("Select users");
-    alert("WhatsApp sent successfully!");
-  };
+  /* ---------------- FILTER ---------------- */
 
   const filteredUsers = users.filter(u =>
     u.name.toLowerCase().includes(search.toLowerCase()) ||
     u.phone.includes(search)
   );
 
-  /* ================= UI ================= */
+  const start = page * pageSize;
+  const paginatedUsers = filteredUsers.slice(start, start + pageSize);
+
+  /* ---------------- EMOJI ---------------- */
+
+  const onEmojiClick = (emojiData) => {
+    setMessage(prev => prev + emojiData.emoji);
+  };
+
+  /* ---------------- BUILD MESSAGE ---------------- */
+
+  const buildMessage = () => {
+    if (!selectedUser) return message;
+
+    return message
+      .replace("{{1}}", selectedUser.name)
+      .replace("{{2}}", "BIG DISCOUNTS")
+      .replace("{{3}}", "50% OFF");
+  };
+
+  /* ---------------- SEND WHATSAPP ---------------- */
+
+  const sendWhatsapp = () => {
+
+    if (!selectedUser) {
+      alert("Please select a user first");
+      return;
+    }
+
+    const finalMessage = buildMessage();
+
+    // ✅ ONLY THIS — NO DOUBLE ENCODE
+    const encodedMsg = encodeURIComponent(finalMessage);
+
+    const url = `https://api.whatsapp.com/send?phone=${selectedUser.phone}&text=${encodedMsg}`;
+
+    window.open(url, "_blank");
+  };
+
+  /* ---------------- UI ---------------- */
 
   return (
     <div className="space-y-6">
-
-      {/* PAGE HEADER */}
       <div>
         <h1 className="text-2xl font-bold">WhatsApp Campaign</h1>
         <p className="text-gray-600">Send WhatsApp messages to customers</p>
       </div>
+    <div className="h-screen p-6 bg-gray-100 overflow-hidden">
+             
 
-      {/* MESSAGE SETUP */}
-      <div className="bg-white p-6 rounded-xl border">
+      <div className="grid grid-cols-2 gap-6 h-full">
 
-        <div className="grid grid-cols-2 gap-6">
+        {/* ============ LEFT PANEL ============ */}
 
-          {/* FORM */}
-          <div>
-            <h3 className="font-semibold mb-4">Message Setup</h3>
+        <div className="bg-white rounded-xl shadow flex flex-col">
 
-            <label>Template</label>
-            <select
-              className="w-full mt-1 mb-4 p-2 border rounded-lg"
-              onChange={(e) =>
-                setSelectedTemplate(
-                  templates.find(t => t.name === e.target.value)
-                )
-              }
-            >
-              {templates.map(t => (
-                <option key={t.name}>{t.name}</option>
-              ))}
-            </select>
-
-            {selectedTemplate.fields.map(f => (
-              <div key={f} className="mb-3">
-                <label>{f}</label>
-                <input
-                  className="w-full mt-1 p-2 border rounded-lg"
-                  onChange={e => handleValueChange(f, e.target.value)}
-                />
-              </div>
-            ))}
-
+          <div className="p-4 border-b">
+            <h2 className="text-xl font-bold">WhatsApp Contacts</h2>
           </div>
 
-          {/* PHONE PREVIEW */}
-          <div className="flex justify-center">
-
-            <div className="w-[280px] h-[520px] border-[6px] border-black rounded-[30px] bg-[#ece5dd] flex flex-col">
-
-              <div className="bg-[#075e54] text-white text-center py-2" style={{borderTopLeftRadius:20,borderTopRightRadius:20}}>
-                WhatsApp Preview
-              </div>
-
-              <div className="flex-1 p-4">
-                <div className="bg-[#dcf8c6] p-3 rounded-lg whitespace-pre-wrap">
-                  {generatePreview()}
-                </div>
-              </div>
-
+          {/* SEARCH */}
+          <div className="p-4 border-b">
+            <div className="relative">
+              <Search
+                size={18}
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+              />
+              <input
+                className="w-full pl-10 pr-4 py-2 border rounded-lg"
+                placeholder="Search contact..."
+                value={search}
+                onChange={(e) => {
+                  setSearch(e.target.value);
+                  setPage(0);
+                }}
+              />
             </div>
+          </div>
 
+          {/* USERS */}
+          <div className="flex-1 overflow-y-auto">
+
+            {paginatedUsers.map(u => (
+              <div
+                key={u.id}
+                onClick={() => setSelectedUser(u)}
+                className={`p-4 cursor-pointer border-b
+                  ${selectedUser?.id === u.id
+                    ? "bg-green-100"
+                    : "hover:bg-green-50"}`}
+              >
+                <div className="font-semibold">{u.name}</div>
+                <div className="text-sm text-gray-500">{u.phone}</div>
+              </div>
+            ))}
+
+          </div>
+
+          {/* PAGINATION */}
+          <div className="p-3 border-t flex justify-between items-center">
+
+            <button
+              disabled={page === 0}
+              onClick={() => setPage(p => p - 1)}
+              className="p-2 rounded hover:bg-gray-200 disabled:opacity-40"
+            >
+              <ChevronLeft />
+            </button>
+
+            <span className="text-sm">
+              Page {page + 1} of {Math.ceil(filteredUsers.length / pageSize)}
+            </span>
+
+            <button
+              disabled={(page + 1) * pageSize >= filteredUsers.length}
+              onClick={() => setPage(p => p + 1)}
+              className="p-2 rounded hover:bg-gray-200 disabled:opacity-40"
+            >
+              <ChevronRight />
+            </button>
+
+          </div>
+
+        </div>
+
+        {/* ============ RIGHT PANEL ============ */}
+
+        <div className="bg-white rounded-xl shadow flex flex-col">
+
+          <div className="p-4 border-b">
+            <h3 className="font-semibold text-lg">Message Composer</h3>
+          </div>
+
+          {/* TEXTAREA */}
+          <div className="relative p-4" style={{ height: "50%" }}>
+
+            {showEmoji && (
+              <div className="absolute bottom-16 right-4 z-50">
+                <EmojiPicker onEmojiClick={onEmojiClick} />
+              </div>
+            )}
+
+            <textarea
+              className="w-full h-full border rounded-lg p-4 resize-none"
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+            />
+
+          </div>
+
+          {/* TOOLBAR */}
+          <div className="p-3 border-t flex items-center gap-3">
+
+            <button
+              onClick={() => setShowEmoji(!showEmoji)}
+              className="p-2 rounded-full hover:bg-gray-200"
+            >
+              <Smile />
+            </button>
+
+            <span className="text-sm text-gray-500">
+              Selected: {selectedUser?.name || "None"}
+            </span>
+
+          </div>
+
+          {/* SEND */}
+          <div className="p-4">
+            <button
+              onClick={sendWhatsapp}
+              className="w-full py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+            >
+              Send WhatsApp
+            </button>
           </div>
 
         </div>
 
       </div>
 
-      {/* SELECT USERS HEADER */}
-      <div className="bg-white p-4 rounded-xl border flex justify-between items-center">
-
-        <h3 className="font-semibold">Select Users</h3>
-
-        <div className="flex items-center gap-4">
-
-          <label className="flex items-center gap-2">
-            <input type="checkbox" onChange={toggleSelectAll} />
-            Select All
-          </label>
-
-          <button
-            onClick={sendCampaign}
-            className="px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl flex items-center"
-          >
-            Send WhatsApp
-          </button>
-
-        </div>
-
-      </div>
-
-      {/* SEARCH USERS */}
-      <div className="bg-white p-4 rounded-xl border">
-
-        <div className="relative">
-
-          <Search
-            size={18}
-            className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
-          />
-
-          <input
-            className="w-full pl-10 pr-4 py-2 border rounded-lg"
-            placeholder="Search by name or phone..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-
-        </div>
-
-      </div>
-
-      {/* USERS TABLE */}
-      <div className="bg-white border rounded-xl overflow-hidden">
-
-        <table className="min-w-full divide-y">
-
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-6 py-3">Select</th>
-              <th className="px-6 py-3">Name</th>
-              <th className="px-6 py-3">Phone</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {filteredUsers.map(u => (
-              <tr key={u.id} className="hover:bg-gray-50">
-
-                <td className="px-6 py-4" style={{display:"flex",alignItems:"center",justifyContent:"center"}}>
-                  <input
-                    type="checkbox"
-                    checked={selectedUsers.includes(u.phone)}
-                    onChange={() => toggleUser(u.phone)}
-                  />
-                </td>
-
-                <td className="px-6 py-4" style={{textAlign:"center"}}>{u.name}</td>
-                <td className="px-6 py-4" style={{textAlign:"center"}}>{u.phone}</td>
-
-              </tr>
-            ))}
-          </tbody>
-
-        </table>
-
-      </div>
-
+    </div>
     </div>
   );
 }
