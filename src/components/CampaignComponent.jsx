@@ -1,4 +1,4 @@
-import React, { useEffect ,useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Search, Smile, ChevronLeft, ChevronRight } from "lucide-react";
 import EmojiPicker from "emoji-picker-react";
 
@@ -11,7 +11,21 @@ export default function CampaignComponent() {
   const [showEmoji, setShowEmoji] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
 
+  // Dynamic Buy URL
+  const [buyUrl, setBuyUrl] = useState("");
+
+  // Message Template
   const [message, setMessage] = useState(
+`The firsts are always special, like your first salary 💰, your first car 🚗 & your first date 😘
+
+Do you know what's special for us? YOUR FIRST ORDER 😍
+
+We want to make it special for you too – Get a FLAT DISCOUNT of {{2}} on your first order worth {{3}} or more, along with FREE DELIVERY 🚚
+
+Just use code: {{4}} 🎉
+
+🛒 Buy Now
+{{BUY_URL}}`
   );
 
   // Pagination
@@ -54,12 +68,11 @@ export default function CampaignComponent() {
   /* ---------------- BUILD MESSAGE ---------------- */
 
   const buildMessage = () => {
-    if (!selectedUser) return message;
-
     return message
-      .replace("{{1}}", selectedUser.name)
-      .replace("{{2}}", "BIG DISCOUNTS")
-      .replace("{{3}}", "50% OFF");
+      .replace("{{2}}", "30%")
+      .replace("{{3}}", "₹499")
+      .replace("{{4}}", "FIRST30")
+      .replace("{{BUY_URL}}", buyUrl);
   };
 
   /* ---------------- SEND WHATSAPP ---------------- */
@@ -71,38 +84,32 @@ export default function CampaignComponent() {
       return;
     }
 
-    const finalMessage = buildMessage();
+    if (!buyUrl) {
+      alert("Please enter Buy Now URL");
+      return;
+    }
 
-    // ✅ ONLY THIS — NO DOUBLE ENCODE
+    const finalMessage = buildMessage();
     const encodedMsg = encodeURIComponent(finalMessage);
 
     const url = `https://api.whatsapp.com/send?phone=${selectedUser.phone}&text=${encodedMsg}`;
-
     window.open(url, "_blank");
   };
 
   /* ---------------- UI ---------------- */
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold">WhatsApp Campaign</h1>
-        <p className="text-gray-600">Send WhatsApp messages to customers</p>
-      </div>
     <div className="h-screen p-6 bg-gray-100 overflow-hidden">
-             
 
       <div className="grid grid-cols-2 gap-6 h-full">
 
-        {/* ============ LEFT PANEL ============ */}
-
+        {/* LEFT PANEL */}
         <div className="bg-white rounded-xl shadow flex flex-col">
 
           <div className="p-4 border-b">
             <h2 className="text-xl font-bold">WhatsApp Contacts</h2>
           </div>
 
-          {/* SEARCH */}
           <div className="p-4 border-b">
             <div className="relative">
               <Search
@@ -121,7 +128,6 @@ export default function CampaignComponent() {
             </div>
           </div>
 
-          {/* USERS */}
           <div className="flex-1 overflow-y-auto">
 
             {paginatedUsers.map(u => (
@@ -140,7 +146,6 @@ export default function CampaignComponent() {
 
           </div>
 
-          {/* PAGINATION */}
           <div className="p-3 border-t flex justify-between items-center">
 
             <button
@@ -167,16 +172,28 @@ export default function CampaignComponent() {
 
         </div>
 
-        {/* ============ RIGHT PANEL ============ */}
-
+        {/* RIGHT PANEL */}
         <div className="bg-white rounded-xl shadow flex flex-col">
 
           <div className="p-4 border-b">
             <h3 className="font-semibold text-lg">Message Composer</h3>
           </div>
 
-          {/* TEXTAREA */}
-          <div className="relative p-4" style={{ height: "50%" }}>
+          {/* Buy URL Input */}
+          <div className="p-4 border-b">
+            <label className="block text-sm font-medium mb-1">
+              Buy Now URL
+            </label>
+            <input
+              type="text"
+              value={buyUrl}
+              onChange={(e) => setBuyUrl(e.target.value)}
+              placeholder="https://yourwebsite.com/product"
+              className="w-full border rounded-lg px-3 py-2"
+            />
+          </div>
+
+          <div className="relative p-4 flex-1">
 
             {showEmoji && (
               <div className="absolute bottom-16 right-4 z-50">
@@ -192,7 +209,6 @@ export default function CampaignComponent() {
 
           </div>
 
-          {/* TOOLBAR */}
           <div className="p-3 border-t flex items-center gap-3">
 
             <button
@@ -208,7 +224,6 @@ export default function CampaignComponent() {
 
           </div>
 
-          {/* SEND */}
           <div className="p-4">
             <button
               onClick={sendWhatsapp}
@@ -222,7 +237,6 @@ export default function CampaignComponent() {
 
       </div>
 
-    </div>
     </div>
   );
 }
