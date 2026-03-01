@@ -22,7 +22,12 @@ const URLS = {
   getItemVariants:BASE_URL + 'getItemVariants',
   deleteCatalogueItem:BASE_URL + 'deleteCatalogueItem',
   updateCatalogItem: BASE_URL + 'updateCatalogItem',
-  updateItemVariant:BASE_URL + 'updateItemVariant'
+  updateItemVariant:BASE_URL + 'updateItemVariant',
+  createCoupon:BASE_URL + 'create_coupon',
+  getCoupon:BASE_URL + 'get_coupons',
+  deleteCoupon:BASE_URL + 'delete_coupon',
+  saveLoyaltySettings:BASE_URL + "/save_loyalty_settings.php",
+  getLoyaltySettings:BASE_URL + "/get_loyalty_settings.php",
 };
 
 const apiClient = {

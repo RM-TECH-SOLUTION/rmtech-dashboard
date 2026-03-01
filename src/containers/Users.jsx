@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import {
   Search,
-  UserPlus,
-  Calendar
+  Calendar,
+  Coins,
+  Users as UsersIcon
 } from 'lucide-react';
 
 const Users = () => {
@@ -10,7 +11,7 @@ const Users = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
-   const token = localStorage.getItem('token');
+  const token = localStorage.getItem('token');
 
   /* ================= FETCH USERS ================= */
 
@@ -43,12 +44,10 @@ const Users = () => {
 
   /* ================= FILTER ================= */
 
-  const filteredUsers = users.filter(user => {
-    return (
-      user.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.email?.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-  });
+  const filteredUsers = users.filter(user =>
+    user.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    user.email?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   /* ================= NEW THIS MONTH ================= */
 
@@ -64,6 +63,18 @@ const Users = () => {
     );
   }).length;
 
+  /* ================= TOTAL POINTS ================= */
+
+  const totalPoints = users.reduce(
+    (sum, user) => sum + Number(user.total_points || 0),
+    0
+  );
+
+  const totalReferrals = users.reduce(
+    (sum, user) => sum + Number(user.total_referrals || 0),
+    0
+  );
+
   /* ================= BADGES ================= */
 
   const getStatusBadge = () => (
@@ -78,16 +89,13 @@ const Users = () => {
     <div className="space-y-6">
 
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Users</h1>
-          <p className="text-gray-600">Registered customers</p>
-        </div>
-
+      <div>
+        <h1 className="text-3xl font-bold text-gray-900">Users</h1>
+        <p className="text-gray-600">Registered customers</p>
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
 
         <div className="bg-white p-6 rounded-xl shadow-md">
           <div className="text-2xl font-bold">{users.length}</div>
@@ -95,34 +103,33 @@ const Users = () => {
         </div>
 
         <div className="bg-white p-6 rounded-xl shadow-md">
-          <div className="text-2xl font-bold">{users.length}</div>
-          <div className="text-gray-500">Active Users</div>
+          <div className="text-2xl font-bold">{newThisMonth}</div>
+          <div className="text-gray-500">New This Month</div>
         </div>
 
         <div className="bg-white p-6 rounded-xl shadow-md">
-          <div className="text-2xl font-bold">{newThisMonth}</div>
-          <div className="text-gray-500">New This Month</div>
+          <div className="text-2xl font-bold">{totalPoints}</div>
+          <div className="text-gray-500">Total Points Issued</div>
+        </div>
+
+        <div className="bg-white p-6 rounded-xl shadow-md">
+          <div className="text-2xl font-bold">{totalReferrals}</div>
+          <div className="text-gray-500">Total Referrals</div>
         </div>
 
       </div>
 
       {/* Search */}
       <div className="bg-white p-4 rounded-xl shadow-md">
-        <div className="flex gap-4">
-
-          <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 
-              -translate-y-1/2 text-gray-400 w-5 h-5" />
-
-            <input
-              type="text"
-              placeholder="Search by name or email..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border rounded-lg"
-            />
-          </div>
-
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+          <input
+            type="text"
+            placeholder="Search by name or email..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full pl-10 pr-4 py-2 border rounded-lg"
+          />
         </div>
       </div>
 
@@ -137,15 +144,11 @@ const Users = () => {
 
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-6 py-3 text-left" style={{fontSize:15,fontWeight:"bold"}}>
-                  User
-                </th>
-                <th className="px-6 py-3 text-left" style={{fontSize:15,fontWeight:"bold"}}>
-                  Status
-                </th>
-                <th className="px-6 py-3 text-left" style={{fontSize:15,fontWeight:"bold"}}>
-                  Joined
-                </th>
+                <th className="px-6 py-3 text-left font-bold">User</th>
+                <th className="px-6 py-3 text-left font-bold">Points</th>
+                <th className="px-6 py-3 text-left font-bold">Referrals</th>
+                <th className="px-6 py-3 text-left font-bold">Status</th>
+                <th className="px-6 py-3 text-left font-bold">Joined</th>
               </tr>
             </thead>
 
@@ -158,21 +161,31 @@ const Users = () => {
                   {/* USER */}
                   <td className="px-6 py-4">
                     <div className="flex items-center">
-
-                      <div className="w-10 h-10 bg-blue-100 rounded-full 
-                        flex items-center justify-center">
-
+                      <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
                         <span className="font-semibold text-blue-600">
                           {user.name?.charAt(0)}
                         </span>
-
                       </div>
-
                       <div className="ml-4">
                         <div className="font-medium">{user.name}</div>
                         <div className="text-gray-500">{user.email}</div>
                       </div>
+                    </div>
+                  </td>
 
+                  {/* POINTS */}
+                  <td className="px-6 py-4">
+                    <div className="flex items-center font-semibold text-yellow-600">
+                      <Coins className="w-4 h-4 mr-2" />
+                      {user.total_points || 0}
+                    </div>
+                  </td>
+
+                  {/* REFERRALS */}
+                  <td className="px-6 py-4">
+                    <div className="flex items-center font-semibold text-indigo-600">
+                      <UsersIcon className="w-4 h-4 mr-2" />
+                      {user.total_referrals || 0}
                     </div>
                   </td>
 

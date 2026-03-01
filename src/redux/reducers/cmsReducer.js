@@ -20,6 +20,15 @@ import {
   CREATE_MERCHANT_REQUEST,
   CREATE_MERCHANT_SUCCESS,
   CREATE_MERCHANT_FAILURE,
+  CREATE_COUPON_REQUEST,
+  CREATE_COUPON_SUCCESS,
+  CREATE_COUPON_FAILURE,
+  DELETE_COUPON_REQUEST,
+  DELETE_COUPON_SUCCESS,
+  DELETE_COUPON_FAILURE,
+  GET_COUPON_REQUEST,
+  GET_COUPON_SUCCESS,
+  GET_COUPON_FAILURE,
   MERCHANT_LOGIN_REQUEST,
   MERCHANT_LOGIN_SUCCESS,
   MERCHANT_LOGIN_FAILURE,
@@ -29,7 +38,13 @@ import {
   UPDATE_MERCHANT_REQUEST,
   UPDATE_MERCHANT_SUCCESS,
   UPDATE_MERCHANT_FAILURE,
-  SET_MERCHANT_STATUS
+  SET_MERCHANT_STATUS,
+  SAVE_LOYALTY_SETTINGS_REQUEST,
+  SAVE_LOYALTY_SETTINGS_SUCCESS,
+  SAVE_LOYALTY_SETTINGS_FAILURE,
+  GET_LOYALTY_SETTINGS_REQUEST,
+  GET_LOYALTY_SETTINGS_SUCCESS,
+  GET_LOYALTY_SETTINGS_FAILURE,
   
 } from "../constants/actionTypes";
 
@@ -47,7 +62,10 @@ const initialState = {
   loginMerchantData:null,
   merchantList:null,
   merchantUpdateStatus:null,
-  merchantStatus:null
+  merchantStatus:null,
+  createCouponData:null,
+  getCouponData:null,
+  loyaltySettings:null
 };
 
 
@@ -222,6 +240,70 @@ const cmsReducer = (state = initialState, action) => {
         error: action.error,
       };
 
+    case CREATE_COUPON_REQUEST:
+      return {
+        ...state,
+        loading: true,
+      };
+
+    case CREATE_COUPON_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        createCouponData: action.payload,
+      };
+      
+
+    case CREATE_COUPON_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        error: action.error,
+      };
+
+    case GET_COUPON_REQUEST:
+      return {
+        ...state,
+        loading: true,
+      };
+
+    case GET_COUPON_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        getCouponData: action.payload,
+      };
+      
+
+    case GET_COUPON_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        error: action.error,
+      };
+
+      case DELETE_COUPON_REQUEST:
+  return {
+    ...state,
+    loading: true,
+  };
+
+case DELETE_COUPON_SUCCESS:
+  return {
+    ...state,
+    loading: false,
+    getCouponData: state.getCouponData.filter(
+      (coupon) => coupon.id !== action.payload
+    ),
+  };
+
+case DELETE_COUPON_FAILURE:
+  return {
+    ...state,
+    loading: false,
+    error: action.error,
+  };
+
       // ----
 
     case MERCHANT_LOGIN_REQUEST:
@@ -295,6 +377,49 @@ const cmsReducer = (state = initialState, action) => {
           ...state,
           merchantStatus:action.payload
         }
+
+        // ================= GET LOYALTY =================
+
+case GET_LOYALTY_SETTINGS_REQUEST:
+  return {
+    ...state,
+    loading: true,
+  };
+
+case GET_LOYALTY_SETTINGS_SUCCESS:
+  return {
+    ...state,
+    loading: false,
+    loyaltySettings: action.payload,
+  };
+
+case GET_LOYALTY_SETTINGS_FAILURE:
+  return {
+    ...state,
+    loading: false,
+    error: action.error,
+  };
+
+// ================= SAVE LOYALTY =================
+
+case SAVE_LOYALTY_SETTINGS_REQUEST:
+  return {
+    ...state,
+    loading: true,
+  };
+
+case SAVE_LOYALTY_SETTINGS_SUCCESS:
+  return {
+    ...state,
+    loading: false,
+  };
+
+case SAVE_LOYALTY_SETTINGS_FAILURE:
+  return {
+    ...state,
+    loading: false,
+    error: action.error,
+  };
 
     // ---------------------------
     default:

@@ -23,6 +23,7 @@ import Home from './containers/Home';
 import './App.css';
 import Dashboard1 from './containers/Dashboard1';
 import Campaign from "./containers/Campaign"
+import Coupons from "./containers/Coupons"
 
 const PublicLayout = () => {
   
@@ -68,6 +69,7 @@ function App() {
             <Route path="merchantList" element={<MerchantListContainer/>} />
             <Route path="settings" element={<Settings />} />
              <Route path="campaign" element={<Campaign />} />
+             <Route path="coupons" element={<Coupons />} />
           </Route>
 
           <Route path="*" element={<Navigate to="/" replace />} />

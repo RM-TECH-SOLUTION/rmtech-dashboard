@@ -10,11 +10,12 @@ export default function CampaignComponent() {
   const [search, setSearch] = useState("");
   const [showEmoji, setShowEmoji] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-  // Dynamic Buy URL
+  const token = localStorage.getItem("token");
+
   const [buyUrl, setBuyUrl] = useState("");
 
-  // Message Template
   const [message, setMessage] = useState(
 `The firsts are always special, like your first salary 💰, your first car 🚗 & your first date 😘
 
@@ -28,32 +29,46 @@ Just use code: {{4}} 🎉
 {{BUY_URL}}`
   );
 
-  // Pagination
   const [page, setPage] = useState(0);
   const pageSize = 8;
 
-  /* ---------------- LOAD USERS ---------------- */
+  /* ---------------- FETCH USERS ---------------- */
 
   useEffect(() => {
-    setUsers([
-      { id: 1, name: "Ram", phone: "918981937900" },
-      { id: 2, name: "Suresh", phone: "919812345678" },
-      { id: 3, name: "Mahesh", phone: "919800112233" },
-      { id: 4, name: "Naresh", phone: "919822334455" },
-      { id: 5, name: "Ravi", phone: "919811122233" },
-      { id: 6, name: "Kiran", phone: "919833344455" },
-      { id: 7, name: "Vijay", phone: "919844455566" },
-      { id: 8, name: "Anil", phone: "919855566677" },
-      { id: 9, name: "Manoj", phone: "919866677788" },
-      { id: 10, name: "Sanjay", phone: "919877788899" }
-    ]);
-  }, []);
+    if (token) {
+      fetchUsers();
+    }
+  }, [token]);
+
+  const fetchUsers = async () => {
+    try {
+      setLoading(true);
+
+      const res = await fetch(
+        `https://api.rmtechsolution.com/getUsers.php?merchant_id=${token}`
+      );
+
+      const json = await res.json();
+
+      if (json.success) {
+        setUsers(json.users || []);
+      } else {
+        setUsers([]);
+      }
+
+    } catch (error) {
+      console.error("Error fetching users:", error);
+      setUsers([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   /* ---------------- FILTER ---------------- */
 
   const filteredUsers = users.filter(u =>
-    u.name.toLowerCase().includes(search.toLowerCase()) ||
-    u.phone.includes(search)
+    u.name?.toLowerCase().includes(search.toLowerCase()) ||
+    u.phone?.includes(search)
   );
 
   const start = page * pageSize;
@@ -99,8 +114,11 @@ Just use code: {{4}} 🎉
   /* ---------------- UI ---------------- */
 
   return (
-    <div className="h-screen p-6 bg-gray-100 overflow-hidden">
-
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-3xl font-bold text-gray-900">Campaign</h1>
+        <p className="text-gray-600"> Manage and send promotional messages to your registered customers</p>
+      </div>
       <div className="grid grid-cols-2 gap-6 h-full">
 
         {/* LEFT PANEL */}
@@ -130,7 +148,19 @@ Just use code: {{4}} 🎉
 
           <div className="flex-1 overflow-y-auto">
 
-            {paginatedUsers.map(u => (
+            {loading && (
+              <div className="p-4 text-center text-gray-500">
+                Loading users...
+              </div>
+            )}
+
+            {!loading && paginatedUsers.length === 0 && (
+              <div className="p-4 text-center text-gray-400">
+                No users found
+              </div>
+            )}
+
+            {!loading && paginatedUsers.map(u => (
               <div
                 key={u.id}
                 onClick={() => setSelectedUser(u)}
@@ -157,7 +187,7 @@ Just use code: {{4}} 🎉
             </button>
 
             <span className="text-sm">
-              Page {page + 1} of {Math.ceil(filteredUsers.length / pageSize)}
+              Page {page + 1} of {Math.max(1, Math.ceil(filteredUsers.length / pageSize))}
             </span>
 
             <button
@@ -169,7 +199,6 @@ Just use code: {{4}} 🎉
             </button>
 
           </div>
-
         </div>
 
         {/* RIGHT PANEL */}
@@ -179,7 +208,6 @@ Just use code: {{4}} 🎉
             <h3 className="font-semibold text-lg">Message Composer</h3>
           </div>
 
-          {/* Buy URL Input */}
           <div className="p-4 border-b">
             <label className="block text-sm font-medium mb-1">
               Buy Now URL
@@ -234,9 +262,7 @@ Just use code: {{4}} 🎉
           </div>
 
         </div>
-
       </div>
-
     </div>
   );
 }

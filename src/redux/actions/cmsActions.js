@@ -21,6 +21,15 @@ import {
   CREATE_MERCHANT_REQUEST,
   CREATE_MERCHANT_SUCCESS,
   CREATE_MERCHANT_FAILURE,
+  CREATE_COUPON_REQUEST,
+  CREATE_COUPON_SUCCESS,
+  CREATE_COUPON_FAILURE,
+  GET_COUPON_REQUEST,
+  GET_COUPON_SUCCESS,
+  GET_COUPON_FAILURE,
+  DELETE_COUPON_REQUEST,
+  DELETE_COUPON_SUCCESS,
+  DELETE_COUPON_FAILURE,
   MERCHANT_LOGIN_REQUEST,
   MERCHANT_LOGIN_SUCCESS,
   MERCHANT_LOGIN_FAILURE,
@@ -30,7 +39,13 @@ import {
   UPDATE_MERCHANT_REQUEST,
   UPDATE_MERCHANT_SUCCESS,
   UPDATE_MERCHANT_FAILURE,
-  SET_MERCHANT_STATUS
+  SET_MERCHANT_STATUS,
+  SAVE_LOYALTY_SETTINGS_REQUEST,
+  SAVE_LOYALTY_SETTINGS_SUCCESS,
+  SAVE_LOYALTY_SETTINGS_FAILURE,
+  GET_LOYALTY_SETTINGS_REQUEST,
+  GET_LOYALTY_SETTINGS_SUCCESS,
+  GET_LOYALTY_SETTINGS_FAILURE,
 } from '../constants/actionTypes';
 import api from '../../services/api';
 
@@ -143,6 +158,116 @@ export const createMerchant = (data) => async (dispatch) => {
   }
 };
 
+export const createCoupon = (data) => async (dispatch) => {
+  dispatch({ type: CREATE_COUPON_REQUEST });
+
+  try {
+    const response = await api.post(
+      api.Urls.createCoupon,
+      data   // ✅ send full coupon data
+    );
+
+    if (response?.success) {
+      dispatch({
+        type: CREATE_COUPON_SUCCESS,
+        payload: response,
+      });
+
+      return response;
+    } else {
+      dispatch({
+        type: CREATE_COUPON_FAILURE,
+        error: response.message || "Failed to create coupon",
+      });
+
+      return response;
+    }
+  } catch (error) {
+    dispatch({
+      type: CREATE_COUPON_FAILURE,
+      error: error.message || "Network error",
+    });
+
+    return {
+      success: false,
+      message: error.message || "Network error",
+    };
+  }
+};
+
+export const getCoupon = (merchantId) => async (dispatch) => {
+  dispatch({ type: GET_COUPON_REQUEST });
+
+  try {
+    const response = await api.get( api.Urls.getCoupon,
+     { merchantId }
+    );
+
+    if (response?.success) {
+      dispatch({
+        type: GET_COUPON_SUCCESS,
+        payload: response.data, // only coupon array
+      });
+
+      return response;
+    } else {
+      dispatch({
+        type: GET_COUPON_FAILURE,
+        error: response.message || "Failed to fetch coupons",
+      });
+
+      return response;
+    }
+  } catch (error) {
+    dispatch({
+      type: GET_COUPON_FAILURE,
+      error: error.message || "Network error",
+    });
+
+    return {
+      success: false,
+      message: error.message || "Network error",
+    };
+  }
+};
+
+export const deleteCoupon = (id) => async (dispatch) => {
+  dispatch({ type: DELETE_COUPON_REQUEST });
+
+  try {
+    const response = await api.post(
+      api.Urls.deleteCoupon,
+      { id }
+    );
+
+    if (response?.success) {
+      dispatch({
+        type: DELETE_COUPON_SUCCESS,
+        payload: id, // return deleted id
+      });
+
+      return response;
+    } else {
+      dispatch({
+        type: DELETE_COUPON_FAILURE,
+        error: response.message || "Failed to delete coupon",
+      });
+
+      return response;
+    }
+  } catch (error) {
+    dispatch({
+      type: DELETE_COUPON_FAILURE,
+      error: error.message || "Network error",
+    });
+
+    return {
+      success: false,
+      message: error.message || "Network error",
+    };
+  }
+};
+
 export const updateMerchantStatus = ({ merchantId, status }) => async (dispatch) => {
   dispatch({ type: UPDATE_MERCHANT_REQUEST });
 
@@ -180,6 +305,73 @@ export const updateMerchantStatus = ({ merchantId, status }) => async (dispatch)
       success: false,
       message: error.message || "Network error",
     };
+  }
+};
+
+export const getLoyaltySettings = (merchantId) => async (dispatch) => {
+  dispatch({ type: GET_LOYALTY_SETTINGS_REQUEST });
+
+  try {
+    const response = await api.get(
+      `${api.Urls.getLoyaltySettings}?merchant_id=${merchantId}`
+    );
+
+    if (response?.success) {
+      dispatch({
+        type: GET_LOYALTY_SETTINGS_SUCCESS,
+        payload: response.settings,
+      });
+
+      return response;
+    } else {
+      dispatch({
+        type: GET_LOYALTY_SETTINGS_FAILURE,
+        error: response.message,
+      });
+
+      return response;
+    }
+  } catch (error) {
+    dispatch({
+      type: GET_LOYALTY_SETTINGS_FAILURE,
+      error: error.message,
+    });
+
+    return { success: false, message: error.message };
+  }
+};
+
+export const saveLoyaltySettings = (data) => async (dispatch) => {
+  dispatch({ type: SAVE_LOYALTY_SETTINGS_REQUEST });
+
+  try {
+    const response = await api.post(
+      api.Urls.saveLoyaltySettings,
+      data
+    );
+
+    if (response?.success) {
+      dispatch({
+        type: SAVE_LOYALTY_SETTINGS_SUCCESS,
+        payload: response,
+      });
+
+      return response;
+    } else {
+      dispatch({
+        type: SAVE_LOYALTY_SETTINGS_FAILURE,
+        error: response.message,
+      });
+
+      return response;
+    }
+  } catch (error) {
+    dispatch({
+      type: SAVE_LOYALTY_SETTINGS_FAILURE,
+      error: error.message,
+    });
+
+    return { success: false, message: error.message };
   }
 };
 
