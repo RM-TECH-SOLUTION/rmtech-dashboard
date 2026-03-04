@@ -45,6 +45,9 @@ import {
   GET_LOYALTY_SETTINGS_REQUEST,
   GET_LOYALTY_SETTINGS_SUCCESS,
   GET_LOYALTY_SETTINGS_FAILURE,
+  COPY_CMS_REQUEST,
+  COPY_CMS_SUCCESS,
+  COPY_CMS_FAILURE
   
 } from "../constants/actionTypes";
 
@@ -65,7 +68,9 @@ const initialState = {
   merchantStatus:null,
   createCouponData:null,
   getCouponData:null,
-  loyaltySettings:null
+  loyaltySettings:null,
+  copyCmsLoading: false,
+  copyCmsResult: null,
 };
 
 
@@ -418,6 +423,27 @@ case SAVE_LOYALTY_SETTINGS_FAILURE:
   return {
     ...state,
     loading: false,
+    error: action.error,
+  };
+
+  case COPY_CMS_REQUEST:
+  return {
+    ...state,
+    copyCmsLoading: true,
+    error: null,
+  };
+
+case COPY_CMS_SUCCESS:
+  return {
+    ...state,
+    copyCmsLoading: false,
+    copyCmsResult: action.payload,
+  };
+
+case COPY_CMS_FAILURE:
+  return {
+    ...state,
+    copyCmsLoading: false,
     error: action.error,
   };
 

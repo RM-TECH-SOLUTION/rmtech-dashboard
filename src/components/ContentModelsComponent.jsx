@@ -10,6 +10,7 @@ import {
   uploadCmsImage,
   createMerchant,
   getMerchant,
+  copyCms
 } from "../redux/actions/cmsActions";
 
 import ModelCard from "./ModelCard";
@@ -44,6 +45,10 @@ const user = JSON.parse(localStorage.getItem("user"));
   const [singletonBase, setSingletonBase] = useState(null);
   const [selectedModelName, setSelectedModelName] = useState("ALL");
   const [selectedMerchantId, setSelectedMerchantId] = useState("ALL");
+
+  const [showCopyModal, setShowCopyModal] = useState(false);
+  const [sourceMerchant, setSourceMerchant] = useState("");
+  const [targetMerchant, setTargetMerchant] = useState("");
 
   // -----------------------------
   // FETCH MERCHANT LIST (ONCE)
@@ -180,16 +185,109 @@ const user = JSON.parse(localStorage.getItem("user"));
           <h1 className="text-3xl font-bold">Content Models</h1>
           <p className="text-gray-600">Manage CMS models by merchant</p>
         </div>
-        {/* {token === "0" && */}
+        {token === "0" &&
         <div className="flex gap-3">
-          <button
-            onClick={() => setMode("create")}
-            className="px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl flex items-center"
-          >
-            <Plus size={18} className="mr-2" />
-            New Model
-          </button>
-        </div>
+
+  <button
+    onClick={() => setShowCopyModal(true)}
+    className="px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl flex items-center"
+  >
+    Copy Content
+  </button>
+
+  <button
+    onClick={() => setMode("create")}
+    className="px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl flex items-center"
+  >
+    <Plus size={18} className="mr-2" />
+    New Model
+  </button>
+
+</div>}
+{showCopyModal && (
+  <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+    <div className="bg-white rounded-xl p-6 w-[400px] space-y-4">
+
+      <h2 className="text-xl font-bold">Copy CMS Content</h2>
+
+      {/* SOURCE MERCHANT */}
+      <div>
+        <label className="block text-sm font-medium mb-1">
+          Source Merchant
+        </label>
+
+        <select
+          value={sourceMerchant}
+          onChange={(e) => setSourceMerchant(e.target.value)}
+          className="w-full border px-3 py-2 rounded-lg"
+        >
+          <option value="">Select Merchant</option>
+
+          {merchantData.map((m) => (
+            <option key={m.merchantId} value={m.merchantId}>
+              {m.name} ({m.merchantId})
+            </option>
+          ))}
+        </select>
+      </div>
+
+      {/* TARGET MERCHANT */}
+      <div>
+        <label className="block text-sm font-medium mb-1">
+          Target Merchant
+        </label>
+
+        <select
+          value={targetMerchant}
+          onChange={(e) => setTargetMerchant(e.target.value)}
+          className="w-full border px-3 py-2 rounded-lg"
+        >
+          <option value="">Select Merchant</option>
+
+          {merchantData.map((m) => (
+            <option key={m.merchantId} value={m.merchantId}>
+              {m.name} ({m.merchantId})
+            </option>
+          ))}
+        </select>
+      </div>
+
+      {/* BUTTONS */}
+      <div className="flex justify-end gap-3 pt-3">
+
+        <button
+          onClick={() => setShowCopyModal(false)}
+          className="px-4 py-2 border rounded-lg"
+        >
+          Cancel
+        </button>
+
+        <button
+          onClick={() => {
+            if (!sourceMerchant || !targetMerchant) {
+              alert("Please select merchants");
+              return;
+            }
+
+            dispatch(copyCms({
+              sourceMerchantId: sourceMerchant,
+              targetMerchantId: targetMerchant
+            }));
+
+            alert("CMS copied successfully");
+
+            setShowCopyModal(false);
+          }}
+          className="px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl flex items-center"
+        >
+          Copy Content
+        </button>
+
+      </div>
+
+    </div>
+  </div>
+)}
         {/* } */}
       </div>
 

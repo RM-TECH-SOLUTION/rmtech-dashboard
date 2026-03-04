@@ -340,6 +340,7 @@ const handleSubmit = async (e) => {
               onChange={(e) =>
                 setEditField({ ...editField, fieldName: e.target.value })
               }
+              disabled={true}
             />
             <span style={{fontSize:15,fontWeight:"bold"}}>Edit Field Key</span>
             <input
@@ -349,6 +350,7 @@ const handleSubmit = async (e) => {
               onChange={(e) =>
                 setEditField({ ...editField, fieldKey: e.target.value })
               }
+              disabled={true}
             />
             <span style={{fontSize:15,fontWeight:"bold",marginTop:10}}>Edit Field Type</span>
             <select
@@ -358,6 +360,7 @@ const handleSubmit = async (e) => {
               onChange={(e) =>
                 setEditField({ ...editField, fieldType: e.target.value })
               }
+              disabled={true}
             >
               <option value="string">String</option>
               <option value="text">Text</option>

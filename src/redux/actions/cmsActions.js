@@ -46,6 +46,9 @@ import {
   GET_LOYALTY_SETTINGS_REQUEST,
   GET_LOYALTY_SETTINGS_SUCCESS,
   GET_LOYALTY_SETTINGS_FAILURE,
+  COPY_CMS_REQUEST,
+  COPY_CMS_SUCCESS,
+  COPY_CMS_FAILURE
 } from '../constants/actionTypes';
 import api from '../../services/api';
 
@@ -553,6 +556,46 @@ export const deleteModel = (data) => async (dispatch) => {
   } catch (error) {
     dispatch({
       type: DELETE_MODEL_FAILURE,
+      error: error.message || "Network error",
+    });
+
+    throw error;
+  }
+};
+
+export const copyCms = (data) => async (dispatch) => {
+  dispatch({ type: COPY_CMS_REQUEST });
+
+  try {
+    const response = await api.post(api.Urls.copyCms, {
+      ...data,
+    });
+
+    console.log(response, "copyCms response");
+
+    if (response?.success) {
+      dispatch({
+        type: COPY_CMS_SUCCESS,
+        payload: response || [],
+      });
+
+      alert(response.message);
+
+      // refresh CMS
+      dispatch(fetchCMSData());
+
+      return response;
+    } else {
+      dispatch({
+        type: COPY_CMS_FAILURE,
+        error: response.message || "Failed to copy CMS",
+      });
+
+      throw new Error(response.message || "Failed to copy CMS");
+    }
+  } catch (error) {
+    dispatch({
+      type: COPY_CMS_FAILURE,
       error: error.message || "Network error",
     });
 

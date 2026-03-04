@@ -28,6 +28,7 @@ const URLS = {
   deleteCoupon:BASE_URL + 'delete_coupon',
   saveLoyaltySettings:BASE_URL + "/save_loyalty_settings.php",
   getLoyaltySettings:BASE_URL + "/get_loyalty_settings.php",
+  copyCms:BASE_URL + "/copyCms"
 };
 
 const apiClient = {

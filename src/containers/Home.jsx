@@ -1896,8 +1896,8 @@ const Home = (props) => {
                     </div>
                     <div>
                       <h3 className="text-xl font-bold text-gray-900 mb-2">Email</h3>
-                      <p className="text-gray-600 mb-2">support@rmtechsolution.com</p>
-                      <p className="text-gray-600">rmtechsolutions@gmail.com</p>
+                      <p className="text-gray-600 mb-2">contactrmtechsolution@gmail.com</p>
+                      <p className="text-gray-600">support@rmtechsolution.com</p>
                       <p className="text-sm text-gray-500 mt-2">We'll reply within 24 hours</p>
                     </div>
                   </div>
