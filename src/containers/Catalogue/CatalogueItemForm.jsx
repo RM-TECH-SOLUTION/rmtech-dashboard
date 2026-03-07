@@ -317,7 +317,7 @@ const handleSubmit = async () => {
 
       {/* IMAGE PREVIEW */}
       {form.images.length > 0 && (
-        <div className="grid grid-cols-4 gap-4 mt-6">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mt-6">
           {form.images.map((img, i) => (
             <div key={i} className="relative">
               <img
@@ -357,10 +357,10 @@ const handleSubmit = async () => {
 
       case "SEO":
         return (
-          <>
+          <div className="space-y-4 overflow-x-hidden">
             <Input label="SEO Title" value={form.seoTitle} onChange={(v) => update("seoTitle", v)} />
             <Textarea label="SEO Description" value={form.seoDescription} onChange={(v) => update("seoDescription", v)} />
-          </>
+          </div>
         );
 
       case "Variants":
@@ -379,7 +379,7 @@ const handleSubmit = async () => {
 
                 <Input label="Variant Name" value={v.variantName} onChange={(val) => updateVariant(i, "variantName", val)} />
 
-                <div className="grid grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                   <Input label="Quantity" type="number" value={v.quantityValue} onChange={(val) => updateVariant(i, "quantityValue", val)} />
                   <Input label="SKU" value={v.sku} onChange={(val) => updateVariant(i, "sku", val)} />
                   <div style={{ display: "grid" }}>
@@ -466,32 +466,32 @@ const handleSubmit = async () => {
   if (loading) return <div className="py-10 text-center">Loading...</div>;
 
   return (
-    <div className="max-w-7xl mx-auto space-y-6">
+    <div className="max-w-7xl mx-auto space-y-4 sm:space-y-6 px-2 sm:px-4">
       {/* HEADER */}
-      <div className="flex items-center gap-3">
+      <div className="flex flex-col sm:flex-row sm:items-center gap-3">
         <Link to={`/dashboard/catalogue/${modelId}`} 
         onClick={() => dispatch(setGetItemsVariantsResponse(null))}
-        className="px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl">
+        className="px-4 sm:px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl w-fit text-sm sm:text-base">
           {"<"}
         </Link>
-        <div>
-          <h1 className="text-2xl font-bold"
-          style={{fontSize:20}}
-          >{itemId ? "Edit" : "Create New"} Item</h1>
-          <p className="text-gray-500"
-          style={{fontSize:15}}
-          >Add new item to your catalogue</p>
+        <div className="min-w-0">
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-900">
+            {itemId ? "Edit" : "Create New"} Item
+          </h1>
+          <p className="text-xs sm:text-sm text-gray-500">
+            Add new item to your catalogue
+          </p>
         </div>
       </div>
 
       {/* TABS */}
-      <div className="bg-white rounded-xl border">
-        <div className="flex border-b">
+      <div className="bg-white rounded-xl border overflow-x-auto">
+        <div className="flex border-b min-w-max md:min-w-full">
           {TABS.map((t) => (
             <button
               key={t}
               onClick={() => setActiveTab(t)}
-              className={`px-6 py-3 text-sm font-medium ${activeTab === t ? "border-b-2 border-blue-600 text-blue-600" : "text-gray-500"
+              className={`px-3 sm:px-4 md:px-6 py-3 text-xs sm:text-sm font-medium whitespace-nowrap ${activeTab === t ? "border-b-2 border-blue-600 text-blue-600" : "text-gray-500"
                 }`}
             >
               {t}
@@ -499,12 +499,12 @@ const handleSubmit = async () => {
           ))}
         </div>
 
-        <div className="grid grid-cols-12 gap-6 p-6">
-          <div className="col-span-8 space-y-4">{renderTab()}</div>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 p-3 sm:p-4 md:p-6">
+          <div className="lg:col-span-2 space-y-4">{renderTab()}</div>
 
-          <div className="col-span-4 space-y-4">
+          <div className="space-y-4">
             <Card title="Status">
-              <select value={form.status} onChange={(e) => update("status", e.target.value)} className="w-full border rounded px-3 py-2">
+              <select value={form.status} onChange={(e) => update("status", e.target.value)} className="w-full border rounded px-3 py-2 text-xs sm:text-sm">
                 <option value="draft">Draft</option>
                 <option value="active">Active</option>
                 <option value="archived">Archived</option>
@@ -529,9 +529,7 @@ const handleSubmit = async () => {
             </Card>
 
             <Card title="Actions">
-              <button onClick={handleSubmit} className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-2 rounded-xl flex justify-center gap-2"
-                style={{ alignItems: "center" }}
-              >
+              <button onClick={handleSubmit} className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-2 rounded-xl flex justify-center gap-2 items-center text-sm sm:text-base">
                 <Save size={16} /> {itemId ? "Update Item" : "Create Item"}
               </button>
             </Card>
@@ -545,31 +543,31 @@ const handleSubmit = async () => {
 /* ---------------- SMALL COMPONENTS ---------------- */
 const Input = ({ label, value, onChange, type = "text" }) => (
   <div>
-    <label className="block text-sm font-medium mb-1">{label}</label>
+    <label className="block text-xs sm:text-sm font-medium mb-1">{label}</label>
     <input
       type={type}
       value={value}
       onChange={(e) => onChange(e.target.value)}
-      className="w-full pl-5 pr-12 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+      className="w-full pl-3 sm:pl-5 pr-3 sm:pr-12 py-2 sm:py-3 border rounded-lg text-xs sm:text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none break-all"
     />
   </div>
 );
 
 const Textarea = ({ label, value, onChange }) => (
   <div>
-    <label className="block text-sm font-medium mb-1">{label}</label>
+    <label className="block text-xs sm:text-sm font-medium mb-1">{label}</label>
     <textarea
       rows={4}
       value={value}
       onChange={(e) => onChange(e.target.value)}
-      className="w-full pl-5 pr-12 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+      className="w-full pl-3 sm:pl-5 pr-3 sm:pr-12 py-2 sm:py-3 border rounded-lg text-xs sm:text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
     />
   </div>
 );
 
 const Card = ({ title, children }) => (
-  <div className="bg-gray-50 border rounded-lg p-4">
-    <h3 className="font-semibold mb-3">{title}</h3>
+  <div className="bg-gray-50 border rounded-lg p-3 sm:p-4">
+    <h3 className="font-semibold mb-3 text-sm">{title}</h3>
     {children}
   </div>
 );

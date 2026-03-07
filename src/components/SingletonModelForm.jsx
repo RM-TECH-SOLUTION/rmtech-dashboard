@@ -247,17 +247,17 @@ const SingletonModelForm = ({ baseData, onClose, setMode, lastSingletonIndex, up
   // UI
   // -------------------------------------------
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center p-6">
+    <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center p-2 sm:p-6 z-50">
       <form
         onSubmit={handleSubmit}
-        className="bg-white w-full max-w-4xl rounded-lg p-6 space-y-6"
+        className="bg-white w-full max-w-5xl rounded-lg p-4 sm:p-6 max-h-[90vh] overflow-y-auto space-y-6"
       >
-        <h2 className="text-2xl font-bold">Singleton Model</h2>
+        <h2 className="text-xl sm:text-2xl font-bold sticky top-0 bg-white py-2">Singleton Model</h2>
 
         {/* BASIC INFO */}
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
           <input
-            className="border p-2 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+            className="border p-2 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-sm"
             value={formData.merchantId}
             onChange={(e) =>
               setFormData({ ...formData, merchantId: e.target.value })
@@ -265,7 +265,7 @@ const SingletonModelForm = ({ baseData, onClose, setMode, lastSingletonIndex, up
             placeholder="Merchant ID"
           />
           <input
-            className="border p-2 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+            className="border p-2 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-sm"
             value={formData.modelName}
             onChange={(e) =>
               setFormData({ ...formData, modelName: e.target.value })
@@ -273,7 +273,7 @@ const SingletonModelForm = ({ baseData, onClose, setMode, lastSingletonIndex, up
             placeholder="Model Name"
           />
           <input
-            className="border p-2 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+            className="border p-2 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-sm"
             value={formData.modelSlug}
             onChange={(e) =>
               setFormData({ ...formData, modelSlug: e.target.value })
@@ -288,18 +288,18 @@ const SingletonModelForm = ({ baseData, onClose, setMode, lastSingletonIndex, up
           onClick={() => {
             setMode("create");
           }}
-          className="px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:shadow-lg transition-all duration-300 flex items-center shadow-lg"
+          className="px-4 sm:px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:shadow-lg transition-all duration-300 flex items-center shadow-lg text-sm sm:text-base"
         >
           ← Create Normal Model
         </button>
 
         {/* ADD COLUMN */}
-        <div className="bg-gray-100 p-4 rounded-lg">
-          <h3 className="font-semibold mb-3">Add Table Columns</h3>
+        <div className="bg-gray-100 p-3 sm:p-4 rounded-lg">
+          <h3 className="font-semibold mb-3 text-sm sm:text-base">Add Table Columns</h3>
 
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3">
             <input
-              className="border p-2 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+              className="border p-2 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-sm"
               placeholder="Field Name"
               value={newField.fieldName}
               onChange={(e) =>
@@ -307,7 +307,7 @@ const SingletonModelForm = ({ baseData, onClose, setMode, lastSingletonIndex, up
               }
             />
             <input
-              className="border p-2 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+              className="border p-2 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-sm"
               placeholder="Field Key"
               value={newField.fieldKey}
               onChange={(e) =>
@@ -315,7 +315,7 @@ const SingletonModelForm = ({ baseData, onClose, setMode, lastSingletonIndex, up
               }
             />
             <select
-              className="border p-2 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+              className="border p-2 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-sm"
               value={newField.fieldType}
               onChange={(e) =>
                 setNewField({ ...newField, fieldType: e.target.value })
@@ -334,7 +334,7 @@ const SingletonModelForm = ({ baseData, onClose, setMode, lastSingletonIndex, up
             type="button"
             onClick={handleAddField}
             style={{ marginTop: 20 }}
-            className="px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:shadow-lg transition-all duration-300 flex items-center shadow-lg"
+            className="px-4 sm:px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:shadow-lg transition-all duration-300 flex items-center shadow-lg text-sm sm:text-base"
           >
             Add Column
           </button>
@@ -342,22 +342,22 @@ const SingletonModelForm = ({ baseData, onClose, setMode, lastSingletonIndex, up
 
         {/* TABLE */}
         {formData.fields.length > 0 && (
-          <div className="bg-gray-100 p-4 rounded-lg">
-            <h3 className="font-semibold mb-3">Table Rows</h3>
+          <div className="bg-gray-100 p-3 sm:p-4 rounded-lg overflow-x-auto">
+            <h3 className="font-semibold mb-3 text-sm sm:text-base">Table Rows</h3>
 
             {/* HEADER */}
-            <div className="grid grid-cols-[repeat(auto-fit,minmax(150px,1fr))] gap-3 border-b pb-2 font-semibold">
+            <div className="grid grid-cols-[repeat(auto-fit,minmax(120px,1fr))] gap-2 sm:gap-3 border-b pb-2 font-semibold text-xs sm:text-sm">
               {formData.fields.map((f) => (
-                <div key={f.fieldKey}>{f.fieldName}</div>
+                <div key={f.fieldKey} className="truncate">{f.fieldName}</div>
               ))}
-              <div>Actions</div>
+              <div className="text-center">Actions</div>
             </div>
 
             {/* ROWS */}
             {formData.rows.map((row, rowIndex) => (
               <div
                 key={rowIndex}
-                className="grid grid-cols-[repeat(auto-fit,minmax(150px,1fr))] gap-3 py-2 border-b items-center"
+                className="grid grid-cols-[repeat(auto-fit,minmax(120px,1fr))] gap-2 sm:gap-3 py-2 border-b items-center text-xs sm:text-sm"
               >
                 {formData.fields.map((f) => (
                   <div key={f.fieldKey}>{renderCell(f, rowIndex)}</div>
@@ -366,9 +366,9 @@ const SingletonModelForm = ({ baseData, onClose, setMode, lastSingletonIndex, up
                 <button
                   type="button"
                   onClick={() => deleteRow(rowIndex)}
-                  className="text-red-600"
+                  className="text-red-600 flex justify-center"
                 >
-                  <Trash2 size={20} />
+                  <Trash2 size={18} />
                 </button>
               </div>
             ))}
@@ -376,7 +376,7 @@ const SingletonModelForm = ({ baseData, onClose, setMode, lastSingletonIndex, up
             <button
               type="button"
               onClick={addRow}
-              className="px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:shadow-lg transition-all duration-300 flex items-center shadow-lg"
+              className="px-4 sm:px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:shadow-lg transition-all duration-300 flex items-center shadow-lg text-sm sm:text-base"
               style={{ marginTop: 20 }}
             >
               + Add Row
@@ -385,11 +385,11 @@ const SingletonModelForm = ({ baseData, onClose, setMode, lastSingletonIndex, up
         )}
 
         {/* FOOTER */}
-        <div className="flex justify-end gap-3">
-          <button type="button" onClick={onClose} className="px-6 py-2 border rounded-xl">
+        <div className="flex flex-col sm:flex-row justify-end gap-2 sm:gap-3 sticky bottom-0 bg-white pt-4">
+          <button type="button" onClick={onClose} className="px-4 sm:px-6 py-2 border rounded-xl text-sm sm:text-base">
             Cancel
           </button>
-          <button type="submit" className="px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:shadow-lg transition-all duration-300 flex items-center shadow-lg">
+          <button type="submit" className="px-4 sm:px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:shadow-lg transition-all duration-300 flex items-center shadow-lg text-sm sm:text-base">
             Save Model
           </button>
         </div>

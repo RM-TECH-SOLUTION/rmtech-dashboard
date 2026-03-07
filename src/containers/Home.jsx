@@ -612,7 +612,7 @@ const Home = (props) => {
               </div>
 
               {/* Quick Stats */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-lg mx-auto lg:mx-0">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 max-w-lg mx-auto lg:mx-0">
                 {[
                   { value: '40%', label: 'Cost Saving', icon: <DollarSign className="w-5 h-5" />, color: 'from-green-500 to-teal-500' },
                   { value: '2X', label: 'Revenue Growth', icon: <TrendingUp className="w-5 h-5" />, color: 'from-blue-500 to-cyan-500' },
@@ -1183,7 +1183,7 @@ const Home = (props) => {
                         </div>
 
                         {/* Stats Grid */}
-                        <div className="grid grid-cols-2 gap-4 mb-6">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
                           {[
                             { label: 'Total Posts', value: '1,234', color: 'bg-blue-500' },
                             { label: 'Active Users', value: '567', color: 'bg-green-500' },
@@ -1361,7 +1361,7 @@ const Home = (props) => {
               <h3 className="text-2xl font-bold text-gray-900 mb-2">Full Platform Support</h3>
               <p className="text-gray-600">All solutions work seamlessly across devices</p>
             </div>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
               {[
                 { icon: <Monitor className="w-8 h-8" />, label: 'Web', description: 'Desktop & Tablet' },
                 { icon: <Smartphone className="w-8 h-8" />, label: 'Mobile', description: 'iOS & Android' },
@@ -1485,7 +1485,7 @@ const Home = (props) => {
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       {[1, 2, 3, 4].map((item) => (
                         <div
                           key={item}
@@ -1538,7 +1538,7 @@ const Home = (props) => {
             </div>
 
             {/* Success Metrics */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto">
               {successMetrics.map((metric, index) => (
                 <div
                   key={index}
@@ -1885,42 +1885,42 @@ const Home = (props) => {
             </p>
           </div>
 
-          <div className="max-w-4xl mx-auto">
-            <div className="bg-white rounded-3xl shadow-2xl p-8 border border-gray-100">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="max-w-4xl mx-auto px-2 sm:px-4">
+            <div className="bg-white rounded-3xl shadow-2xl p-4 sm:p-6 md:p-8 border border-gray-100">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 md:gap-8">
                 {/* Left Column - Contact Info */}
-                <div className="space-y-8">
-                  <div className="flex items-start space-x-6 p-6 bg-blue-50 rounded-2xl">
-                    <div className="w-14 h-14 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center flex-shrink-0">
-                      <Mail className="w-7 h-7 text-white" />
+                <div className="space-y-4 sm:space-y-6 md:space-y-8">
+                  <div className="flex items-start space-x-3 sm:space-x-4 md:space-x-6 p-4 sm:p-5 md:p-6 bg-blue-50 rounded-2xl">
+                    <div className="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center flex-shrink-0">
+                      <Mail className="w-6 sm:w-7 h-6 sm:h-7 text-white" />
                     </div>
-                    <div>
-                      <h3 className="text-xl font-bold text-gray-900 mb-2">Email</h3>
-                      <p className="text-gray-600 mb-2">contactrmtechsolution@gmail.com</p>
-                      <p className="text-gray-600">support@rmtechsolution.com</p>
-                      <p className="text-sm text-gray-500 mt-2">We'll reply within 24 hours</p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start space-x-6 p-6 bg-purple-50 rounded-2xl">
-                    <div className="w-14 h-14 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl flex items-center justify-center flex-shrink-0">
-                      <Phone className="w-7 h-7 text-white" />
-                    </div>
-                    <div>
-                      <h3 className="text-xl font-bold text-gray-900 mb-2">Phone</h3>
-                      <p className="text-gray-600 mb-2">+91 8777370341 / 7013608102</p>
-                      <p className="text-sm text-gray-500">Mon-Fri: 9 AM - 6 PM IST</p>
+                    <div className="min-w-0">
+                      <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2">Email</h3>
+                      <p className="text-sm sm:text-gray-600 mb-2 break-all">contactrmtechsolution@gmail.com</p>
+                      <p className="text-sm sm:text-gray-600 break-all">support@rmtechsolution.com</p>
+                      <p className="text-xs sm:text-sm text-gray-500 mt-2">We'll reply within 24 hours</p>
                     </div>
                   </div>
 
-                  <div className="flex items-start space-x-6 p-6 bg-green-50 rounded-2xl">
-                    <div className="w-14 h-14 bg-gradient-to-r from-green-500 to-teal-500 rounded-xl flex items-center justify-center flex-shrink-0">
-                      <Building className="w-7 h-7 text-white" />
+                  <div className="flex items-start space-x-3 sm:space-x-4 md:space-x-6 p-4 sm:p-5 md:p-6 bg-purple-50 rounded-2xl">
+                    <div className="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl flex items-center justify-center flex-shrink-0">
+                      <Phone className="w-6 sm:w-7 h-6 sm:h-7 text-white" />
                     </div>
-                    <div>
-                      <h3 className="text-xl font-bold text-gray-900 mb-2">Company</h3>
-                      <p className="text-gray-600 mb-1">RM Tech Solution</p>
-                      <p className="text-sm text-gray-500">Registered Digital Agency</p>
+                    <div className="min-w-0">
+                      <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2">Phone</h3>
+                      <p className="text-sm sm:text-gray-600 mb-2 break-all">+91 8777370341 / 7013608102</p>
+                      <p className="text-xs sm:text-sm text-gray-500">Mon-Fri: 9 AM - 6 PM IST</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start space-x-3 sm:space-x-4 md:space-x-6 p-4 sm:p-5 md:p-6 bg-green-50 rounded-2xl">
+                    <div className="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-r from-green-500 to-teal-500 rounded-xl flex items-center justify-center flex-shrink-0">
+                      <Building className="w-6 sm:w-7 h-6 sm:h-7 text-white" />
+                    </div>
+                    <div className="min-w-0">
+                      <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2">Company</h3>
+                      <p className="text-sm sm:text-gray-600 mb-1 break-all">RM Tech Solution</p>
+                      <p className="text-xs sm:text-sm text-gray-500">Registered Digital Agency</p>
                     </div>
                   </div>
 

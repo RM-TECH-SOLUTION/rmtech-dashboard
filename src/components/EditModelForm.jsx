@@ -205,17 +205,16 @@ const handleSubmit = async (e) => {
 
   return (
     <div 
-    className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center p-4"
-    
+    className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center p-4 z-50"
     >
       <form
         onSubmit={handleSubmit}
-        className="bg-white w-full max-w-3xl rounded-lg p-6 space-y-6"
+        className="bg-white w-full max-w-5xl max-h-[90vh] overflow-y-auto rounded-lg p-4 sm:p-6 space-y-6"
       >
-        <h2 className="text-xl font-semibold">Edit Model</h2>
+        <h2 className="text-xl sm:text-2xl font-bold sticky top-0 bg-white py-2">Edit Model</h2>
 
         {/* BASIC INFO (READ ONLY) */}
-        <div className="grid grid-cols-3 gap-4 opacity-60 cursor-not-allowed">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 opacity-60 cursor-not-allowed">
           <input className="border p-2 rounded" value={formData.merchantId} disabled />
           <input className="border p-2 rounded" value={formData.modelName} disabled />
           <input className="border p-2 rounded" value={formData.modelSlug} disabled />

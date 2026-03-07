@@ -97,23 +97,23 @@ const ContentItemForm = () => {
   }
 
   return (
-    <div className="max-w-4xl mx-auto">
+    <div className="max-w-4xl mx-auto px-2 sm:px-4 md:px-6">
       {/* Header */}
-      <div className="mb-8">
+      <div className="mb-6 sm:mb-8">
         <div className="flex items-center mb-4">
           <Link
             to={`/content-models/${modelSlug}`}
-            className="text-blue-600 hover:text-blue-800 mr-3"
+            className="text-blue-600 hover:text-blue-800 mr-3 flex-shrink-0"
           >
             <ArrowLeft size={20} />
           </Link>
-          <div className="flex items-center">
-            <div className="text-2xl mr-3">{model.icon}</div>
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900">
+          <div className="flex items-center min-w-0">
+            <div className="text-xl sm:text-2xl mr-2 sm:mr-3 flex-shrink-0">{model.icon}</div>
+            <div className="min-w-0">
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 truncate">
                 {itemId ? `Edit ${model.name}` : `Create ${model.name}`}
               </h1>
-              <p className="text-gray-600">
+              <p className="text-sm sm:text-base text-gray-600">
                 {itemId ? 'Update item details' : 'Add new content item'}
               </p>
             </div>
@@ -122,7 +122,7 @@ const ContentItemForm = () => {
       </div>
 
       {/* Form */}
-      <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-sm border p-6 space-y-6">
+      <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-sm border p-4 sm:p-6 max-h-[90vh] overflow-y-auto space-y-6">
         {model.fields.map(field => (
           <div key={field.key} className="space-y-2">
             <label className="block text-sm font-medium text-gray-700">
@@ -137,17 +137,17 @@ const ContentItemForm = () => {
         ))}
 
         {/* Form Actions */}
-        <div className="flex justify-end space-x-4 pt-6 border-t">
+        <div className="flex flex-col sm:flex-row justify-end gap-2 sm:gap-4 pt-4 sm:pt-6 border-t sticky bottom-0 bg-white">
           <Link
             to={`/content-models/${modelSlug}`}
-            className="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 flex items-center"
+            className="px-4 sm:px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 flex items-center justify-center sm:justify-start text-sm sm:text-base"
           >
             <X size={18} className="mr-2" />
             Cancel
           </Link>
           <button
             type="submit"
-            className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center"
+            className="px-4 sm:px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center justify-center sm:justify-start text-sm sm:text-base"
           >
             <Save size={18} className="mr-2" />
             {itemId ? 'Update Item' : 'Create Item'}

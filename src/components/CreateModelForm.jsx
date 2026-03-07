@@ -204,15 +204,15 @@ const handleSubmit = async (e) => {
   // JSX UI
   // ----------------------------------------------------
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center p-6">
+    <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center p-4 z-50">
       <form
         onSubmit={handleSubmit}
-        className="bg-white w-full max-w-4xl rounded-lg p-6 space-y-6"
+        className="bg-white w-full max-w-5xl max-h-[90vh] overflow-y-auto rounded-lg p-4 sm:p-6 space-y-6"
       >
-        <h2 className="text-2xl font-bold">Create Model</h2>
+        <h2 className="text-xl sm:text-2xl font-bold sticky top-0 bg-white py-2">Create Model</h2>
 
         {/* BASIC INFO */}
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <input
             className="border p-2 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
             placeholder="Merchant ID"
@@ -256,7 +256,7 @@ const handleSubmit = async (e) => {
         <div className="bg-gray-100 p-4 rounded-lg">
           <h3 className="font-semibold mb-3">Add Fields</h3>
 
-          <div className="grid grid-cols-4 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
             <input
               className="border p-2 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
               placeholder="Field Name"
@@ -310,18 +310,18 @@ const handleSubmit = async (e) => {
   <div className="mt-4 border rounded-lg p-4">
     <h3 className="font-semibold mb-3">Fields List</h3>
 
-    <div className="grid grid-cols-5 font-semibold border-b pb-2">
+    <div className="hidden md:grid grid-cols-5 font-semibold border-b pb-2 gap-4">
       <div>Field Name</div>
       <div>Key</div>
       <div>Type</div>
       <div>Value</div>
-      <div>Actions</div>
+      <div className="text-right">Actions</div>
     </div>
 
     {formData.fields.map((f, idx) => (
       <div
         key={idx}
-        className="grid grid-cols-5 py-2 border-b items-center"
+        className="hidden md:grid grid-cols-5 py-2 border-b items-center gap-4"
       >
         <div>{f.fieldName}</div>
         <div>{f.fieldKey}</div>
@@ -339,7 +339,7 @@ const handleSubmit = async (e) => {
 </div>
 
         {/* ACTION BUTTONS */}
-        <div className="flex gap-3">
+        <div className="flex gap-2 justify-end">
           {/* EDIT ICON */}
           <button
             type="button"
@@ -375,8 +375,27 @@ const handleSubmit = async (e) => {
 )}
 
 
+        {/* MOBILE FIELD LIST */}
+        <div className="md:hidden space-y-3">
+          {formData.fields.map((f, idx) => (
+            <div key={idx} className="border rounded-lg p-3 bg-gray-50 space-y-2">
+              <div className="font-medium text-sm">{f.fieldName}</div>
+              <div className="text-xs text-gray-600">Key: {f.fieldKey}</div>
+              <div className="text-xs text-gray-600">Type: {f.fieldType}</div>
+              <div className="flex gap-2 justify-end">
+                <button type="button" className="text-blue-600 hover:bg-blue-100 p-2 rounded" onClick={() => { setNewField(f); setFormData(prev => ({ ...prev, fields: prev.fields.filter((_, i) => i !== idx) })); }}>
+                  <Edit size={16} />
+                </button>
+                <button type="button" className="text-red-600 hover:bg-red-100 p-2 rounded" onClick={() => setFormData(prev => ({ ...prev, fields: prev.fields.filter((_, i) => i !== idx) }))}>
+                  <Trash2 size={16} />
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+
         {/* FOOTER BUTTONS */}
-        <div className="flex justify-end gap-4">
+        <div className="flex flex-col sm:flex-row justify-end gap-3 sticky bottom-0 bg-white pt-4">
           <button type="button" onClick={onClose} className="px-6 py-2 border rounded-xl">
             Cancel
           </button>

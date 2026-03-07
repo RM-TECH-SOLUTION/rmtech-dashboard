@@ -218,39 +218,39 @@ const EditSingletonModelForm = ({ model, onClose, deleteCms }) => {
   // UI
   // -------------------------------
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center p-6">
+    <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center p-2 sm:p-6 z-50">
       <form
         onSubmit={handleSubmit}
-        className="bg-white w-full max-w-4xl rounded-lg p-6 space-y-6"
+        className="bg-white w-full max-w-5xl rounded-lg p-4 sm:p-6 max-h-[90vh] overflow-y-auto space-y-6"
       >
-        <h2 className="text-2xl font-bold">Edit Singleton Model</h2>
+        <h2 className="text-xl sm:text-2xl font-bold sticky top-0 bg-white py-2">Edit Singleton Model</h2>
 
-         <div className="grid grid-cols-3 gap-4 opacity-60 cursor-not-allowed">
-          <input className="border p-2 rounded" value={model.merchantId} disabled />
-          <input className="border p-2 rounded" value={model.modelName} disabled />
-          <input className="border p-2 rounded" value={model.modelSlug} disabled />
+         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 opacity-60 cursor-not-allowed">
+          <input className="border p-2 rounded text-sm" value={model.merchantId} disabled />
+          <input className="border p-2 rounded text-sm" value={model.modelName} disabled />
+          <input className="border p-2 rounded text-sm" value={model.modelSlug} disabled />
         </div>
 
-        <div className="space-y-4 max-h-[400px] overflow-y-auto">
+        <div className="space-y-4">
           {rows.map((row, rowIndex) => (
             <div
               key={row.singletonModelIndex}
-              className="border p-4 rounded-lg bg-gray-50 relative"
+              className="border p-3 sm:p-4 rounded-lg bg-gray-50 relative"
             >
               <button
                 type="button"
                 onClick={() =>
                   handleDeleteRow(row.singletonModelIndex)
                 }
-                className="absolute top-3 right-3 text-red-600"
+                className="absolute top-2 sm:top-3 right-2 sm:right-3 text-red-600 flex-shrink-0"
               >
                 <Trash2 size={18} />
               </button>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 pr-10">
                 {structureFields.map((field) => (
                   <div key={field.fieldKey}>
-                    <label className="block text-sm font-medium mb-1">
+                    <label className="block text-xs sm:text-sm font-medium mb-1">
                       {field.fieldName}
                     </label>
                     {renderInput(field, rowIndex)}
@@ -261,17 +261,17 @@ const EditSingletonModelForm = ({ model, onClose, deleteCms }) => {
           ))}
         </div>
 
-        <div className="flex justify-end gap-3">
+        <div className="flex flex-col sm:flex-row justify-end gap-2 sm:gap-3 sticky bottom-0 bg-white pt-4">
           <button
             type="button"
             onClick={onClose}
-            className="px-6 py-2 border rounded-xl"
+            className="px-4 sm:px-6 py-2 border rounded-xl text-sm sm:text-base"
           >
             Cancel
           </button>
           <button
             type="submit"
-            className="px-6 py-2 bg-blue-600 text-white rounded-xl"
+            className="px-4 sm:px-6 py-2 bg-blue-600 text-white rounded-xl text-sm sm:text-base"
           >
             Save Changes
           </button>

@@ -116,10 +116,10 @@ Just use code: {{4}} 🎉
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">Campaign</h1>
-        <p className="text-gray-600"> Manage and send promotional messages to your registered customers</p>
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Campaign</h1>
+        <p className="text-gray-600 text-sm sm:text-base"> Manage and send promotional messages to your registered customers</p>
       </div>
-      <div className="grid grid-cols-2 gap-6 h-full">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 min-h-[600px]">
 
         {/* LEFT PANEL */}
         <div className="bg-white rounded-xl shadow flex flex-col">

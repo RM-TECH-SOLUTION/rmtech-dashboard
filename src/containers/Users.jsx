@@ -134,21 +134,21 @@ const Users = () => {
       </div>
 
       {/* Table */}
-      <div className="bg-white rounded-xl shadow-md overflow-hidden">
+      <div className="bg-white rounded-xl shadow-md overflow-hidden overflow-x-auto">
 
         {loading ? (
           <div className="p-6 text-center">Loading users...</div>
         ) : (
 
-          <table className="min-w-full divide-y divide-gray-200">
+          <table className="w-full divide-y divide-gray-200">
 
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-6 py-3 text-left font-bold">User</th>
-                <th className="px-6 py-3 text-left font-bold">Points</th>
-                <th className="px-6 py-3 text-left font-bold">Referrals</th>
-                <th className="px-6 py-3 text-left font-bold">Status</th>
-                <th className="px-6 py-3 text-left font-bold">Joined</th>
+                <th className="px-2 sm:px-4 md:px-6 py-3 text-left font-bold text-xs sm:text-sm">User</th>
+                <th className="px-2 sm:px-4 md:px-6 py-3 text-left font-bold text-xs sm:text-sm">Points</th>
+                <th className="px-2 sm:px-4 md:px-6 py-3 text-left font-bold text-xs sm:text-sm">Referrals</th>
+                <th className="px-2 sm:px-4 md:px-6 py-3 text-left font-bold text-xs sm:text-sm">Status</th>
+                <th className="px-2 sm:px-4 md:px-6 py-3 text-left font-bold text-xs sm:text-sm">Joined</th>
               </tr>
             </thead>
 
@@ -159,46 +159,46 @@ const Users = () => {
                 <tr key={user.id} className="hover:bg-gray-50">
 
                   {/* USER */}
-                  <td className="px-6 py-4">
-                    <div className="flex items-center">
-                      <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                        <span className="font-semibold text-blue-600">
+                  <td className="px-2 sm:px-4 md:px-6 py-3 sm:py-4">
+                    <div className="flex items-center gap-2 sm:gap-4">
+                      <div className="w-8 sm:w-10 h-8 sm:h-10 bg-blue-100 rounded-full flex-shrink-0 flex items-center justify-center">
+                        <span className="font-semibold text-blue-600 text-xs sm:text-sm">
                           {user.name?.charAt(0)}
                         </span>
                       </div>
-                      <div className="ml-4">
-                        <div className="font-medium">{user.name}</div>
-                        <div className="text-gray-500">{user.email}</div>
+                      <div className="min-w-0 flex-1">
+                        <div className="font-medium text-xs sm:text-sm truncate">{user.name}</div>
+                        <div className="text-gray-500 text-xs truncate">{user.email}</div>
                       </div>
                     </div>
                   </td>
 
                   {/* POINTS */}
-                  <td className="px-6 py-4">
-                    <div className="flex items-center font-semibold text-yellow-600">
-                      <Coins className="w-4 h-4 mr-2" />
-                      {user.total_points || 0}
+                  <td className="px-2 sm:px-4 md:px-6 py-3 sm:py-4">
+                    <div className="flex items-center font-semibold text-yellow-600 text-xs sm:text-sm">
+                      <Coins className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 flex-shrink-0" />
+                      <span className="truncate">{user.total_points || 0}</span>
                     </div>
                   </td>
 
                   {/* REFERRALS */}
-                  <td className="px-6 py-4">
-                    <div className="flex items-center font-semibold text-indigo-600">
-                      <UsersIcon className="w-4 h-4 mr-2" />
-                      {user.total_referrals || 0}
+                  <td className="px-2 sm:px-4 md:px-6 py-3 sm:py-4">
+                    <div className="flex items-center font-semibold text-indigo-600 text-xs sm:text-sm">
+                      <UsersIcon className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 flex-shrink-0" />
+                      <span className="truncate">{user.total_referrals || 0}</span>
                     </div>
                   </td>
 
                   {/* STATUS */}
-                  <td className="px-6 py-4">
+                  <td className="px-2 sm:px-4 md:px-6 py-3 sm:py-4">
                     {getStatusBadge()}
                   </td>
 
                   {/* JOINED */}
-                  <td className="px-6 py-4 text-gray-500">
-                    <div className="flex items-center">
-                      <Calendar className="w-4 h-4 mr-2" />
-                      {user.created_at?.split(" ")[0]}
+                  <td className="px-2 sm:px-4 md:px-6 py-3 sm:py-4 text-gray-500">
+                    <div className="flex items-center text-xs sm:text-sm gap-1">
+                      <Calendar className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
+                      <span className="truncate">{user.created_at?.split(" ")[0]}</span>
                     </div>
                   </td>
 

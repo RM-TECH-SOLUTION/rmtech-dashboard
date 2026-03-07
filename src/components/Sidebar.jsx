@@ -21,8 +21,8 @@ const Sidebar = ({ isMobileOpen, toggleMobileSidebar }) => {
   const [collapsed, setCollapsed] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-  const user = JSON.parse(localStorage.getItem('user')) || { name: 'Admin', email: 'admin@rmtechsolution.com' };
-  const token = JSON.parse(localStorage.getItem('token'))
+  const user = { name: 'Admin', email: 'admin@rmtechsolution.com', ...JSON.parse(localStorage.getItem('user') || '{}') };
+  const token = localStorage.getItem('token');
 
   console.log(user,"useruseruserhhhh");
   
@@ -117,8 +117,10 @@ const Sidebar = ({ isMobileOpen, toggleMobileSidebar }) => {
         inset-y-0 left-0 z-50
         bg-gray-900 text-white flex flex-col transition-all duration-300
         ${isMobileOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
-        ${collapsed ? 'w-20' : 'w-64'}
+        ${collapsed ? 'w-16 md:w-20' : 'w-56 md:w-64'}
         h-screen
+        max-h-screen
+        overflow-y-auto
       `}>
         {/* Logo & Close Button for Mobile */}
         <div className="p-6 border-b border-gray-800">

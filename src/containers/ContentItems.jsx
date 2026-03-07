@@ -195,26 +195,26 @@ const ContentItems = () => {
           </div>
 
           {/* Items Grid/Table */}
-          <div className="bg-white rounded-xl shadow-sm border overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
+          <div className="bg-white rounded-xl shadow-sm border overflow-hidden overflow-x-auto">
+            <div className="min-w-full">
+              <table className="w-full divide-y divide-gray-200">
                 <thead className="bg-gray-50">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                    <th className="px-2 sm:px-4 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                       ID
                     </th>
                     {model.fields.slice(0, 3).map(field => (
-                      <th key={field.key} className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                      <th key={field.key} className="px-2 sm:px-4 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                         {field.name}
                       </th>
                     ))}
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                    <th className="px-2 sm:px-4 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                       Created
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                    <th className="px-2 sm:px-4 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                       Status
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                    <th className="px-2 sm:px-4 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                       Actions
                     </th>
                   </tr>
@@ -222,48 +222,48 @@ const ContentItems = () => {
                 <tbody className="divide-y divide-gray-200">
                   {items.map(item => (
                     <tr key={item.id} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 text-gray-500">#{item.id}</td>
+                      <td className="px-2 sm:px-4 md:px-6 py-3 sm:py-4 text-gray-500 text-xs sm:text-sm">#{item.id}</td>
                       {model.fields.slice(0, 3).map(field => (
-                        <td key={field.key} className="px-6 py-4">
+                        <td key={field.key} className="px-2 sm:px-4 md:px-6 py-3 sm:py-4 text-xs sm:text-sm">
                           <FieldValue field={field} value={item[field.key]} />
                         </td>
                       ))}
-                      <td className="px-6 py-4 text-gray-500">
-                        <div className="flex items-center">
-                          <Calendar size={14} className="mr-2" />
-                          {item.createdAt}
+                      <td className="px-2 sm:px-4 md:px-6 py-3 sm:py-4 text-gray-500 text-xs sm:text-sm">
+                        <div className="flex items-center gap-1">
+                          <Calendar size={14} className="flex-shrink-0" />
+                          <span className="truncate">{item.createdAt}</span>
                         </div>
                       </td>
-                      <td className="px-6 py-4">
+                      <td className="px-2 sm:px-4 md:px-6 py-3 sm:py-4">
                         {item.isActive !== undefined ? (
                           item.isActive ? (
-                            <span className="inline-flex items-center px-2 py-1 text-xs bg-green-100 text-green-800 rounded-full">
+                            <span className="inline-flex items-center px-2 py-1 text-xs bg-green-100 text-green-800 rounded-full whitespace-nowrap">
                               <CheckCircle size={12} className="mr-1" />
                               Active
                             </span>
                           ) : (
-                            <span className="inline-flex items-center px-2 py-1 text-xs bg-red-100 text-red-800 rounded-full">
+                            <span className="inline-flex items-center px-2 py-1 text-xs bg-red-100 text-red-800 rounded-full whitespace-nowrap">
                               <XCircle size={12} className="mr-1" />
                               Inactive
                             </span>
                           )
                         ) : (
-                          <span className="px-2 py-1 text-xs bg-gray-100 text-gray-800 rounded-full">
+                          <span className="px-2 py-1 text-xs bg-gray-100 text-gray-800 rounded-full whitespace-nowrap">
                             N/A
                           </span>
                         )}
                       </td>
-                      <td className="px-6 py-4">
-                        <div className="flex space-x-2">
+                      <td className="px-2 sm:px-4 md:px-6 py-3 sm:py-4">
+                        <div className="flex gap-1 sm:gap-2">
                           <Link
                             to={`/content-models/${modelSlug}/edit/${item.id}`}
-                            className="p-1 text-blue-600 hover:bg-blue-50 rounded"
+                            className="p-1 text-blue-600 hover:bg-blue-50 rounded flex-shrink-0"
                           >
                             <Edit size={16} />
                           </Link>
                           <button
                             onClick={() => handleDeleteItem(item.id)}
-                            className="p-1 text-red-600 hover:bg-red-50 rounded"
+                            className="p-1 text-red-600 hover:bg-red-50 rounded flex-shrink-0"
                           >
                             <Trash2 size={16} />
                           </button>

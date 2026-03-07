@@ -131,17 +131,17 @@ const CouponsComponent = () => {
   );
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-4 sm:space-y-6 md:space-y-8 px-2 sm:px-4">
         {/* ================= HEADER ================= */}
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Coupons and Loyalty</h1>
-          <p className="text-gray-600">Manage discount coupons and Loyalty Settings</p>
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4">
+        <div className="min-w-0">
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900">Coupons and Loyalty</h1>
+          <p className="text-xs sm:text-sm md:text-base text-gray-600">Manage discount coupons and Loyalty Settings</p>
         </div>
 
         <button
           onClick={() => setShowModal(true)}
-          className="px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl"
+          className="px-3 sm:px-4 md:px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl text-xs sm:text-sm md:text-base whitespace-nowrap flex-shrink-0"
         >
           + Create Coupon
         </button>
@@ -149,14 +149,14 @@ const CouponsComponent = () => {
 
        {/* ================= LOYALTY SETTINGS ================= */}
 
-      <div className="bg-white rounded-xl shadow-md p-6">
-  <h2 className="text-2xl font-bold mb-6">Loyalty Settings</h2>
+      <div className="bg-white rounded-xl shadow-md p-3 sm:p-4 md:p-6">
+  <h2 className="text-lg sm:text-xl md:text-2xl font-bold mb-4 sm:mb-6">Loyalty Settings</h2>
 
-  <div className="grid grid-cols-2 gap-6">
+  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 md:gap-6">
 
     {/* Spend Rule */}
     <div>
-      <label className="block text-sm font-semibold mb-2">
+      <label className="block text-xs sm:text-sm font-semibold mb-2">
         Spend Amount (₹)
       </label>
       <input
@@ -168,12 +168,12 @@ const CouponsComponent = () => {
             spend_amount: e.target.value,
           })
         }
-        className="w-full border p-2 rounded-lg"
+        className="w-full border p-2 sm:p-3 rounded-lg text-xs sm:text-sm"
       />
     </div>
 
     <div>
-      <label className="block text-sm font-semibold mb-2">
+      <label className="block text-xs sm:text-sm font-semibold mb-2">
         Reward Points
       </label>
       <input
@@ -185,13 +185,13 @@ const CouponsComponent = () => {
             reward_points: e.target.value,
           })
         }
-        className="w-full border p-2 rounded-lg"
+        className="w-full border p-2 sm:p-3 rounded-lg text-xs sm:text-sm"
       />
     </div>
 
     {/* Referral Settings */}
     <div>
-      <label className="block text-sm font-semibold mb-2">
+      <label className="block text-xs sm:text-sm font-semibold mb-2">
         New User Referral Points
       </label>
       <input
@@ -203,12 +203,12 @@ const CouponsComponent = () => {
             referral_new_user_points: e.target.value,
           })
         }
-        className="w-full border p-2 rounded-lg"
+        className="w-full border p-2 sm:p-3 rounded-lg text-xs sm:text-sm"
       />
     </div>
 
     <div>
-      <label className="block text-sm font-semibold mb-2">
+      <label className="block text-xs sm:text-sm font-semibold mb-2">
         Referrer Reward Points
       </label>
       <input
@@ -220,13 +220,13 @@ const CouponsComponent = () => {
             referral_referrer_points: e.target.value,
           })
         }
-        className="w-full border p-2 rounded-lg"
+        className="w-full border p-2 sm:p-3 rounded-lg text-xs sm:text-sm"
       />
     </div>
 
     {/* Point Value */}
     <div>
-      <label className="block text-sm font-semibold mb-2">
+      <label className="block text-xs sm:text-sm font-semibold mb-2">
         1 Point Value (₹)
       </label>
       <input
@@ -239,13 +239,13 @@ const CouponsComponent = () => {
             point_value: e.target.value,
           })
         }
-        className="w-full border p-2 rounded-lg"
+        className="w-full border p-2 sm:p-3 rounded-lg text-xs sm:text-sm"
       />
     </div>
 
     {/* Redeem Settings */}
     <div>
-      <label className="block text-sm font-semibold mb-2">
+      <label className="block text-xs sm:text-sm font-semibold mb-2">
         Minimum Redeem Points
       </label>
       <input
@@ -257,12 +257,12 @@ const CouponsComponent = () => {
             min_redeem_points: e.target.value,
           })
         }
-        className="w-full border p-2 rounded-lg"
+        className="w-full border p-2 sm:p-3 rounded-lg text-xs sm:text-sm"
       />
     </div>
 
     <div>
-      <label className="block text-sm font-semibold mb-2">
+      <label className="block text-xs sm:text-sm font-semibold mb-2">
         Maximum Redeem Points
       </label>
       <input
@@ -274,12 +274,12 @@ const CouponsComponent = () => {
             max_redeem_points: e.target.value,
           })
         }
-        className="w-full border p-2 rounded-lg"
+        className="w-full border p-2 sm:p-3 rounded-lg text-xs sm:text-sm"
       />
     </div>
 
     <div>
-      <label className="block text-sm font-semibold mb-2">
+      <label className="block text-xs sm:text-sm font-semibold mb-2">
         Maximum Redeem Percentage (%)
       </label>
       <input
@@ -291,16 +291,16 @@ const CouponsComponent = () => {
             max_redeem_percentage: e.target.value,
           })
         }
-        className="w-full border p-2 rounded-lg"
+        className="w-full border p-2 sm:p-3 rounded-lg text-xs sm:text-sm"
       />
     </div>
 
   </div>
 
   {/* Toggles */}
-  <div className="flex gap-8 mt-8">
+  <div className="flex flex-col sm:flex-row gap-3 sm:gap-6 md:gap-8 mt-4 sm:mt-6 md:mt-8">
 
-    <label className="flex items-center gap-2 font-medium">
+    <label className="flex items-center gap-2 font-medium text-xs sm:text-sm">
       <input
         type="checkbox"
         checked={loyaltyForm.enable_referral == 1}
@@ -314,7 +314,7 @@ const CouponsComponent = () => {
       Enable Referral System
     </label>
 
-    <label className="flex items-center gap-2 font-medium">
+    <label className="flex items-center gap-2 font-medium text-xs sm:text-sm">
       <input
         type="checkbox"
         checked={loyaltyForm.enable_redeem == 1}
@@ -332,15 +332,14 @@ const CouponsComponent = () => {
 
   <button
     onClick={handleSaveLoyalty}
-     className="px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl"
-     style={{marginTop:30}}
+     className="px-4 sm:px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl text-sm sm:text-base mt-6 sm:mt-8 md:mt-12"
   >
     Save Loyalty Settings
   </button>
 </div>
 
       {/* ================= SEARCH ================= */}
-      <div className="bg-white p-4 rounded-xl shadow-md">
+      <div className="bg-white p-3 sm:p-4 rounded-xl shadow-md">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
           <input
@@ -348,42 +347,42 @@ const CouponsComponent = () => {
             placeholder="Search coupon code..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 border rounded-lg"
+            className="w-full pl-10 pr-3 sm:pr-4 py-2 border rounded-lg text-sm sm:text-base"
           />
         </div>
       </div>
 
       {/* ================= COUPON TABLE ================= */}
-      <div className="bg-white rounded-xl shadow-md overflow-hidden">
+      <div className="bg-white rounded-xl shadow-md overflow-x-auto">
         {loading ? (
-          <div className="p-6 text-center">Loading coupons...</div>
+          <div className="p-4 sm:p-6 text-center text-sm sm:text-base">Loading coupons...</div>
         ) : (
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-6 py-3 text-left font-bold">Code</th>
-                <th className="px-6 py-3 text-left font-bold">Type</th>
-                <th className="px-6 py-3 text-left font-bold">Value</th>
-                <th className="px-6 py-3 text-left font-bold">Min Order</th>
-                <th className="px-6 py-3 text-left font-bold">Expiry</th>
-                <th className="px-6 py-3 text-left font-bold">Status</th>
-                <th className="px-6 py-3 text-left font-bold">Action</th>
+                <th className="px-3 sm:px-4 lg:px-6 py-2 sm:py-3 text-left text-xs sm:text-sm font-bold">Code</th>
+                <th className="hidden sm:table-cell px-3 sm:px-4 lg:px-6 py-2 sm:py-3 text-left text-xs sm:text-sm font-bold">Type</th>
+                <th className="px-3 sm:px-4 lg:px-6 py-2 sm:py-3 text-left text-xs sm:text-sm font-bold">Value</th>
+                <th className="hidden md:table-cell px-3 sm:px-4 lg:px-6 py-2 sm:py-3 text-left text-xs sm:text-sm font-bold">Min Order</th>
+                <th className="hidden lg:table-cell px-3 sm:px-4 lg:px-6 py-2 sm:py-3 text-left text-xs sm:text-sm font-bold">Expiry</th>
+                <th className="px-3 sm:px-4 lg:px-6 py-2 sm:py-3 text-left text-xs sm:text-sm font-bold">Status</th>
+                <th className="px-3 sm:px-4 lg:px-6 py-2 sm:py-3 text-left text-xs sm:text-sm font-bold">Action</th>
               </tr>
             </thead>
 
             <tbody className="divide-y divide-gray-200">
               {filteredCoupons.map((coupon) => (
                 <tr key={coupon.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 font-semibold">{coupon.code}</td>
-                  <td className="px-6 py-4">{coupon.type}</td>
-                  <td className="px-6 py-4">
+                  <td className="px-3 sm:px-4 lg:px-6 py-2 sm:py-3 text-xs sm:text-sm font-semibold">{coupon.code}</td>
+                  <td className="hidden sm:table-cell px-3 sm:px-4 lg:px-6 py-2 sm:py-3 text-xs sm:text-sm">{coupon.type}</td>
+                  <td className="px-3 sm:px-4 lg:px-6 py-2 sm:py-3 text-xs sm:text-sm">
                     {coupon.type === "flat"
                       ? `₹${coupon.value}`
                       : `${coupon.value}%`}
                   </td>
-                  <td className="px-6 py-4">₹{coupon.minOrder || 0}</td>
-                  <td className="px-6 py-4">{coupon.expiry}</td>
-                  <td className="px-6 py-4">
+                  <td className="hidden md:table-cell px-3 sm:px-4 lg:px-6 py-2 sm:py-3 text-xs sm:text-sm">₹{coupon.minOrder || 0}</td>
+                  <td className="hidden lg:table-cell px-3 sm:px-4 lg:px-6 py-2 sm:py-3 text-xs sm:text-sm">{coupon.expiry}</td>
+                  <td className="px-3 sm:px-4 lg:px-6 py-2 sm:py-3 text-xs sm:text-sm">
                     <span
                       className={`px-2 py-1 text-xs rounded-full ${
                         coupon.active
@@ -394,7 +393,7 @@ const CouponsComponent = () => {
                       {coupon.active ? "Active" : "Inactive"}
                     </span>
                   </td>
-                  <td className="px-6 py-4">
+                  <td className="px-3 sm:px-4 lg:px-6 py-2 sm:py-3">
                     <button
                       onClick={() => handleDeleteCoupon(coupon.id)}
                       className="text-red-600 hover:text-red-800"
@@ -412,8 +411,8 @@ const CouponsComponent = () => {
       {/* ================= CREATE MODAL ================= */}
 
       {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-          <div className="bg-white w-full max-w-lg p-6 rounded-xl relative shadow-lg">
+        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 p-4">
+          <div className="bg-white w-full max-w-sm sm:max-w-lg max-h-[90vh] overflow-y-auto rounded-xl relative shadow-lg p-4 sm:p-6">
             <button
               onClick={() => setShowModal(false)}
               className="absolute top-3 right-4 text-xl font-bold text-gray-500"
@@ -421,11 +420,11 @@ const CouponsComponent = () => {
               ✕
             </button>
 
-            <h2 className="text-xl font-bold mb-6 text-center">
+            <h2 className="text-lg sm:text-xl font-bold mb-4 sm:mb-6 text-center">
               Create Coupon
             </h2>
 
-            <div className="space-y-4">
+            <div className="space-y-3 sm:space-y-4">
               <input
                 type="text"
                 placeholder="Coupon Code"
@@ -436,7 +435,7 @@ const CouponsComponent = () => {
                     code: e.target.value.toUpperCase(),
                   })
                 }
-                className="w-full border p-2 rounded-lg"
+                className="w-full border p-2 sm:p-3 rounded-lg text-sm sm:text-base"
               />
 
               <select
@@ -444,7 +443,7 @@ const CouponsComponent = () => {
                 onChange={(e) =>
                   setCouponForm({ ...couponForm, type: e.target.value })
                 }
-                className="w-full border p-2 rounded-lg"
+                className="w-full border p-2 sm:p-3 rounded-lg text-sm sm:text-base"
               >
                 <option value="flat">Flat Amount</option>
                 <option value="percentage">Percentage</option>
@@ -457,7 +456,7 @@ const CouponsComponent = () => {
                 onChange={(e) =>
                   setCouponForm({ ...couponForm, value: e.target.value })
                 }
-                className="w-full border p-2 rounded-lg"
+                className="w-full border p-2 sm:p-3 rounded-lg text-sm sm:text-base"
               />
 
               <input
@@ -467,7 +466,7 @@ const CouponsComponent = () => {
                 onChange={(e) =>
                   setCouponForm({ ...couponForm, minOrder: e.target.value })
                 }
-                className="w-full border p-2 rounded-lg"
+                className="w-full border p-2 sm:p-3 rounded-lg text-sm sm:text-base"
               />
 
               <input
@@ -476,12 +475,12 @@ const CouponsComponent = () => {
                 onChange={(e) =>
                   setCouponForm({ ...couponForm, expiry: e.target.value })
                 }
-                className="w-full border p-2 rounded-lg"
+                className="w-full border p-2 sm:p-3 rounded-lg text-sm sm:text-base"
               />
 
               <button
                 onClick={handleCreateCoupon}
-                className="w-full px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl"
+                className="w-full px-4 sm:px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl text-sm sm:text-base mt-4 sm:mt-6"
               >
                 Create Coupon
               </button>
