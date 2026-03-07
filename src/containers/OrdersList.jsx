@@ -508,7 +508,7 @@ console.log(merchantData, "merchantData");
       )}
 
       {/* ================= ACTION BUTTONS ================= */}
-      <div className="border-t pt-4 flex flex-col sm:flex-row gap-3 sm:gap-4">
+      {/* <div className="border-t pt-4 flex flex-col sm:flex-row gap-3 sm:gap-4">
         <button
           onClick={() => handleStatusUpdate(selectedOrder)}
           disabled={
@@ -549,7 +549,7 @@ console.log(merchantData, "merchantData");
         >
           Refund Payment
         </button>
-      </div>
+      </div> */}
 
     </div>
   </div>

@@ -4,6 +4,9 @@ import { Link, useNavigate } from 'react-router-dom';
 import { fetchCMSData } from '../redux/actions/cmsActions';
 import { connect } from 'react-redux';
 import logo from '../assets/logo4.png';
+import { motion } from "framer-motion";
+import { FaCheckCircle, FaWhatsapp } from "react-icons/fa";
+import { AiOutlineInfoCircle } from "react-icons/ai";
 import {
   Menu,
   X,
@@ -108,7 +111,7 @@ const Home = (props) => {
   const togglePolicy = (policy) => {
     setOpenPolicy(openPolicy === policy ? null : policy);
   };
-
+const [tooltip,setTooltip]=useState(null)
   useEffect(() => {
     props.fetchCMSData();
     const handleScroll = () => {
@@ -279,65 +282,72 @@ const Home = (props) => {
 
 
   // Pricing Plans
-  const pricingPlans = [
-    {
-      name: 'Starter',
-      price: '₹40K+',
-      description: 'Perfect for basic online presence',
-      features: [
-        { included: true, text: 'Responsive Website' },
-        { included: true, text: 'Basic Blog System' },
-        { included: true, text: 'Contact Form' },
-        { included: true, text: '5 Pages' },
-        { included: true, text: 'Mobile Responsive' },
-        { included: false, text: 'Admin Dashboard' },
-        { included: false, text: 'Product Catalog' },
-        { included: false, text: 'Custom CMS' },
-        { included: false, text: 'E-commerce' },
-        { included: false, text: 'Mobile App' },
-      ],
-      color: 'from-blue-500 to-cyan-500',
-      highlight: false
-    },
-    {
-      name: 'Business',
-      price: '₹80K+',
-      description: 'Complete business solution with CMS',
-      features: [
-        { included: true, text: 'Everything in Starter' },
-        { included: true, text: 'Advanced CMS Dashboard' },
-        { included: true, text: 'Product Catalog System' },
-        { included: true, text: 'User Management' },
-        { included: true, text: 'Content Management' },
-        { included: true, text: 'Media Library' },
-        { included: true, text: 'Basic E-commerce' },
-        { included: true, text: '10+ Pages' },
-        { included: false, text: 'Mobile App' },
-        { included: false, text: 'Advanced Analytics' },
-      ],
-      color: 'from-purple-500 to-pink-500',
-      highlight: true
-    },
-    {
-      name: 'Enterprise',
-      price: '₹1L+',
-      description: 'Full-stack dynamic solution',
-      features: [
-        { included: true, text: 'Everything in Business' },
-        { included: true, text: 'Native Mobile App' },
-        { included: true, text: 'Advanced E-commerce' },
-        { included: true, text: 'Real-time Analytics' },
-        { included: true, text: 'API Integration' },
-        { included: true, text: 'Custom Modules' },
-        { included: true, text: 'Unlimited Pages' },
-        { included: true, text: 'Priority Support' },
-        { included: true, text: 'Training Sessions' },
-        { included: true, text: 'Maintenance (1 Year)' },
-      ],
-      color: 'from-orange-500 to-red-500',
-      highlight: false
-    },
-  ];
+const pricingPlans = [
+  {
+    name: "Monthly",
+    price: "₹3,000",
+    period: "/month",
+    highlight: false,
+    description: "Launch your online store instantly",
+    features: [
+      "Free Domain + Hosting",
+      "Unlimited Products & Categories",
+      "Responsive Website Design",
+      "Android Mobile App",
+      "Payment Gateway Integration",
+      "Shipping & Order Tracking",
+      "Coupons & Discounts",
+      "Google Map Integration",
+      "WhatsApp AI Chatbot",
+      "3 Business Email IDs",
+      "Social Media Integration",
+      "Customer Enquiry Form",
+      "User Access Control",
+      "1 Year Technical Support"
+    ]
+  },
+  {
+    name: "Yearly",
+    price: "₹30,000",
+    period: "/year",
+    highlight: true,
+    description: "Best value for growing businesses",
+    features: [
+      "Free Domain + Hosting",
+      "Unlimited Products & Categories",
+      "Responsive Website Design",
+      "Android Mobile App",
+      "Payment Gateway Integration",
+      "Shipping & Order Tracking",
+      "Coupons & Discounts",
+      "Google Map Integration",
+      "WhatsApp AI Chatbot",
+      "3 Business Email IDs",
+      "Social Media Integration",
+      "Customer Enquiry Form",
+      "User Access Control",
+      "1 Year Technical Support"
+    ]
+  },
+  {
+    name: "Custom",
+    price: "Custom",
+    period: "",
+    highlight: false,
+    description: "Enterprise level solutions",
+    features: [
+      "Everything in Yearly Plan",
+      "Custom App Development",
+      "White Label Solution",
+      "Dedicated Server",
+      "Priority Support",
+      "Custom Integrations",
+      "Advanced Analytics",
+      "Source Code Access",
+      "Unlimited Users"
+    ]
+  }
+];
 
   // Our Services
   const services = [
@@ -1644,87 +1654,119 @@ const Home = (props) => {
       </section>
 
       {/* Pricing Plans */}
-      <section id="pricing" className="py-20 bg-gradient-to-b from-white to-blue-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <span className="inline-block px-4 py-2 bg-yellow-100 text-yellow-600 rounded-full text-sm font-semibold mb-4">
-              💰 Transparent Pricing
-            </span>
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-              Choose Your{' '}
-              <span className="bg-gradient-to-r from-yellow-500 to-orange-500 bg-clip-text text-transparent">
-                Growth Plan
-              </span>
-            </h2>
-            <p className="text-gray-600 text-xl max-w-3xl mx-auto">
-              Start with a basic website or get a complete digital ecosystem
-            </p>
-          </div>
+  <section id="pricing" className="py-28 bg-gradient-to-b from-slate-900 via-indigo-950 to-black text-white">
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {pricingPlans.map((plan, index) => (
-              <div
-                key={index}
-                className={`relative ${plan.highlight
-                    ? 'scale-105 shadow-2xl border-2 border-purple-500'
-                    : 'shadow-lg'
-                  } bg-white rounded-3xl overflow-hidden`}
-              >
-                {plan.highlight && (
-                  <div className="absolute top-0 left-0 right-0 bg-gradient-to-r from-purple-600 to-pink-600 text-white text-center py-2 text-sm font-semibold">
-                    🏆 Most Popular
-                  </div>
-                )}
+<div className="max-w-7xl mx-auto px-6">
 
-                <div className="p-8 pt-12">
-                  <div className={`inline-block px-4 py-2 rounded-full bg-gradient-to-r ${plan.color} text-white text-sm font-semibold mb-4`}>
-                    {plan.name}
-                  </div>
+<div className="text-center mb-20">
 
-                  <div className="mb-6">
-                    <div className="text-5xl font-bold text-gray-900">{plan.price}</div>
-                    <p className="text-gray-600 mt-2">{plan.description}</p>
-                  </div>
+<h2 className="text-5xl font-bold mb-6">
+Simple <span className="text-purple-400">Pricing</span>
+</h2>
 
-                  <div className="space-y-4 mb-8">
-                    {plan.features.map((feature, idx) => (
-                      <div key={idx} className="flex items-center">
-                        {feature.included ? (
-                          <Check className="w-5 h-5 text-green-500 mr-3 flex-shrink-0" />
-                        ) : (
-                          <Close className="w-5 h-5 text-gray-300 mr-3 flex-shrink-0" />
-                        )}
-                        <span className={feature.included ? 'text-gray-700' : 'text-gray-400'}>
-                          {feature.text}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
+<p className="text-gray-400 text-xl">
+Launch your complete digital business ecosystem
+</p>
 
-                  <button
-                    onClick={() => navigate('/login')}
-                    className={`w-full py-4 rounded-xl font-semibold text-lg transition-all ${plan.highlight
-                        ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:shadow-xl'
-                        : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
-                      }`}
-                  >
-                    {plan.highlight ? 'Start Business Plan' : 'Get Started'}
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
+</div>
 
-          <div className="mt-12 text-center">
-            <p className="text-gray-600">
-              Need a custom solution?{' '}
-              <a href="#contact" className="text-blue-600 font-semibold hover:underline">
-                Contact us for a custom quote
-              </a>
-            </p>
-          </div>
-        </div>
-      </section>
+<div className="grid md:grid-cols-3 gap-10">
+
+{pricingPlans.map((plan,index)=> (
+
+<motion.div
+key={index}
+initial={{opacity:0,y:40}}
+whileInView={{opacity:1,y:0}}
+transition={{duration:0.6,delay:index*0.2}}
+className={`relative backdrop-blur-xl bg-white/10 border border-white/20 rounded-3xl p-10 shadow-2xl hover:scale-105 transition ${
+plan.highlight ? "border-purple-400 shadow-purple-500/30" : ""
+}`}
+>
+
+{plan.highlight && (
+<div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-purple-600 px-6 py-1 rounded-full text-sm">
+Most Popular
+</div>
+)}
+
+<h3 className="text-2xl font-semibold mb-2">
+{plan.name}
+</h3>
+
+<p className="text-gray-400 mb-6">
+{plan.description}
+</p>
+
+<div className="mb-8">
+<span className="text-5xl font-bold">
+{plan.price}
+</span>
+
+<span className="text-gray-400 ml-2">
+{plan.period}
+</span>
+</div>
+
+<div className="space-y-4 mb-10">
+
+{plan.features.map((feature,i)=> (
+
+<div key={i} className="flex items-center gap-3 relative">
+
+<FaCheckCircle className="text-green-400"/>
+
+<span className="text-gray-200">
+{feature}
+</span>
+
+{/* <AiOutlineInfoCircle
+className="text-gray-400 cursor-pointer"
+onMouseEnter={()=>setTooltip(i)}
+onMouseLeave={()=>setTooltip(null)}
+/> */}
+
+{/* {tooltip===i && (
+<div className="absolute left-8 top-6 bg-black text-sm px-3 py-2 rounded shadow-lg">
+Included in this plan
+</div>
+)} */}
+
+</div>
+
+))}
+
+</div>
+
+<div className="space-y-3">
+
+<button className="w-full py-4 rounded-xl font-semibold bg-gradient-to-r from-purple-500 to-pink-500 hover:opacity-90 transition">
+{plan.name==="Custom" ? "Contact Sales" : "Get Started"}
+</button>
+
+<a
+// href="https://wa.me/8143770778"
+// target="_blank"
+className="flex items-center justify-center gap-2 border border-green-500 text-green-400 py-3 rounded-xl hover:bg-green-500 hover:text-white transition"
+>
+
+<FaWhatsapp/>
+
+Chat on WhatsApp
+
+</a>
+
+</div>
+
+</motion.div>
+
+))}
+
+</div>
+
+</div>
+
+</section>
 
       {/* Our Process */}
       <section className="py-20 bg-gradient-to-b from-gray-50 to-white">
@@ -1902,16 +1944,16 @@ const Home = (props) => {
                     </div>
                   </div>
 
-                  <div className="flex items-start space-x-3 sm:space-x-4 md:space-x-6 p-4 sm:p-5 md:p-6 bg-purple-50 rounded-2xl">
+                  {/* <div className="flex items-start space-x-3 sm:space-x-4 md:space-x-6 p-4 sm:p-5 md:p-6 bg-purple-50 rounded-2xl">
                     <div className="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl flex items-center justify-center flex-shrink-0">
                       <Phone className="w-6 sm:w-7 h-6 sm:h-7 text-white" />
                     </div>
-                    {/* <div className="min-w-0">
+                    <div className="min-w-0">
                       <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2">Phone</h3>
                       <p className="text-sm sm:text-gray-600 mb-2 break-all">+91 8777370341 / 7013608102</p>
                       <p className="text-xs sm:text-sm text-gray-500">Mon-Fri: 9 AM - 6 PM IST</p>
-                    </div> */}
-                  </div>
+                    </div>
+                  </div> */}
 
                   <div className="flex items-start space-x-3 sm:space-x-4 md:space-x-6 p-4 sm:p-5 md:p-6 bg-green-50 rounded-2xl">
                     <div className="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-r from-green-500 to-teal-500 rounded-xl flex items-center justify-center flex-shrink-0">
