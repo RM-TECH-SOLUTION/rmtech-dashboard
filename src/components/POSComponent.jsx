@@ -268,7 +268,10 @@ export default function POSComponent() {
                   </p>
                 </div>
 
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2"
+                style={{display:"flex",flexDirection:"column-reverse",justifyContent:"center",alignItems:"flex-end"}}
+                >
+                    <div style={{display:"flex",gap:7}}>
 
                   <button
                     onClick={() => updateQty(item.id, item.variant, "dec")}
@@ -285,6 +288,7 @@ export default function POSComponent() {
                   >
                     +
                   </button>
+                  </div>
 
                   <Trash2
                     onClick={() => removeItem(item.id, item.variant)}
