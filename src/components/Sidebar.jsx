@@ -14,7 +14,8 @@ import {
   Merchant,
   X,
   Megaphone,
-  Ticket
+  Ticket,
+  Receipt
 } from 'lucide-react';
 
 const Sidebar = ({ isMobileOpen, toggleMobileSidebar }) => {
@@ -59,6 +60,7 @@ const Sidebar = ({ isMobileOpen, toggleMobileSidebar }) => {
 
   const navItemsUser = [
     { path: '/dashboard', icon: <Home size={20} />, label: 'Dashboard' },
+    { path: '/dashboard/pos', icon: <Receipt size={20} />, label: 'Point of Sale (POS)' },
     { path: '/dashboard/posts', icon: <FileText size={20} />, label: 'Order Status' },
     { path: '/dashboard/campaign', icon: <Megaphone size={20} />, label: 'Campaign' },
     { path: '/dashboard/coupons', icon: <Ticket size={20} />, label: 'Coupons' },
@@ -72,6 +74,7 @@ const Sidebar = ({ isMobileOpen, toggleMobileSidebar }) => {
 
    const navItemsMerchant = [
     { path: '/dashboard', icon: <Home size={20} />, label: 'Dashboard' },
+    { path: '/dashboard/pos', icon: <Receipt size={20} />, label: 'Point of Sale (POS)' },
     { path: '/dashboard/posts', icon: <FileText size={20} />, label: 'Order Status' },
     { path: '/dashboard/campaign', icon: <Megaphone size={20} />, label: 'Campaign' },
     { path: '/dashboard/coupons', icon: <Ticket size={20} />, label: 'Coupons' },

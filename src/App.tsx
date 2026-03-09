@@ -22,6 +22,7 @@ import MerchantListContainer from './containers/MerchantListContainer';
 import Dashboard1 from './containers/Dashboard1';
 import Campaign from "./containers/Campaign";
 import Coupons from "./containers/Coupons"
+import POSContainer from './containers/POSContainer';
 
 
 const PublicLayout = () => {
@@ -54,6 +55,7 @@ function App() {
           </ProtectedRoute>
         }>
           <Route index element={<Dashboard1 />} />
+          <Route path="pos" element={<POSContainer />} />
           <Route path="posts" element={<OrdersList />} />
           <Route path="posts/create" element={<CreatePost />} />
           <Route path="posts/edit/:id" element={<EditPost />} />
