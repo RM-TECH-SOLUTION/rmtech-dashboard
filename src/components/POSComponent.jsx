@@ -253,7 +253,9 @@ export default function POSComponent() {
 
           <h2 className="font-bold border-b pb-3">Cart</h2>
 
-          <div className="space-y-3 mt-3 max-h-[350px] overflow-auto">
+          <div className="space-y-3 mt-3 max-h-[350px] overflow-auto"
+          style={{paddingInline:5}}
+          >
 
             {cart.map((item) => (
               <div
