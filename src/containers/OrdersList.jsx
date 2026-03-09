@@ -492,20 +492,49 @@ console.log(merchantData, "merchantData");
       </div>
 
       {/* ================= ADDRESS ================= */}
-      {selectedOrder.address && (
-        <div className="border-t pt-3 sm:pt-4 mb-4 sm:mb-6">
 
-          <h3 className="font-semibold text-sm sm:text-base mb-3">Delivery Address</h3>
+      {console.log(selectedOrder,"selectedOrderhh")}
+      
+      {selectedOrder?.address && (
+  <div className="border-t pt-3 sm:pt-4 mb-4 sm:mb-6">
 
-          <p className="text-sm sm:text-base">{selectedOrder.address.name}</p>
-          <p className="text-sm sm:text-base">{selectedOrder.address.street}</p>
-          <p className="text-sm sm:text-base">
-            {selectedOrder.address.city} -{" "}
-            {selectedOrder.address.pincode}
-          </p>
+    <h3 className="font-semibold text-sm sm:text-base mb-3">
+      Delivery Address
+    </h3>
 
-        </div>
-      )}
+    {selectedOrder.address.building && (
+      <p className="text-sm sm:text-base font-medium">
+        {selectedOrder.address.building}
+      </p>
+    )}
+
+    {(selectedOrder.address.doorNo || selectedOrder.address.street) && (
+      <p className="text-sm sm:text-base">
+        {selectedOrder.address.doorNo && `${selectedOrder.address.doorNo}, `}
+        {selectedOrder.address.street}
+      </p>
+    )}
+
+    {selectedOrder.address.landmark && (
+      <p className="text-sm sm:text-base">
+        {selectedOrder.address.landmark}
+      </p>
+    )}
+
+    {(selectedOrder.address.city ||
+      selectedOrder.address.pincode ||
+      selectedOrder.address.state) && (
+      <p className="text-sm sm:text-base">
+        {selectedOrder.address.city}
+        {selectedOrder.address.city && " - "}
+        {selectedOrder.address.pincode}
+        {selectedOrder.address.pincode && " - "}
+        {selectedOrder.address.state}
+      </p>
+    )}
+
+  </div>
+)}
 
       {/* ================= ACTION BUTTONS ================= */}
       {/* <div className="border-t pt-4 flex flex-col sm:flex-row gap-3 sm:gap-4">
