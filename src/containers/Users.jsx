@@ -168,6 +168,7 @@ const Users = () => {
                       </div>
                       <div className="min-w-0 flex-1">
                         <div className="font-medium text-xs sm:text-sm truncate">{user.name}</div>
+                         <div className="text-gray-500 text-xs truncate">{user.phone}</div>
                         <div className="text-gray-500 text-xs truncate">{user.email}</div>
                       </div>
                     </div>

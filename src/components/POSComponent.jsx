@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Search, Trash2 } from "lucide-react";
-
-const merchantId = 9;
+import { useDispatch, useSelector } from "react-redux";
+import {
+  getLoyaltySettings,
+} from "../redux/actions/cmsActions";
 
 const suggestedCoupons = [
   { code: "SAVE10", label: "10% OFF" },
@@ -13,9 +15,16 @@ export default function POSComponent() {
 
   const [categories, setCategories] = useState([]);
   const [products, setProducts] = useState([]);
+ const user = JSON.parse(localStorage.getItem("user") || "{}");
+ const token = localStorage.getItem("token");
+  const dispatch = useDispatch();
+  const merchantData = user.merchantData;
+  const loyaltySettings  = useSelector((state) => state.cms.loyaltySettings || []);
+ 
 
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [search, setSearch] = useState("");
+  const [customerPhone, setCustomerPhone] = useState("");
 
   const [cart, setCart] = useState([]);
   const [selectedVariants, setSelectedVariants] = useState({});
@@ -29,6 +38,7 @@ export default function POSComponent() {
 
   useEffect(() => {
     fetchCatalogModels();
+    dispatch(getLoyaltySettings(token))
   }, []);
 
   const fetchCatalogModels = async () => {
@@ -36,7 +46,7 @@ export default function POSComponent() {
     try {
 
       const res = await fetch(
-        `https://api.rmtechsolution.com/getCatalogueModels?merchantId=${merchantId}`
+        `https://api.rmtechsolution.com/getCatalogueModels?merchantId=${token}`
       );
 
       const data = await res.json();
@@ -61,7 +71,7 @@ export default function POSComponent() {
     try {
 
       const res = await fetch(
-        `https://api.rmtechsolution.com/getCatalogueItems?catalogueModelId=${catalogId}&merchantId=${merchantId}`
+        `https://api.rmtechsolution.com/getCatalogueItems?catalogueModelId=${catalogId}&merchantId=${token}`
       );
 
       const data = await res.json();
@@ -159,6 +169,17 @@ const removeItem = (id, variantId) => {
   const total = cart.reduce((sum, i) => sum + i.qty * i.price, 0);
   const finalTotal = total - discount;
 
+ const spendAmount = Number(loyaltySettings?.spend_amount || 0);
+const rewardPoints = Number(loyaltySettings?.reward_points || 0);
+
+let earnedPoints = 0;
+
+if (spendAmount > 0) {
+  earnedPoints = Math.floor((finalTotal / spendAmount) * rewardPoints);
+}
+
+console.log(earnedPoints,"earnedPointsjjjj",loyaltySettings);
+
   /* ================= COUPON ================= */
 
   const applyCoupon = () => {
@@ -172,6 +193,87 @@ const removeItem = (id, variantId) => {
     }
 
   };
+
+const createOrder = async () => {
+
+  try {
+
+    const items = cart.map((item) => ({
+      item_id: item.id,
+      item_name: item.name,
+      variant_name: item.variant,
+      price: item.price,
+      quantity: item.qty,
+      total: item.qty * item.price
+    }));
+
+    const payload = {
+      merchant_id: merchantData?.merchant_id,
+      user_id: 0,
+      phone: customerPhone || "POS",
+      items,
+      amount: Number(finalTotal),
+      orderType: `offline[${paymentMethod}]`,
+      couponDiscount: discount || 0,
+      pointsDiscount: 0,
+      earnedPoints: earnedPoints || 0,
+      address: JSON.stringify({
+        source: "POS",
+        counter: "Dashboard POS"
+      })
+    };
+
+    console.log("POS PAYLOAD:", payload);
+
+    const res = await fetch(
+      "https://api.rmtechsolution.com/create_pos_order.php",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(payload)
+      }
+    );
+
+    const text = await res.text();
+
+    console.log("RAW RESPONSE:", text);
+
+    const data = JSON.parse(text);
+
+    console.log("PARSED RESPONSE:", data);
+
+    if (!data.success) {
+      alert("Order failed");
+      return;
+    }
+
+    setCart([]);
+    setShowCheckout(false);
+
+    window.print();
+
+  } catch (err) {
+
+    console.error("POS ERROR:", err);
+
+    alert("POS Order Error");
+
+  }
+
+};
+
+const handleCheckout = () => {
+
+  if (cart.length === 0) {
+    alert("Cart empty");
+    return;
+  }
+
+  createOrder();
+
+};
 
   /* ================= FILTER ================= */
 
@@ -407,9 +509,11 @@ const removeItem = (id, variantId) => {
       {/* Customer Phone */}
 
       <input
-        type="tel"
-        placeholder="Customer Phone"
-        className="w-full border rounded-lg p-2 mb-3"
+          type="tel"
+          placeholder="Customer Phone"
+          value={customerPhone}
+          onChange={(e) => setCustomerPhone(e.target.value)}
+          className="w-full border rounded-lg p-2 mb-3"
       />
 
       {/* Coupon */}
@@ -509,9 +613,12 @@ const removeItem = (id, variantId) => {
           Cancel
         </button>
 
-        <button className="flex-1 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg">
-          Print Bill
-        </button>
+        <button
+  onClick={handleCheckout}
+  className="flex-1 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg"
+>
+  Print Bill
+</button>
 
       </div>
 

@@ -41,6 +41,9 @@ const CouponsComponent = () => {
     max_redeem_percentage: 100,
     enable_referral: 1,
     enable_redeem: 1,
+     delivery_charge: 0,
+  packing_charge: 0,
+  online_payment_charge: 0
   });
 
   /* ================= FETCH DATA ================= */
@@ -294,6 +297,60 @@ const CouponsComponent = () => {
         className="w-full border p-2 sm:p-3 rounded-lg text-xs sm:text-sm"
       />
     </div>
+
+    {/* Delivery Charge */}
+<div>
+  <label className="block text-xs sm:text-sm font-semibold mb-2">
+    Delivery Charge (₹)
+  </label>
+  <input
+    type="number"
+    value={loyaltyForm.delivery_charge}
+    onChange={(e) =>
+      setLoyaltyForm({
+        ...loyaltyForm,
+        delivery_charge: e.target.value,
+      })
+    }
+    className="w-full border p-2 sm:p-3 rounded-lg text-xs sm:text-sm"
+  />
+</div>
+
+{/* Packing Charge */}
+<div>
+  <label className="block text-xs sm:text-sm font-semibold mb-2">
+    Packing Charge (₹)
+  </label>
+  <input
+    type="number"
+    value={loyaltyForm.packing_charge}
+    onChange={(e) =>
+      setLoyaltyForm({
+        ...loyaltyForm,
+        packing_charge: e.target.value,
+      })
+    }
+    className="w-full border p-2 sm:p-3 rounded-lg text-xs sm:text-sm"
+  />
+</div>
+
+{/* Online Payment Charge */}
+<div>
+  <label className="block text-xs sm:text-sm font-semibold mb-2">
+    Online Payment Charge (₹)
+  </label>
+  <input
+    type="number"
+    value={loyaltyForm.online_payment_charge}
+    onChange={(e) =>
+      setLoyaltyForm({
+        ...loyaltyForm,
+        online_payment_charge: e.target.value,
+      })
+    }
+    className="w-full border p-2 sm:p-3 rounded-lg text-xs sm:text-sm"
+  />
+</div>
 
   </div>
 
