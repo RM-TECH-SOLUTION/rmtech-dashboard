@@ -22,6 +22,7 @@ export default function POSComponent() {
   const merchantData = user.merchantData;
   const loyaltySettings  = useSelector((state) => state.cms.loyaltySettings || []);
   const cmsData = useSelector((state) => state.cms.data || []);
+  const [coupons, setCoupons] = useState([]);
 
 const billLogoConfig = cmsData.find(
   (item) => item.modelSlug === "billLogo"
@@ -53,9 +54,28 @@ console.log("Merchant Name:hhh", merchantName);
   useEffect(() => {
     dispatch(fetchCMSData(token)); 
     fetchCatalogModels();
+    fetchCoupons();
     dispatch(getLoyaltySettings(token))
 
   }, []);
+
+  const fetchCoupons = async () => {
+  try {
+
+    const res = await fetch(
+      `https://api.rmtechsolution.com/get_coupons?merchantId=${token}`
+    );
+
+    const data = await res.json();
+
+    if (data.success) {
+      setCoupons(data.data || []);
+    }
+
+  } catch (err) {
+    console.log("Coupon fetch error", err);
+  }
+};
 
   const fetchCatalogModels = async () => {
 
@@ -200,17 +220,36 @@ console.log(earnedPoints,"earnedPointsjjjj",loyaltySettings);
 
   /* ================= COUPON ================= */
 
-  const applyCoupon = () => {
+ const applyCoupon = () => {
 
-    if (couponCode === "SAVE10") setDiscount(total * 0.1);
-    else if (couponCode === "FLAT50") setDiscount(50);
-    else if (couponCode === "WELCOME20") setDiscount(total * 0.2);
-    else {
-      alert("Invalid Coupon");
-      setDiscount(0);
-    }
+  const coupon = coupons.find(
+    (c) => c.code.toLowerCase() === couponCode.toLowerCase()
+  );
 
-  };
+  if (!coupon) {
+    alert("Invalid Coupon");
+    setDiscount(0);
+    return;
+  }
+
+  if (Number(total) < Number(coupon.minOrder)) {
+    alert(`Minimum order ₹${coupon.minOrder} required`);
+    return;
+  }
+
+  let discountAmount = 0;
+
+  if (coupon.type === "percentage") {
+    discountAmount = (total * Number(coupon.value)) / 100;
+  }
+
+  if (coupon.type === "flat") {
+    discountAmount = Number(coupon.value);
+  }
+
+  setDiscount(discountAmount);
+
+};
 
 const createOrder = async () => {
 
@@ -585,7 +624,7 @@ const handleCheckout = () => {
 
       <div className="flex flex-wrap gap-2 mb-4">
 
-        {suggestedCoupons.map((c) => (
+        {coupons.map((c) => (
 
           <button
             key={c.code}
