@@ -17,6 +17,30 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* ================= POS PRINT RECEIPT ================= */
+
+@media print {
+
+  body * {
+    visibility: hidden;
+  }
+
+  #print-bill,
+  #print-bill * {
+    visibility: visible;
+  }
+
+  #print-bill {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 280px;
+    font-family: monospace;
+    font-size: 13px;
+  }
+
+}
+
 /* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 10px;

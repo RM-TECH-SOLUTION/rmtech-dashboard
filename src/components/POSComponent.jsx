@@ -3,6 +3,7 @@ import { Search, Trash2 } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   getLoyaltySettings,
+  fetchCMSData
 } from "../redux/actions/cmsActions";
 
 const suggestedCoupons = [
@@ -20,7 +21,16 @@ export default function POSComponent() {
   const dispatch = useDispatch();
   const merchantData = user.merchantData;
   const loyaltySettings  = useSelector((state) => state.cms.loyaltySettings || []);
- 
+  const cmsData = useSelector((state) => state.cms.data || []);
+
+const billLogoConfig = cmsData.find(
+  (item) => item.modelSlug === "billLogo"
+);
+ const logo = billLogoConfig?.cms?.logo?.fieldValue;
+const merchantName = billLogoConfig?.cms?.merchantName?.fieldValue;
+
+console.log("Logo:hhh", logo);
+console.log("Merchant Name:hhh", merchantName);
 
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [search, setSearch] = useState("");
@@ -33,12 +43,18 @@ export default function POSComponent() {
   const [couponCode, setCouponCode] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("cash");
   const [discount, setDiscount] = useState(0);
+  const [lastOrder, setLastOrder] = useState(null);
+
+  console.log(selectedVariants,"selectedVariantsselectedVariants");
+  
 
   /* ================= FETCH CATALOG ================= */
 
   useEffect(() => {
+    dispatch(fetchCMSData(token)); 
     fetchCatalogModels();
     dispatch(getLoyaltySettings(token))
+
   }, []);
 
   const fetchCatalogModels = async () => {
@@ -94,6 +110,8 @@ export default function POSComponent() {
   const variantId = selected?.id || "default";
   const variantName = selected?.variant_name || "";
  const price = Number(selected?.price || product.price || 0);
+ console.log(selected,"selectedselectedgg");
+ 
 
   const exist = cart.find(
     (item) =>
@@ -198,10 +216,13 @@ const createOrder = async () => {
 
   try {
 
+    console.log(cart,"cartcartcart")
     const items = cart.map((item) => ({
+      
       item_id: item.id,
       item_name: item.name,
       variant_name: item.variant,
+      variantId: item.variantId || "default",
       price: item.price,
       quantity: item.qty,
       total: item.qty * item.price
@@ -249,10 +270,21 @@ const createOrder = async () => {
       return;
     }
 
-    setCart([]);
-    setShowCheckout(false);
+    setLastOrder({
+  items,
+  total,
+  discount,
+  finalTotal,
+  paymentMethod
+});
 
-    window.print();
+setCart([]);
+setShowCheckout(false);
+
+setTimeout(() => {
+  window.print();
+  fetchCatalogModels();
+}, 300);
 
   } catch (err) {
 
@@ -344,6 +376,10 @@ const handleCheckout = () => {
                 selectedVariants[product.id] || product.variants?.[0];
 
               const price = selected?.price || product.price;
+              const stock =
+  product.variants?.length > 0
+    ? selected?.stock ?? 0
+    : product.stock ?? 0;
 
               const image =
                 product.images?.[0] || product.image?.[0];
@@ -364,6 +400,9 @@ const handleCheckout = () => {
                   )}
 
                   <h3 className="font-semibold">{product.name}</h3>
+                 <p className="text-sm text-gray-500">
+  Stock: {stock}
+</p>
 
                   {product.variants?.length > 0 && (
 
@@ -397,11 +436,16 @@ const handleCheckout = () => {
                   </p>
 
                   <button
-                    onClick={() => addToCart(product)}
-                    className="w-full mt-3 py-2 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 text-white"
-                  >
-                    Add
-                  </button>
+  onClick={() => addToCart(product)}
+  disabled={stock <= 0}
+  className={`w-full mt-3 py-2 rounded-xl text-white ${
+    stock <= 0
+      ? "bg-gray-400 cursor-not-allowed"
+      : "bg-gradient-to-r from-blue-600 to-purple-600"
+  }`}
+>
+  {stock <= 0 ? "Out of Stock" : "Add"}
+</button>
 
                 </div>
 
@@ -626,7 +670,83 @@ const handleCheckout = () => {
 
   </div>
 )}
+{/* PRINT BILL */}
 
+<div id="print-bill" className="hidden print:block p-4 text-sm">
+
+  <div className="text-center mb-2">
+
+  {logo && (
+    <img
+      src={logo}
+      alt="Merchant Logo"
+      className="mx-auto h-14 object-contain mb-1"
+    />
+  )}
+
+  <h2 className="font-bold text-lg">
+    {merchantName || "RM Tech Store"}
+  </h2>
+
+  <p>POS Receipt</p>
+
+</div>
+
+  <hr className="my-2"/>
+
+  {lastOrder?.items?.map((item, index) => (
+
+    <div key={index} className="flex justify-between mb-1">
+
+      <div>
+        <div>{item.item_name}</div>
+
+        {item.variant_name && (
+          <div className="text-xs text-gray-500">
+            {item.variant_name}
+          </div>
+        )}
+
+      </div>
+
+      <div>
+        {item.quantity} × ₹{item.price}
+      </div>
+
+    </div>
+
+  ))}
+
+  <hr className="my-2"/>
+
+  <div className="flex justify-between">
+    <span>Subtotal</span>
+    <span>₹{lastOrder?.total}</span>
+  </div>
+
+  {lastOrder?.discount > 0 && (
+    <div className="flex justify-between">
+      <span>Discount</span>
+      <span>-₹{lastOrder?.discount}</span>
+    </div>
+  )}
+
+  <div className="flex justify-between font-bold mt-2">
+    <span>Total</span>
+    <span>₹{lastOrder?.finalTotal}</span>
+  </div>
+
+  <hr className="my-2"/>
+
+  <div className="text-center">
+    Payment : {lastOrder?.paymentMethod}
+  </div>
+
+  <div className="text-center mt-2">
+    Thank You Visit Again
+  </div>
+
+</div>
     </div>
   );
 }

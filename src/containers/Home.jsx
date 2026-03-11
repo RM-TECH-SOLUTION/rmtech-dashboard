@@ -113,7 +113,7 @@ const Home = (props) => {
   };
 const [tooltip,setTooltip]=useState(null)
   useEffect(() => {
-    props.fetchCMSData();
+    // props.fetchCMSData();
     const handleScroll = () => {
       setScrolled(window.scrollY > 50);
     };
