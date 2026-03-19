@@ -27,6 +27,7 @@ export default function POSComponent() {
   const scanLock = useRef(false);
   const scanTimeout = useRef(null);
   const [allProducts, setAllProducts] = useState([]);
+  const lastScannedRef = useRef("");
 
   const billLogoConfig = cmsData.find(
     (item) => item.modelSlug === "billLogo"
@@ -366,29 +367,44 @@ export default function POSComponent() {
   };
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      if (document.activeElement !== barcodeRef.current) {
-        barcodeRef.current?.focus();
+    const handleClick = (e) => {
+      // ❌ don't focus if clicking input/select/button
+      if (
+        e.target.tagName === "INPUT" ||
+        e.target.tagName === "SELECT" ||
+        e.target.tagName === "BUTTON" ||
+        e.target.closest("input, select, button")
+      ) {
+        return;
       }
-    }, 500);
 
-    return () => clearInterval(interval);
+      barcodeRef.current?.focus();
+    };
+
+    document.addEventListener("click", handleClick);
+
+    return () => {
+      document.removeEventListener("click", handleClick);
+    };
   }, []);
 
   const handleBarcodeScan = (code) => {
-    if (!code || scanLock.current) return;
+    if (!code) return;
 
-    scanLock.current = true;
+    // ✅ PREVENT SAME CODE DOUBLE SCAN
+    if (lastScannedRef.current === code) return;
 
+    lastScannedRef.current = code;
+
+    // reset after short time
     setTimeout(() => {
-      scanLock.current = false;
-    }, 300);
+      lastScannedRef.current = "";
+    }, 500);
 
     let foundProduct = null;
     let foundVariant = null;
 
-    for (const product of allProducts) { // ✅ FIXED
-
+    for (const product of allProducts) {
       if (product.barcode === code) {
         foundProduct = product;
         break;
@@ -423,7 +439,7 @@ export default function POSComponent() {
       }
     }
 
-    // AUTO SWITCH CATEGORY (🔥 UX BOOST)
+    // CATEGORY SWITCH
     const category = categories.find(
       (c) => c.id === foundProduct.catalogue_model_id
     );
@@ -433,7 +449,7 @@ export default function POSComponent() {
       loadItems(category.id);
     }
 
-    // SET VARIANT
+    // VARIANT SELECT
     if (foundVariant) {
       setSelectedVariants((prev) => ({
         ...prev,
@@ -608,29 +624,28 @@ export default function POSComponent() {
               autoFocus
               value={barcodeInput}
               onChange={(e) => {
-                const value = e.target.value.trim();
-                setBarcodeInput(value);
-
-                if (scanTimeout.current) {
-                  clearTimeout(scanTimeout.current);
-                }
-
-                scanTimeout.current = setTimeout(() => {
-                  if (value) {
-                    handleBarcodeScan(value);
-                    setBarcodeInput("");
-
-                    barcodeRef.current?.focus();
-                  }
-                }, 200); // wait for full scan input
+                setBarcodeInput(e.target.value);
               }}
+
               onKeyDown={(e) => {
                 if (e.key === "Enter") {
-                  handleBarcodeScan(barcodeInput);
+
+                  if (scanLock.current) return; // 🚫 block duplicate
+
+                  scanLock.current = true;
+
+                  const code = barcodeInput.trim();
+
+                  if (code) {
+                    handleBarcodeScan(code);
+                  }
+
                   setBarcodeInput("");
+
                   setTimeout(() => {
-                    barcodeRef.current?.focus(); // ✅ keep scanner active
-                  }, 50);
+                    scanLock.current = false; // ✅ unlock after delay
+                    barcodeRef.current?.focus();
+                  }, 300);
                 }
               }}
               placeholder="Scan barcode..."
