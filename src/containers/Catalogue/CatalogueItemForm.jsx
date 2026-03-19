@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft, Upload, Save, X, Plus } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
+import Barcode from "react-barcode";
+import JsBarcode from "jsbarcode";
 import {
   createCatalogItem,
   updateCatalogItem,
@@ -29,13 +31,13 @@ const CatalogueItemForm = () => {
   const dispatch = useDispatch();
   const token = localStorage.getItem("token");
 
-  const { items, loading,getItemsVariantsResponse } = useSelector((state) => state.catalog);
+  const { items, loading, getItemsVariantsResponse } = useSelector((state) => state.catalog);
 
   const [activeTab, setActiveTab] = useState("Basic Info");
   const [tagInput, setTagInput] = useState("");
 
-  console.log(getItemsVariantsResponse,"getItemsVariantsResponse");
-  
+  console.log(getItemsVariantsResponse, "getItemsVariantsResponse");
+
   /* ---------------- MAIN FORM ---------------- */
   const [form, setForm] = useState({
     merchantId: token,
@@ -44,6 +46,7 @@ const CatalogueItemForm = () => {
     name: "",
     brand: "",
     sku: "",
+    barcode: "",
     category: modelId,
     description: "",
 
@@ -81,6 +84,7 @@ const CatalogueItemForm = () => {
       comparePrice: "",
       stock: "",
       sku: "",
+      barcode: "",
       status: "active",
       merchantId: token,
     },
@@ -88,7 +92,7 @@ const CatalogueItemForm = () => {
 
   /* ---------------- LOAD ITEM ---------------- */
   useEffect(() => {
-    if (itemId) dispatch(getCatalogItems({ modelId ,merchantId: token }));
+    if (itemId) dispatch(getCatalogItems({ modelId, merchantId: token }));
     if (itemId) dispatch(getItemVariants({ itemId, merchantId: token }));
   }, [dispatch, itemId, modelId]);
 
@@ -97,14 +101,14 @@ const CatalogueItemForm = () => {
       const existing = items.find((i) => String(i.id) === String(itemId));
       if (existing) {
         setForm((p) => ({
-  ...p,
-  ...existing,
+          ...p,
+          ...existing,
 
-  comparePrice: existing.compare_price ?? "",
-  costPrice: existing.cost_price ?? "",
-  seoTitle: existing.seo_title ?? "",
-  seoDescription: existing.seo_description ?? "",
-}));
+          comparePrice: existing.compare_price ?? "",
+          costPrice: existing.cost_price ?? "",
+          seoTitle: existing.seo_title ?? "",
+          seoDescription: existing.seo_description ?? "",
+        }));
         setVariants(existing.variants || variants);
       }
     }
@@ -137,6 +141,7 @@ const CatalogueItemForm = () => {
         comparePrice: "",
         stock: "",
         sku: "",
+        barcode: "",
         status: "active",
       },
     ]);
@@ -152,125 +157,250 @@ const CatalogueItemForm = () => {
     setVariants((p) => p.filter((_, i) => i !== index));
   };
 
-useEffect(() => {
-  if (Array.isArray(getItemsVariantsResponse)) {
-    setVariants(
-      getItemsVariantsResponse.map((v) => ({
-        id: v.id,
+  useEffect(() => {
+    if (Array.isArray(getItemsVariantsResponse)) {
+      setVariants(
+        getItemsVariantsResponse.map((v) => ({
+          id: v.id,
 
-        variantName: v.variant_name ?? v.variantName ?? "",
-        quantityValue: v.quantity_value ?? v.quantityValue ?? "",
-        quantityUnit: v.quantity_unit ?? v.quantityUnit ?? "g",
+          variantName: v.variant_name ?? v.variantName ?? "",
+          quantityValue: v.quantity_value ?? v.quantityValue ?? "",
+          quantityUnit: v.quantity_unit ?? v.quantityUnit ?? "g",
 
-        price: v.price ?? "",
-        comparePrice: v.compare_price ?? v.comparePrice ?? "",
-        costPrice: v.cost_price ?? "",
+          price: v.price ?? "",
+          comparePrice: v.compare_price ?? v.comparePrice ?? "",
+          costPrice: v.cost_price ?? "",
 
-        stock: v.stock ?? "",
-        sku: v.sku ?? "",
-        status: v.status ?? "active",
+          stock: v.stock ?? "",
+          sku: v.sku ?? "",
+          barcode: v.barcode ?? "",
+          status: v.status ?? "active",
 
-        merchantId: token,
-      }))
-    );
-  }
-}, [getItemsVariantsResponse, token]);
+          merchantId: token,
+        }))
+      );
+    }
+  }, [getItemsVariantsResponse, token]);
 
 
 
   /* ---------------- SUBMIT ---------------- */
-const handleSubmit = async () => {
-  try {
-    let currentItemId = itemId;
+  const handleSubmit = async () => {
+    try {
+      let currentItemId = itemId;
 
-    /* ---------- ITEM ---------- */
-    if (!itemId) {
-      const res = await dispatch(createCatalogItem(form));
-      if (!res?.success || !res?.data?.id) {
-        alert("Item creation failed");
-        return;
-      }
-      currentItemId = res.data.id;
-    } else {
-      await dispatch(updateCatalogItem({ id: itemId, data: form }));
-    }
-
-    /* ---------- VARIANTS ---------- */
-    for (const v of variants) {
-      if (!v.price) continue; // skip empty rows
-
-      if (v.id) {
-        // ✅ UPDATE VARIANT
-        await dispatch(
-          updateItemVariant({
-            variantId: v.id,
-            itemId: currentItemId,
-            merchantId: Number(form.merchantId),
-            variantName: v.variantName,
-            quantityValue: v.quantityValue,
-            quantityUnit: v.quantityUnit,
-            price: v.price,
-            comparePrice: v.comparePrice,
-            stock: v.stock,
-            sku: v.sku,
-            status: v.status,
-          })
-        );
+      /* ---------- ITEM ---------- */
+      if (!itemId) {
+        const res = await dispatch(createCatalogItem(form));
+        if (!res?.success || !res?.data?.id) {
+          alert("Item creation failed");
+          return;
+        }
+        currentItemId = res.data.id;
       } else {
-        // ✅ CREATE NEW VARIANT
-        await dispatch(
-          createItemVariant({
-            ...v,
-            itemId: currentItemId,
-            merchantId: Number(form.merchantId),
-          })
-        );
+        await dispatch(updateCatalogItem({ id: itemId, data: form }));
       }
+
+      /* ---------- VARIANTS ---------- */
+      for (const v of variants) {
+        const isEmpty =
+          !v.variantName &&
+          !v.quantityValue &&
+          !v.price &&
+          !v.sku &&
+          !v.barcode;
+
+        if (isEmpty) continue;
+
+        if (v.id) {
+          await dispatch(
+            updateItemVariant({
+              variantId: v.id,
+              itemId: currentItemId,
+              merchantId: Number(form.merchantId),
+              variantName: v.variantName,
+              quantityValue: v.quantityValue,
+              quantityUnit: v.quantityUnit,
+              price: v.price,
+              comparePrice: v.comparePrice,
+              stock: v.stock,
+              sku: v.sku,
+              barcode: v.barcode,
+              status: v.status,
+            })
+          );
+        } else {
+          await dispatch(
+            createItemVariant({
+              ...v,
+              itemId: currentItemId,
+              merchantId: Number(form.merchantId),
+            })
+          );
+        }
+      }
+
+      /* ---------- REFRESH ---------- */
+      await dispatch(getCatalogItems({ modelId, merchantId: token }));
+      navigate(`/dashboard/catalogue/${modelId}`);
+
+    } catch (err) {
+      console.error(err);
+      alert("Something went wrong while saving item");
     }
-
-    /* ---------- REFRESH ---------- */
-    await dispatch(getCatalogItems({ modelId ,merchantId: token }));
-    navigate(`/dashboard/catalogue/${modelId}`);
-
-  } catch (err) {
-    console.error(err);
-    alert("Something went wrong while saving item");
-  }
-};
+  };
 
 
 
   const handleImageUpload = async (files) => {
-  const uploadedImages = [];
+    const uploadedImages = [];
 
-  for (let file of files) {
-    const fd = new FormData();
-    fd.append("image", file);
-    fd.append("merchantId", Number(form.merchantId)); 
+    for (let file of files) {
+      const fd = new FormData();
+      fd.append("image", file);
+      fd.append("merchantId", Number(form.merchantId));
 
-    const res = await fetch(
-      "https://api.rmtechsolution.com/uploadCmsImage",
-      {
-        method: "POST",
-        body: fd,
+      const res = await fetch(
+        "https://api.rmtechsolution.com/uploadCmsImage",
+        {
+          method: "POST",
+          body: fd,
+        }
+      );
+
+      const json = await res.json();
+
+      if (!json.success || !json.imageUrl) {
+        alert("Image upload failed");
+        return;
       }
-    );
 
-    const json = await res.json();
-
-    if (!json.success || !json.imageUrl) {
-      alert("Image upload failed");
-      return;
+      uploadedImages.push(json.imageUrl);
     }
 
-    uploadedImages.push(json.imageUrl);
-  }
+    setForm((prev) => ({
+      ...prev,
+      images: [...prev.images, ...uploadedImages],
+    }));
+  };
 
-  setForm((prev) => ({
-    ...prev,
-    images: [...prev.images, ...uploadedImages],
-  }));
-};
+
+  // 🔹 SKU Generator
+  const generateSKU = (name = "", category = "") => {
+    const prefix = (category || "ITEM").slice(0, 3).toUpperCase();
+    const namePart = name.replace(/\s/g, "").slice(0, 4).toUpperCase();
+    const random = Math.floor(1000 + Math.random() * 9000);
+
+    return `${prefix}-${namePart}-${random}`;
+  };
+
+  // 🔹 Barcode Generator (EAN-13 style)
+  const generateBarcode = () => {
+    return String(
+      Math.floor(1000000000000 + Math.random() * 9000000000000)
+    );
+  };
+
+  const handleThermalPrint = () => {
+    const printWindow = window.open("", "", "width=300,height=600");
+
+    const barcodesHTML = variants
+      .filter(v => v.barcode)
+      .map(v => `
+      <div style="margin-bottom:15px;text-align:center;">
+        <div style="font-weight:bold;">
+          ${v.variantName || form.name}
+        </div>
+
+        <div>SKU: ${v.sku || "-"}</div>
+
+        <svg class="barcode" data-value="${v.barcode}"></svg>
+
+        <div style="font-size:10px;margin-top:2px;">
+          ${v.barcode}
+        </div>
+
+        <hr/>
+      </div>
+    `)
+      .join("");
+
+    printWindow.document.write(`
+    <html>
+      <head>
+        <title>Thermal Print</title>
+
+        <!-- ✅ LOAD JsBarcode INSIDE PRINT WINDOW -->
+        <script src="https://cdn.jsdelivr.net/npm/jsbarcode"></script>
+      </head>
+
+      <body style="width:220px;font-family:monospace;font-size:12px;">
+
+        <h3 style="text-align:center;">RM Tech</h3>
+        <hr/>
+
+        ${barcodesHTML}
+
+        <script>
+          window.onload = function () {
+
+            // render all barcodes
+            document.querySelectorAll(".barcode").forEach(el => {
+              const value = el.getAttribute("data-value");
+
+              JsBarcode(el, value, {
+                format: "CODE128",
+                width: 2,
+                height: 50,
+                displayValue: false
+              });
+            });
+
+            // wait for render then print
+            setTimeout(() => {
+              window.print();
+            }, 500);
+          };
+        </script>
+
+      </body>
+    </html>
+  `);
+
+    printWindow.document.close();
+  };
+
+  const verifyBarcode = async (barcode, variantIndex = null) => {
+    if (!barcode) return;
+
+    try {
+      const res = await fetch("https://api.rmtechsolution.com/checkBarcode", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ barcode }),
+      });
+
+      const data = await res.json();
+
+      if (data?.exists) {
+        alert("Barcode already exists! New generated one applied.");
+
+        // ✅ ITEM BARCODE
+        if (variantIndex === null) {
+          update("barcode", data.newBarcode);
+        }
+        // ✅ VARIANT BARCODE
+        else {
+          updateVariant(variantIndex, "barcode", data.newBarcode);
+        }
+      }
+    } catch (err) {
+      console.error("Barcode check failed", err);
+    }
+  };
+
 
 
   /* ---------------- TAB CONTENT ---------------- */
@@ -281,7 +411,60 @@ const handleSubmit = async () => {
           <>
             <Input label="Product Name *" value={form.name} onChange={(v) => update("name", v)} />
             <Input label="Brand *" value={form.brand} onChange={(v) => update("brand", v)} />
-            <Input label="SKU *" value={form.sku} onChange={(v) => update("sku", v)} />
+            <Input
+              label="SKU *"
+              value={form.sku}
+              onChange={(v) => update("sku", v)}
+            />
+
+            <div className="flex gap-2 mt-2"
+            >
+              <button
+                type="button"
+                onClick={() =>
+                  update("sku", generateSKU(form.name, form.category))
+                }
+                className="px-3 py-1 bg-gray-200 rounded text-sm"
+              >
+                Generate SKU
+              </button>
+            </div>
+
+            {/* 🔹 Barcode */}
+            <div className={`flex flex-col col-span-1 sm:col-span-2 lg:col-span-3 
+    ${itemId ? "opacity-50 pointer-events-none" : ""}`}>
+
+
+              <Input
+                label="Barcode"
+                value={form.barcode}
+                onChange={(v) => {
+                  update("barcode", v);
+                  verifyBarcode(v); // 🔥 check immediately
+                }}
+              />
+
+              <div className="flex gap-2 mt-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    const newCode = generateBarcode();
+                    update("barcode", newCode);
+                    verifyBarcode(newCode);
+                  }}
+                  className="px-3 py-1 bg-gray-200 rounded text-sm"
+                >
+                  Generate Barcode
+                </button>
+              </div>
+
+              {/* 🔹 Barcode Preview */}
+              {form.barcode && (
+                <div className="mt-3">
+                  <Barcode value={form.barcode} height={50} />
+                </div>
+              )}
+            </div>
             <Textarea label="Description" value={form.description} onChange={(v) => update("description", v)} />
           </>
         );
@@ -297,52 +480,52 @@ const handleSubmit = async () => {
           </>
         );
 
-     case "Media":
-  return (
-    <div
-      className="border-2 border-dashed rounded-lg p-10 text-center cursor-pointer"
-      onClick={() => document.getElementById("item-image-upload").click()}
-    >
-      <Upload className="mx-auto mb-2" />
-      <p className="text-gray-600">Drop images here or click to upload</p>
+      case "Media":
+        return (
+          <div
+            className="border-2 border-dashed rounded-lg p-10 text-center cursor-pointer"
+            onClick={() => document.getElementById("item-image-upload").click()}
+          >
+            <Upload className="mx-auto mb-2" />
+            <p className="text-gray-600">Drop images here or click to upload</p>
 
-      <input
-        id="item-image-upload"
-        type="file"
-        accept="image/*"
-        multiple
-        hidden
-        onChange={(e) => handleImageUpload(e.target.files)}
-      />
+            <input
+              id="item-image-upload"
+              type="file"
+              accept="image/*"
+              multiple
+              hidden
+              onChange={(e) => handleImageUpload(e.target.files)}
+            />
 
-      {/* IMAGE PREVIEW */}
-      {form.images.length > 0 && (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mt-6">
-          {form.images.map((img, i) => (
-            <div key={i} className="relative">
-              <img
-                src={img}
-                alt="item"
-                className="h-24 w-full object-cover rounded"
-              />
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setForm((p) => ({
-                    ...p,
-                    images: p.images.filter((_, x) => x !== i),
-                  }));
-                }}
-                className="absolute -top-2 -right-2 bg-red-600 text-white rounded-full p-1"
-              >
-                <X size={12} />
-              </button>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
-  );
+            {/* IMAGE PREVIEW */}
+            {form.images.length > 0 && (
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mt-6">
+                {form.images.map((img, i) => (
+                  <div key={i} className="relative">
+                    <img
+                      src={img}
+                      alt="item"
+                      className="h-24 w-full object-cover rounded"
+                    />
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setForm((p) => ({
+                          ...p,
+                          images: p.images.filter((_, x) => x !== i),
+                        }));
+                      }}
+                      className="absolute -top-2 -right-2 bg-red-600 text-white rounded-full p-1"
+                    >
+                      <X size={12} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        );
 
       case "Details":
         return (
@@ -367,27 +550,52 @@ const handleSubmit = async () => {
         return (
           <div className="space-y-4">
             {variants.map((v, i) => (
-              <div key={i} className="border rounded-lg p-4 bg-gray-50 space-y-3">
-                <div className="flex justify-between">
+              <div
+                key={i}
+                className="border rounded-xl p-4 bg-gray-50 space-y-4"
+              >
+                {console.log(v, "hasjajsggy")
+                }
+                {/* HEADER */}
+                <div className="flex justify-between items-center">
                   <h4 className="font-semibold">Variant {i + 1}</h4>
                   {variants.length > 1 && (
-                    <button onClick={() => removeVariant(i)} className="text-red-600 text-sm">
+                    <button
+                      onClick={() => removeVariant(i)}
+                      className="text-red-600 text-sm"
+                    >
                       Remove
                     </button>
                   )}
                 </div>
 
-                <Input label="Variant Name" value={v.variantName} onChange={(val) => updateVariant(i, "variantName", val)} />
+                {/* VARIANT NAME */}
+                <Input
+                  label="Variant Name"
+                  value={v.variantName}
+                  onChange={(val) => updateVariant(i, "variantName", val)}
+                />
 
+                {/* MAIN GRID */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                  <Input label="Quantity" type="number" value={v.quantityValue} onChange={(val) => updateVariant(i, "quantityValue", val)} />
-                  <Input label="SKU" value={v.sku} onChange={(val) => updateVariant(i, "sku", val)} />
-                  <div style={{ display: "grid" }}>
-                    <span>Units</span>
+
+                  {/* QUANTITY */}
+                  <Input
+                    label="Quantity"
+                    type="number"
+                    value={v.quantityValue}
+                    onChange={(val) => updateVariant(i, "quantityValue", val)}
+                  />
+
+                  {/* UNIT */}
+                  <div className="flex flex-col">
+                    <label className="text-sm font-medium mb-1">Units</label>
                     <select
                       value={v.quantityUnit}
-                      onChange={(e) => updateVariant(i, "quantityUnit", e.target.value)}
-                      className="pl-5 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                      onChange={(e) =>
+                        updateVariant(i, "quantityUnit", e.target.value)
+                      }
+                      className="pl-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
                     >
                       <option value="g">g</option>
                       <option value="kg">kg</option>
@@ -396,21 +604,99 @@ const handleSubmit = async () => {
                       <option value="pcs">pcs</option>
                     </select>
                   </div>
+
+                  {/* SKU */}
+                  <div className={`flex flex-col ${itemId ? "opacity-50 pointer-events-none" : ""}`}>
+                    <Input
+                      label="SKU"
+                      value={v.sku}
+                      onChange={(val) => updateVariant(i, "sku", val)}
+                    />
+                    <button
+                      type="button"
+                      onClick={() =>
+                        updateVariant(
+                          i,
+                          "sku",
+                          generateSKU(v.variantName, form.name)
+                        )
+                      }
+                      className="mt-1 text-xs bg-gray-200 px-2 py-1 rounded"
+                    >
+                      Auto Generate
+                    </button>
+                  </div>
+
+                  {/* BARCODE */}
+
+                  <div className={`flex flex-col col-span-1 sm:col-span-2 lg:col-span-3 
+    ${itemId ? "opacity-50 pointer-events-none" : ""}`}>
+                    <Input
+                      label="Barcode"
+                      value={v.barcode}
+                      onChange={(val) => {
+                        updateVariant(i, "barcode", val);
+                        verifyBarcode(val, i);
+                      }}
+                    />
+
+                    {!itemId &&
+                      <React.Fragment>
+                        <div className="flex gap-2 mt-1">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const newCode = generateBarcode();
+                              updateVariant(i, "barcode", newCode);
+                              verifyBarcode(newCode, i);
+                            }}
+                            className="text-xs bg-gray-200 px-2 py-1 rounded"
+                          >
+                            Generate Barcode
+                          </button>
+                        </div>
+
+
+                        {/* BARCODE PREVIEW */}
+                        {v.barcode && (
+                          <div className="mt-3 flex justify-center bg-white p-2 rounded">
+                            <Barcode value={v.barcode} height={50} />
+                          </div>
+                        )}
+                      </React.Fragment>}
+                  </div>
+
                 </div>
 
+                {/* PRICING */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                  <Input
+                    label="Price"
+                    type="number"
+                    value={v.price}
+                    onChange={(val) => updateVariant(i, "price", val)}
+                  />
+                  <Input
+                    label="Compare Price"
+                    type="number"
+                    value={v.comparePrice}
+                    onChange={(val) => updateVariant(i, "comparePrice", val)}
+                  />
+                  <Input
+                    label="Stock"
+                    type="number"
+                    value={v.stock}
+                    onChange={(val) => updateVariant(i, "stock", val)}
+                  />
 
-                <div className="grid grid-cols-3 gap-4">
-                  <Input label="Price" type="number" value={v.price} onChange={(val) => updateVariant(i, "price", val)} />
-                  <Input label="Compare Price" type="number" value={v.comparePrice} onChange={(val) => updateVariant(i, "comparePrice", val)} />
-                  <Input label="Stock" type="number" value={v.stock} onChange={(val) => updateVariant(i, "stock", val)} />
-                  <div className="grid">
-                    <span className="text-sm font-medium mb-1">Status</span>
+                  <div className="flex flex-col">
+                    <label className="text-sm font-medium mb-1">Status</label>
                     <select
                       value={v.status}
                       onChange={(e) =>
                         updateVariant(i, "status", e.target.value)
                       }
-                      className="pl-5 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                      className="pl-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
                     >
                       <option value="active">Active</option>
                       <option value="inactive">Inactive</option>
@@ -418,13 +704,18 @@ const handleSubmit = async () => {
                     </select>
                   </div>
                 </div>
-
               </div>
             ))}
 
-            {!itemId && <button onClick={addVariant} className="px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl flex items-center">
-              <Plus size={14} /> Add Variant
-            </button>}
+            {/* ADD VARIANT */}
+            {!itemId && (
+              <button
+                onClick={addVariant}
+                className="px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl flex items-center gap-2"
+              >
+                <Plus size={14} /> Add Variant
+              </button>
+            )}
           </div>
         );
 
@@ -469,9 +760,9 @@ const handleSubmit = async () => {
     <div className="max-w-7xl mx-auto space-y-4 sm:space-y-6 px-2 sm:px-4">
       {/* HEADER */}
       <div className="flex flex-col sm:flex-row sm:items-center gap-3">
-        <Link to={`/dashboard/catalogue/${modelId}`} 
-        onClick={() => dispatch(setGetItemsVariantsResponse(null))}
-        className="px-4 sm:px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl w-fit text-sm sm:text-base">
+        <Link to={`/dashboard/catalogue/${modelId}`}
+          onClick={() => dispatch(setGetItemsVariantsResponse(null))}
+          className="px-4 sm:px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl w-fit text-sm sm:text-base">
           {"<"}
         </Link>
         <div className="min-w-0">
@@ -511,6 +802,78 @@ const handleSubmit = async () => {
                 <option value="outOfStock">Out of stock</option>
               </select>
             </Card>
+            <div className="print-area">
+              <Card title="Barcodes">
+
+                {/* ITEM BARCODE */}
+                {form.barcode && (
+                  <div className="mb-5 text-center border-b pb-4">
+                    <p className="text-xs text-gray-500 mb-1">Item</p>
+
+                    {/* SKU */}
+                    {form.sku && (
+                      <p className="text-sm font-medium mb-1">
+                        SKU: {form.sku}
+                      </p>
+                    )}
+
+                    {/* BARCODE */}
+                    <div className="bg-white p-2 rounded border inline-block">
+                      <Barcode value={form.barcode} height={40} />
+                    </div>
+
+                    <p className="text-xs mt-1 break-all">{form.barcode}</p>
+                  </div>
+                )}
+
+                {/* VARIANT BARCODES */}
+                {variants.map((v, i) =>
+                  v.barcode ? (
+                    <div key={i} className="mb-5 text-center border-b pb-4 last:border-none">
+
+                      {/* VARIANT NAME */}
+                      <p className="text-xs text-gray-500 mb-1">
+                        {v.variantName || `Variant ${i + 1}`}
+                      </p>
+
+                      {/* SKU */}
+                      {v.sku && (
+                        <p className="text-sm font-medium mb-1">
+                          SKU: {v.sku}
+                        </p>
+                      )}
+
+                      {/* BARCODE */}
+                      <div className="bg-white p-2 rounded border inline-block">
+                        <Barcode value={v.barcode} height={40} />
+                      </div>
+
+                      <p className="text-xs mt-1 break-all">{v.barcode}</p>
+                    </div>
+                  ) : null
+                )}
+
+                {/* PRINT BUTTON */}
+                {(form.barcode || variants.some(v => v.barcode)) && (
+                  <>
+                    <button
+                      onClick={() => window.print()}
+                      className="w-full mt-3 bg-black text-white py-2 rounded text-sm"
+                    >
+                      Print Labels
+                    </button>
+
+                    {/* <button
+  onClick={handleThermalPrint}
+  className="w-full mt-3 bg-black text-white py-2 rounded text-sm"
+>
+  Print Thermal Labels
+</button> */}
+                  </>
+                )}
+
+              </Card>
+            </div>
 
             <Card title="Organization">
               <Input
@@ -534,6 +897,7 @@ const handleSubmit = async () => {
               </button>
             </Card>
           </div>
+
         </div>
       </div>
     </div>

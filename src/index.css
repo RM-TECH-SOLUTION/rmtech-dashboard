@@ -20,6 +20,7 @@ body {
 /* ================= POS PRINT RECEIPT ================= */
 
 @media print {
+@media print {
 
   body * {
     visibility: hidden;
@@ -39,6 +40,56 @@ body {
     font-size: 13px;
   }
 
+}
+@media print {
+  body * {
+    visibility: hidden;
+  }
+
+  .print-area, .print-area * {
+    visibility: visible;
+  }
+
+  .print-area {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+  }
+}
+  body * {
+    visibility: hidden;
+  }
+
+  /* POS BILL */
+  #print-bill,
+  #print-bill * {
+    visibility: visible;
+  }
+
+  /* BARCODE PRINT */
+  .print-area,
+  .print-area * {
+    visibility: visible;
+  }
+
+  #print-bill {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 280px;
+    font-family: monospace;
+    font-size: 13px;
+  }
+
+  .print-area {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background: white;
+    padding: 20px;
+  }
 }
 
 /* Custom scrollbar */
