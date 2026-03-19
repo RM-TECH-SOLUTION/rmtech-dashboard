@@ -402,6 +402,64 @@ const CatalogueItemForm = () => {
   };
 
 
+  const printSingleBarcode = ({ name, sku, barcode, elementId }) => {
+    if (!barcode) return;
+
+    const printWindow = window.open("", "_blank");
+
+    const barcodeSVG =
+      document.getElementById(elementId)?.innerHTML || "";
+
+    const html = `
+    <html>
+      <head>
+        <title>Print Label</title>
+        <style>
+          @page { size: 58mm auto; margin: 0; }
+
+          body {
+            width: 58mm;
+            margin: 0;
+            padding: 6px;
+            font-family: monospace;
+            text-align: center;
+          }
+
+          .barcode svg {
+            width: 100% !important;
+            height: 60px !important;
+          }
+        </style>
+      </head>
+
+      <body>
+        <div><b>${name}</b></div>
+        <div>SKU: ${sku || "-"}</div>
+
+        <div class="barcode">
+          ${barcodeSVG}
+        </div>
+
+        <div>${barcode}</div>
+
+        <script>
+          setTimeout(() => {
+            window.print();
+
+            // ✅ IMPORTANT: close tab after print
+            setTimeout(() => {
+              window.close();
+            }, 300);
+
+          }, 300);
+        </script>
+      </body>
+    </html>
+  `;
+
+    printWindow.document.write(html);
+    printWindow.document.close();
+  };
 
   /* ---------------- TAB CONTENT ---------------- */
   const renderTab = () => {
@@ -660,7 +718,9 @@ const CatalogueItemForm = () => {
                         {/* BARCODE PREVIEW */}
                         {v.barcode && (
                           <div className="mt-3 flex justify-center bg-white p-2 rounded">
-                            <Barcode value={v.barcode} height={50} />
+                            <div id={`barcode-${i}`}>
+                              <Barcode value={v.barcode} height={60} width={2} />
+                            </div>
                           </div>
                         )}
                       </React.Fragment>}
@@ -810,19 +870,34 @@ const CatalogueItemForm = () => {
                   <div className="mb-5 text-center border-b pb-4">
                     <p className="text-xs text-gray-500 mb-1">Item</p>
 
-                    {/* SKU */}
                     {form.sku && (
                       <p className="text-sm font-medium mb-1">
                         SKU: {form.sku}
                       </p>
                     )}
 
-                    {/* BARCODE */}
                     <div className="bg-white p-2 rounded border inline-block">
-                      <Barcode value={form.barcode} height={40} />
+                      <div id="barcode-item">
+                        <Barcode value={form.barcode} height={60} width={2} />
+                      </div>
                     </div>
 
                     <p className="text-xs mt-1 break-all">{form.barcode}</p>
+
+                    {/* ✅ PRINT BUTTON */}
+                    <button
+                      onClick={() =>
+                        printSingleBarcode({
+                          name: form.name,
+                          sku: form.sku,
+                          barcode: form.barcode,
+                          elementId: "barcode-item"
+                        })
+                      }
+                      className="mt-2 px-3 py-1 bg-black text-white rounded text-xs"
+                    >
+                      Print Label
+                    </button>
                   </div>
                 )}
 
@@ -831,24 +906,38 @@ const CatalogueItemForm = () => {
                   v.barcode ? (
                     <div key={i} className="mb-5 text-center border-b pb-4 last:border-none">
 
-                      {/* VARIANT NAME */}
                       <p className="text-xs text-gray-500 mb-1">
                         {v.variantName || `Variant ${i + 1}`}
                       </p>
 
-                      {/* SKU */}
                       {v.sku && (
                         <p className="text-sm font-medium mb-1">
                           SKU: {v.sku}
                         </p>
                       )}
 
-                      {/* BARCODE */}
                       <div className="bg-white p-2 rounded border inline-block">
-                        <Barcode value={v.barcode} height={40} />
+                        <div id={`barcode-${i}`}>
+                          <Barcode value={v.barcode} height={60} width={2} />
+                        </div>
                       </div>
 
                       <p className="text-xs mt-1 break-all">{v.barcode}</p>
+
+                      {/* ✅ PRINT BUTTON */}
+                      <button
+                        onClick={() =>
+                          printSingleBarcode({
+                            name: v.variantName || form.name,
+                            sku: v.sku,
+                            barcode: v.barcode,
+                            elementId: `barcode-${i}`
+                          })
+                        }
+                        className="mt-2 px-3 py-1 bg-black text-white rounded text-xs"
+                      >
+                        Print Label
+                      </button>
                     </div>
                   ) : null
                 )}
@@ -860,7 +949,7 @@ const CatalogueItemForm = () => {
                       onClick={() => window.print()}
                       className="w-full mt-3 bg-black text-white py-2 rounded text-sm"
                     >
-                      Print Labels
+                      All Print Labels
                     </button>
 
                     {/* <button

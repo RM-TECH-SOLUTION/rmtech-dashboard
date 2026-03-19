@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Search, Trash2 } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -16,22 +16,26 @@ export default function POSComponent() {
 
   const [categories, setCategories] = useState([]);
   const [products, setProducts] = useState([]);
- const user = JSON.parse(localStorage.getItem("user") || "{}");
- const token = localStorage.getItem("token");
+  const user = JSON.parse(localStorage.getItem("user") || "{}");
+  const token = localStorage.getItem("token");
   const dispatch = useDispatch();
   const merchantData = user.merchantData;
-  const loyaltySettings  = useSelector((state) => state.cms.loyaltySettings || []);
+  const loyaltySettings = useSelector((state) => state.cms.loyaltySettings || []);
   const cmsData = useSelector((state) => state.cms.data || []);
   const [coupons, setCoupons] = useState([]);
+  const barcodeRef = React.useRef();
+  const scanLock = useRef(false);
+  const scanTimeout = useRef(null);
+  const [allProducts, setAllProducts] = useState([]);
 
-const billLogoConfig = cmsData.find(
-  (item) => item.modelSlug === "billLogo"
-);
- const logo = billLogoConfig?.cms?.logo?.fieldValue;
-const merchantName = billLogoConfig?.cms?.merchantName?.fieldValue;
+  const billLogoConfig = cmsData.find(
+    (item) => item.modelSlug === "billLogo"
+  );
+  const logo = billLogoConfig?.cms?.logo?.fieldValue;
+  const merchantName = billLogoConfig?.cms?.merchantName?.fieldValue;
 
-console.log("Logo:hhh", logo);
-console.log("Merchant Name:hhh", merchantName);
+  console.log("Logo:hhh", logo);
+  console.log("Merchant Name:hhh", merchantName);
 
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [search, setSearch] = useState("");
@@ -45,37 +49,52 @@ console.log("Merchant Name:hhh", merchantName);
   const [paymentMethod, setPaymentMethod] = useState("cash");
   const [discount, setDiscount] = useState(0);
   const [lastOrder, setLastOrder] = useState(null);
+  const [barcodeInput, setBarcodeInput] = useState("");
 
-  console.log(selectedVariants,"selectedVariantsselectedVariants");
-  
+  console.log(allProducts, "selectedVariantsselectedVariants");
+
 
   /* ================= FETCH CATALOG ================= */
 
   useEffect(() => {
-    dispatch(fetchCMSData(token)); 
+    dispatch(fetchCMSData(token));
     fetchCatalogModels();
     fetchCoupons();
     dispatch(getLoyaltySettings(token))
+    fetchAllItems()
 
   }, []);
 
   const fetchCoupons = async () => {
-  try {
+    try {
 
-    const res = await fetch(
-      `https://api.rmtechsolution.com/get_coupons?merchantId=${token}`
-    );
+      const res = await fetch(
+        `https://api.rmtechsolution.com/get_coupons?merchantId=${token}`
+      );
 
-    const data = await res.json();
+      const data = await res.json();
 
-    if (data.success) {
-      setCoupons(data.data || []);
+      if (data.success) {
+        setCoupons(data.data || []);
+      }
+
+    } catch (err) {
+      console.log("Coupon fetch error", err);
     }
+  };
+  const fetchAllItems = async () => {
+    try {
+      const res = await fetch(
+        `https://api.rmtechsolution.com/getAllCatalogueItems?merchantId=${token}`
+      );
 
-  } catch (err) {
-    console.log("Coupon fetch error", err);
-  }
-};
+      const data = await res.json();
+
+      setAllProducts(data?.data || []);
+    } catch (err) {
+      console.log("All items error", err);
+    }
+  };
 
   const fetchCatalogModels = async () => {
 
@@ -122,229 +141,314 @@ console.log("Merchant Name:hhh", merchantName);
 
   /* ================= ADD TO CART ================= */
 
- const addToCart = (product) => {
+  const addToCart = (product) => {
 
-  const selected =
-    selectedVariants[product.id] || product.variants?.[0];
+    const selected =
+      selectedVariants[product.id] || product.variants?.[0];
 
-  const variantId = selected?.id || "default";
-  const variantName = selected?.variant_name || "";
- const price = Number(selected?.price || product.price || 0);
- console.log(selected,"selectedselectedgg");
- 
+    const variantId = selected?.id || "default";
+    const variantName = selected?.variant_name || "";
+    const price = Number(selected?.price || product.price || 0);
+    console.log(selected, "selectedselectedgg");
 
-  const exist = cart.find(
-    (item) =>
-      item.id === product.id &&
-      item.variantId === variantId
-  );
 
-  if (exist) {
-
-    setCart(
-      cart.map((item) =>
+    const exist = cart.find(
+      (item) =>
         item.id === product.id &&
         item.variantId === variantId
-          ? { ...item, qty: item.qty + 1 }
-          : item
-      )
     );
 
-  } else {
+    if (exist) {
 
-    setCart([
-      ...cart,
-      {
-        id: product.id,
-        variantId,
-        name: product.name,
-        variant: variantName,
-        price,
-        qty: 1,
-      },
-    ]);
+      setCart(
+        cart.map((item) =>
+          item.id === product.id &&
+            item.variantId === variantId
+            ? { ...item, qty: item.qty + 1 }
+            : item
+        )
+      );
 
-  }
+    } else {
 
-};
+      setCart([
+        ...cart,
+        {
+          id: product.id,
+          variantId,
+          name: product.name,
+          variant: variantName,
+          price,
+          qty: 1,
+        },
+      ]);
+
+    }
+
+  };
   /* ================= UPDATE QTY ================= */
 
-const updateQty = (id, variantId, type) => {
+  const updateQty = (id, variantId, type) => {
 
-  const updated = cart
-    .map((item) => {
+    const updated = cart
+      .map((item) => {
 
-      if (item.id === id && item.variantId === variantId) {
+        if (item.id === id && item.variantId === variantId) {
 
-        const qty =
-          type === "inc" ? item.qty + 1 : item.qty - 1;
+          const qty =
+            type === "inc" ? item.qty + 1 : item.qty - 1;
 
-        return { ...item, qty };
+          return { ...item, qty };
 
-      }
+        }
 
-      return item;
+        return item;
 
-    })
-    .filter((i) => i.qty > 0);
+      })
+      .filter((i) => i.qty > 0);
 
-  setCart(updated);
+    setCart(updated);
 
-};
+  };
 
   /* ================= REMOVE ITEM ================= */
 
-const removeItem = (id, variantId) => {
-  setCart(
-    cart.filter(
-      (item) =>
-        !(item.id === id && item.variantId === variantId)
-    )
-  );
-};
+  const removeItem = (id, variantId) => {
+    setCart(
+      cart.filter(
+        (item) =>
+          !(item.id === id && item.variantId === variantId)
+      )
+    );
+  };
   /* ================= TOTAL ================= */
 
   const total = cart.reduce((sum, i) => sum + i.qty * i.price, 0);
   const finalTotal = total - discount;
 
- const spendAmount = Number(loyaltySettings?.spend_amount || 0);
-const rewardPoints = Number(loyaltySettings?.reward_points || 0);
+  const spendAmount = Number(loyaltySettings?.spend_amount || 0);
+  const rewardPoints = Number(loyaltySettings?.reward_points || 0);
 
-let earnedPoints = 0;
+  let earnedPoints = 0;
 
-if (spendAmount > 0) {
-  earnedPoints = Math.floor((finalTotal / spendAmount) * rewardPoints);
-}
+  if (spendAmount > 0) {
+    earnedPoints = Math.floor((finalTotal / spendAmount) * rewardPoints);
+  }
 
-console.log(earnedPoints,"earnedPointsjjjj",loyaltySettings);
+  console.log(earnedPoints, "earnedPointsjjjj", loyaltySettings);
 
   /* ================= COUPON ================= */
 
- const applyCoupon = () => {
+  const applyCoupon = () => {
 
-  const coupon = coupons.find(
-    (c) => c.code.toLowerCase() === couponCode.toLowerCase()
-  );
-
-  if (!coupon) {
-    alert("Invalid Coupon");
-    setDiscount(0);
-    return;
-  }
-
-  if (Number(total) < Number(coupon.minOrder)) {
-    alert(`Minimum order ₹${coupon.minOrder} required`);
-    return;
-  }
-
-  let discountAmount = 0;
-
-  if (coupon.type === "percentage") {
-    discountAmount = (total * Number(coupon.value)) / 100;
-  }
-
-  if (coupon.type === "flat") {
-    discountAmount = Number(coupon.value);
-  }
-
-  setDiscount(discountAmount);
-
-};
-
-const createOrder = async () => {
-
-  try {
-
-    console.log(cart,"cartcartcart")
-    const items = cart.map((item) => ({
-      
-      item_id: item.id,
-      item_name: item.name,
-      variant_name: item.variant,
-      variantId: item.variantId || "default",
-      price: item.price,
-      quantity: item.qty,
-      total: item.qty * item.price
-    }));
-
-    const payload = {
-      merchant_id: merchantData?.merchant_id,
-      user_id: 0,
-      phone: customerPhone || "POS",
-      items,
-      amount: Number(finalTotal),
-      orderType: `offline[${paymentMethod}]`,
-      couponDiscount: discount || 0,
-      pointsDiscount: 0,
-      earnedPoints: earnedPoints || 0,
-      address: JSON.stringify({
-        source: "POS",
-        counter: "Dashboard POS"
-      })
-    };
-
-    console.log("POS PAYLOAD:", payload);
-
-    const res = await fetch(
-      "https://api.rmtechsolution.com/create_pos_order.php",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(payload)
-      }
+    const coupon = coupons.find(
+      (c) => c.code.toLowerCase() === couponCode.toLowerCase()
     );
 
-    const text = await res.text();
-
-    console.log("RAW RESPONSE:", text);
-
-    const data = JSON.parse(text);
-
-    console.log("PARSED RESPONSE:", data);
-
-    if (!data.success) {
-      alert("Order failed");
+    if (!coupon) {
+      alert("Invalid Coupon");
+      setDiscount(0);
       return;
     }
 
-    setLastOrder({
-  items,
-  total,
-  discount,
-  finalTotal,
-  paymentMethod
-});
+    if (Number(total) < Number(coupon.minOrder)) {
+      alert(`Minimum order ₹${coupon.minOrder} required`);
+      return;
+    }
 
-setCart([]);
-setShowCheckout(false);
+    let discountAmount = 0;
 
-setTimeout(() => {
-  window.print();
-  fetchCatalogModels();
-}, 300);
+    if (coupon.type === "percentage") {
+      discountAmount = (total * Number(coupon.value)) / 100;
+    }
 
-  } catch (err) {
+    if (coupon.type === "flat") {
+      discountAmount = Number(coupon.value);
+    }
 
-    console.error("POS ERROR:", err);
+    setDiscount(discountAmount);
 
-    alert("POS Order Error");
+  };
 
-  }
+  const createOrder = async () => {
 
-};
+    try {
 
-const handleCheckout = () => {
+      console.log(cart, "cartcartcart")
+      const items = cart.map((item) => ({
 
-  if (cart.length === 0) {
-    alert("Cart empty");
-    return;
-  }
+        item_id: item.id,
+        item_name: item.name,
+        variant_name: item.variant,
+        variantId: item.variantId || "default",
+        price: item.price,
+        quantity: item.qty,
+        total: item.qty * item.price
+      }));
 
-  createOrder();
+      const payload = {
+        merchant_id: merchantData?.merchant_id,
+        user_id: 0,
+        phone: customerPhone || "POS",
+        items,
+        amount: Number(finalTotal),
+        orderType: `offline[${paymentMethod}]`,
+        couponDiscount: discount || 0,
+        pointsDiscount: 0,
+        earnedPoints: earnedPoints || 0,
+        address: JSON.stringify({
+          source: "POS",
+          counter: "Dashboard POS"
+        })
+      };
 
-};
+      console.log("POS PAYLOAD:", payload);
+
+      const res = await fetch(
+        "https://api.rmtechsolution.com/create_pos_order.php",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(payload)
+        }
+      );
+
+      const text = await res.text();
+
+      console.log("RAW RESPONSE:", text);
+
+      const data = JSON.parse(text);
+
+      console.log("PARSED RESPONSE:", data);
+
+      if (!data.success) {
+        alert("Order failed");
+        return;
+      }
+
+      setLastOrder({
+        items,
+        total,
+        discount,
+        finalTotal,
+        paymentMethod
+      });
+
+      setCart([]);
+      setShowCheckout(false);
+
+      setTimeout(() => {
+        window.print();
+        fetchCatalogModels();
+      }, 300);
+
+    } catch (err) {
+
+      console.error("POS ERROR:", err);
+
+      alert("POS Order Error");
+
+    }
+
+  };
+
+  const handleCheckout = () => {
+
+    if (cart.length === 0) {
+      alert("Cart empty");
+      return;
+    }
+
+    createOrder();
+
+  };
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (document.activeElement !== barcodeRef.current) {
+        barcodeRef.current?.focus();
+      }
+    }, 500);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const handleBarcodeScan = (code) => {
+    if (!code || scanLock.current) return;
+
+    scanLock.current = true;
+
+    setTimeout(() => {
+      scanLock.current = false;
+    }, 300);
+
+    let foundProduct = null;
+    let foundVariant = null;
+
+    for (const product of allProducts) { // ✅ FIXED
+
+      if (product.barcode === code) {
+        foundProduct = product;
+        break;
+      }
+
+      const variant = product.variants?.find(
+        (v) => v.barcode === code
+      );
+
+      if (variant) {
+        foundProduct = product;
+        foundVariant = variant;
+        break;
+      }
+    }
+
+    if (!foundProduct) {
+      alert("Product not found");
+      return;
+    }
+
+    // STOCK CHECK
+    if (foundVariant) {
+      if (Number(foundVariant.stock || 0) <= 0) {
+        alert("Variant out of stock");
+        return;
+      }
+    } else {
+      if (Number(foundProduct.stock || 0) <= 0) {
+        alert("Product out of stock");
+        return;
+      }
+    }
+
+    // AUTO SWITCH CATEGORY (🔥 UX BOOST)
+    const category = categories.find(
+      (c) => c.id === foundProduct.catalogue_model_id
+    );
+
+    if (category) {
+      setSelectedCategory(category);
+      loadItems(category.id);
+    }
+
+    // SET VARIANT
+    if (foundVariant) {
+      setSelectedVariants((prev) => ({
+        ...prev,
+        [foundProduct.id]: foundVariant,
+      }));
+    }
+
+    addToCart(foundProduct);
+    playBeep();
+  };
+
+  const playBeep = () => {
+    const audio = new Audio("https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg");
+    audio.play();
+  };
 
   /* ================= FILTER ================= */
 
@@ -380,11 +484,10 @@ const handleCheckout = () => {
                 setSelectedCategory(cat);
                 loadItems(cat.id);
               }}
-              className={`w-full text-left px-3 py-2 rounded-lg mb-2 ${
-                selectedCategory?.id === cat.id
-                  ? "bg-blue-600 text-white"
-                  : "bg-gray-100"
-              }`}
+              className={`w-full text-left px-3 py-2 rounded-lg mb-2 ${selectedCategory?.id === cat.id
+                ? "bg-blue-600 text-white"
+                : "bg-gray-100"
+                }`}
             >
               {cat.name}
             </button>
@@ -416,9 +519,9 @@ const handleCheckout = () => {
 
               const price = selected?.price || product.price;
               const stock =
-  product.variants?.length > 0
-    ? selected?.stock ?? 0
-    : product.stock ?? 0;
+                product.variants?.length > 0
+                  ? selected?.stock ?? 0
+                  : product.stock ?? 0;
 
               const image =
                 product.images?.[0] || product.image?.[0];
@@ -439,34 +542,34 @@ const handleCheckout = () => {
                   )}
 
                   <h3 className="font-semibold">{product.name}</h3>
-                 <p className="text-sm text-gray-500">
-  Stock: {stock}
-</p>
+                  <p className="text-sm text-gray-500">
+                    Stock: {stock}
+                  </p>
 
                   {product.variants?.length > 0 && (
 
-                 <select
-  className="border rounded mt-2 p-1 text-sm"
-  value={selectedVariants[product.id]?.id || product.variants?.[0]?.id}
-  onChange={(e) => {
+                    <select
+                      className="border rounded mt-2 p-1 text-sm"
+                      value={selectedVariants[product.id]?.id || product.variants?.[0]?.id}
+                      onChange={(e) => {
 
-    const variant = product.variants.find(
-      (v) => v.id.toString() === e.target.value
-    );
+                        const variant = product.variants.find(
+                          (v) => v.id.toString() === e.target.value
+                        );
 
-    setSelectedVariants((prev) => ({
-      ...prev,
-      [product.id]: variant,
-    }));
+                        setSelectedVariants((prev) => ({
+                          ...prev,
+                          [product.id]: variant,
+                        }));
 
-  }}
->
-  {product.variants.map((v) => (
-    <option key={v.id} value={v.id}>
-      {v.variant_name} - ₹{v.price}
-    </option>
-  ))}
-</select>
+                      }}
+                    >
+                      {product.variants.map((v) => (
+                        <option key={v.id} value={v.id}>
+                          {v.variant_name} - ₹{v.price}
+                        </option>
+                      ))}
+                    </select>
 
                   )}
 
@@ -475,16 +578,15 @@ const handleCheckout = () => {
                   </p>
 
                   <button
-  onClick={() => addToCart(product)}
-  disabled={stock <= 0}
-  className={`w-full mt-3 py-2 rounded-xl text-white ${
-    stock <= 0
-      ? "bg-gray-400 cursor-not-allowed"
-      : "bg-gradient-to-r from-blue-600 to-purple-600"
-  }`}
->
-  {stock <= 0 ? "Out of Stock" : "Add"}
-</button>
+                    onClick={() => addToCart(product)}
+                    disabled={stock <= 0}
+                    className={`w-full mt-3 py-2 rounded-xl text-white ${stock <= 0
+                      ? "bg-gray-400 cursor-not-allowed"
+                      : "bg-gradient-to-r from-blue-600 to-purple-600"
+                      }`}
+                  >
+                    {stock <= 0 ? "Out of Stock" : "Add"}
+                  </button>
 
                 </div>
 
@@ -498,7 +600,43 @@ const handleCheckout = () => {
 
         {/* CART */}
 
+
         <div className="md:col-span-3 bg-white rounded-xl shadow p-4">
+          <div className="mb-4">
+            <input
+              ref={barcodeRef}
+              autoFocus
+              value={barcodeInput}
+              onChange={(e) => {
+                const value = e.target.value.trim();
+                setBarcodeInput(value);
+
+                if (scanTimeout.current) {
+                  clearTimeout(scanTimeout.current);
+                }
+
+                scanTimeout.current = setTimeout(() => {
+                  if (value) {
+                    handleBarcodeScan(value);
+                    setBarcodeInput("");
+
+                    barcodeRef.current?.focus();
+                  }
+                }, 200); // wait for full scan input
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  handleBarcodeScan(barcodeInput);
+                  setBarcodeInput("");
+                  setTimeout(() => {
+                    barcodeRef.current?.focus(); // ✅ keep scanner active
+                  }, 50);
+                }
+              }}
+              placeholder="Scan barcode..."
+              className="w-full border p-3 rounded-lg text-lg"
+            />
+          </div>
 
           <h2 className="font-bold border-b pb-3">Cart</h2>
 
@@ -582,210 +720,208 @@ const handleCheckout = () => {
 
       {/* CHECKOUT POPUP */}
 
-     {showCheckout && (
-  <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 p-4">
+      {showCheckout && (
+        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 p-4">
 
-    <div className="bg-white w-full max-w-md rounded-xl shadow-lg p-6">
+          <div className="bg-white w-full max-w-md rounded-xl shadow-lg p-6">
 
-      <h2 className="text-xl font-bold mb-4">Checkout</h2>
+            <h2 className="text-xl font-bold mb-4">Checkout</h2>
 
-      {/* Customer Phone */}
+            {/* Customer Phone */}
 
-      <input
-          type="tel"
-          placeholder="Customer Phone"
-          value={customerPhone}
-          onChange={(e) => setCustomerPhone(e.target.value)}
-          className="w-full border rounded-lg p-2 mb-3"
-      />
+            <input
+              type="tel"
+              placeholder="Customer Phone"
+              value={customerPhone}
+              onChange={(e) => setCustomerPhone(e.target.value)}
+              className="w-full border rounded-lg p-2 mb-3"
+            />
 
-      {/* Coupon */}
+            {/* Coupon */}
 
-      <div className="flex gap-2 mb-2">
+            <div className="flex gap-2 mb-2">
 
-        <input
-          type="text"
-          placeholder="Coupon Code"
-          value={couponCode}
-          onChange={(e) => setCouponCode(e.target.value)}
-          className="flex-1 border rounded-lg p-2"
-        />
+              <input
+                type="text"
+                placeholder="Coupon Code"
+                value={couponCode}
+                onChange={(e) => setCouponCode(e.target.value)}
+                className="flex-1 border rounded-lg p-2"
+              />
 
-        <button
-          onClick={applyCoupon}
-          className="px-4 bg-green-600 text-white rounded-lg"
-        >
-          Redeem
-        </button>
+              <button
+                onClick={applyCoupon}
+                className="px-4 bg-green-600 text-white rounded-lg"
+              >
+                Redeem
+              </button>
 
-      </div>
+            </div>
 
-      {/* Suggested Coupons */}
+            {/* Suggested Coupons */}
 
-      <div className="flex flex-wrap gap-2 mb-4">
+            <div className="flex flex-wrap gap-2 mb-4">
 
-        {coupons.map((c) => (
+              {coupons.map((c) => (
 
-          <button
-            key={c.code}
-            onClick={() => setCouponCode(c.code)}
-            className="px-3 py-1 bg-gray-100 rounded-lg text-sm hover:bg-blue-600 hover:text-white"
-          >
-            {c.code}
-          </button>
+                <button
+                  key={c.code}
+                  onClick={() => setCouponCode(c.code)}
+                  className="px-3 py-1 bg-gray-100 rounded-lg text-sm hover:bg-blue-600 hover:text-white"
+                >
+                  {c.code}
+                </button>
+
+              ))}
+
+            </div>
+
+            {/* Bill Summary */}
+
+            <div className="border-t pt-3 space-y-2">
+
+              <div className="flex justify-between">
+                <span>Subtotal</span>
+                <span>₹{total}</span>
+              </div>
+
+              {discount > 0 && (
+                <div className="flex justify-between text-green-600">
+                  <span>Discount</span>
+                  <span>-₹{discount}</span>
+                </div>
+              )}
+
+              <div className="flex justify-between font-bold text-lg">
+                <span>Total</span>
+                <span>₹{finalTotal}</span>
+              </div>
+
+            </div>
+
+            {/* Payment Method */}
+
+            <div className="flex gap-4 mt-4">
+
+              <button
+                onClick={() => setPaymentMethod("cash")}
+                className={`px-4 py-2 border rounded ${paymentMethod === "cash" ? "bg-blue-600 text-white" : ""
+                  }`}
+              >
+                Cash
+              </button>
+
+              <button
+                onClick={() => setPaymentMethod("online")}
+                className={`px-4 py-2 border rounded ${paymentMethod === "online" ? "bg-blue-600 text-white" : ""
+                  }`}
+              >
+                Online
+              </button>
+
+            </div>
+
+            {/* Buttons */}
+
+            <div className="flex gap-3 mt-6">
+
+              <button
+                onClick={() => setShowCheckout(false)}
+                className="flex-1 py-2 border rounded-lg"
+              >
+                Cancel
+              </button>
+
+              <button
+                onClick={handleCheckout}
+                className="flex-1 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg"
+              >
+                Print Bill
+              </button>
+
+            </div>
+
+          </div>
+
+        </div>
+      )}
+      {/* PRINT BILL */}
+
+      <div id="print-bill" className="hidden print:block p-4 text-sm">
+
+        <div className="text-center mb-2">
+
+          {logo && (
+            <img
+              src={logo}
+              alt="Merchant Logo"
+              className="mx-auto h-14 object-contain mb-1"
+            />
+          )}
+
+          <h2 className="font-bold text-lg">
+            {merchantName || "RM Tech Store"}
+          </h2>
+
+          <p>POS Receipt</p>
+
+        </div>
+
+        <hr className="my-2" />
+
+        {lastOrder?.items?.map((item, index) => (
+
+          <div key={index} className="flex justify-between mb-1">
+
+            <div>
+              <div>{item.item_name}</div>
+
+              {item.variant_name && (
+                <div className="text-xs text-gray-500">
+                  {item.variant_name}
+                </div>
+              )}
+
+            </div>
+
+            <div>
+              {item.quantity} × ₹{item.price}
+            </div>
+
+          </div>
 
         ))}
 
-      </div>
-
-      {/* Bill Summary */}
-
-      <div className="border-t pt-3 space-y-2">
+        <hr className="my-2" />
 
         <div className="flex justify-between">
           <span>Subtotal</span>
-          <span>₹{total}</span>
+          <span>₹{lastOrder?.total}</span>
         </div>
 
-        {discount > 0 && (
-          <div className="flex justify-between text-green-600">
+        {lastOrder?.discount > 0 && (
+          <div className="flex justify-between">
             <span>Discount</span>
-            <span>-₹{discount}</span>
+            <span>-₹{lastOrder?.discount}</span>
           </div>
         )}
 
-        <div className="flex justify-between font-bold text-lg">
+        <div className="flex justify-between font-bold mt-2">
           <span>Total</span>
-          <span>₹{finalTotal}</span>
+          <span>₹{lastOrder?.finalTotal}</span>
+        </div>
+
+        <hr className="my-2" />
+
+        <div className="text-center">
+          Payment : {lastOrder?.paymentMethod}
+        </div>
+
+        <div className="text-center mt-2">
+          Thank You Visit Again
         </div>
 
       </div>
-
-      {/* Payment Method */}
-
-      <div className="flex gap-4 mt-4">
-
-        <button
-          onClick={() => setPaymentMethod("cash")}
-          className={`px-4 py-2 border rounded ${
-            paymentMethod === "cash" ? "bg-blue-600 text-white" : ""
-          }`}
-        >
-          Cash
-        </button>
-
-        <button
-          onClick={() => setPaymentMethod("online")}
-          className={`px-4 py-2 border rounded ${
-            paymentMethod === "online" ? "bg-blue-600 text-white" : ""
-          }`}
-        >
-          Online
-        </button>
-
-      </div>
-
-      {/* Buttons */}
-
-      <div className="flex gap-3 mt-6">
-
-        <button
-          onClick={() => setShowCheckout(false)}
-          className="flex-1 py-2 border rounded-lg"
-        >
-          Cancel
-        </button>
-
-        <button
-  onClick={handleCheckout}
-  className="flex-1 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg"
->
-  Print Bill
-</button>
-
-      </div>
-
-    </div>
-
-  </div>
-)}
-{/* PRINT BILL */}
-
-<div id="print-bill" className="hidden print:block p-4 text-sm">
-
-  <div className="text-center mb-2">
-
-  {logo && (
-    <img
-      src={logo}
-      alt="Merchant Logo"
-      className="mx-auto h-14 object-contain mb-1"
-    />
-  )}
-
-  <h2 className="font-bold text-lg">
-    {merchantName || "RM Tech Store"}
-  </h2>
-
-  <p>POS Receipt</p>
-
-</div>
-
-  <hr className="my-2"/>
-
-  {lastOrder?.items?.map((item, index) => (
-
-    <div key={index} className="flex justify-between mb-1">
-
-      <div>
-        <div>{item.item_name}</div>
-
-        {item.variant_name && (
-          <div className="text-xs text-gray-500">
-            {item.variant_name}
-          </div>
-        )}
-
-      </div>
-
-      <div>
-        {item.quantity} × ₹{item.price}
-      </div>
-
-    </div>
-
-  ))}
-
-  <hr className="my-2"/>
-
-  <div className="flex justify-between">
-    <span>Subtotal</span>
-    <span>₹{lastOrder?.total}</span>
-  </div>
-
-  {lastOrder?.discount > 0 && (
-    <div className="flex justify-between">
-      <span>Discount</span>
-      <span>-₹{lastOrder?.discount}</span>
-    </div>
-  )}
-
-  <div className="flex justify-between font-bold mt-2">
-    <span>Total</span>
-    <span>₹{lastOrder?.finalTotal}</span>
-  </div>
-
-  <hr className="my-2"/>
-
-  <div className="text-center">
-    Payment : {lastOrder?.paymentMethod}
-  </div>
-
-  <div className="text-center mt-2">
-    Thank You Visit Again
-  </div>
-
-</div>
     </div>
   );
 }
