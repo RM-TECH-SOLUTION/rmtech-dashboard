@@ -1964,7 +1964,7 @@ Chat on WhatsApp
                     <div className="min-w-0">
                       <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2">Company</h3>
                       <p className="text-sm sm:text-gray-600 mb-1 break-all">RM Tech Solution</p>
-                      <p className="text-xs sm:text-sm text-gray-500">Registered Digital Agency</p>
+                      <p className="text-xs sm:text-sm text-gray-500">Registered Digital Agency | MSME Registered • Udyam No: MSME-UDYAM-TS-25-0065841</p>
                     </div>
                   </div>
 
