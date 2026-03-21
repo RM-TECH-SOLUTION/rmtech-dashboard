@@ -900,7 +900,7 @@ const printSingleBarcode = async ({ name, sku, barcode }) => {
                 )}
 
                 {/* PRINT BUTTON */}
-                {(form.barcode || variants.some(v => v.barcode)) && (
+                {/* {(form.barcode || variants.some(v => v.barcode)) && (
                   <>
                     <button
                       onClick={() => window.print()}
@@ -908,15 +908,8 @@ const printSingleBarcode = async ({ name, sku, barcode }) => {
                     >
                       All Print Labels
                     </button>
-
-                    {/* <button
-  onClick={handleThermalPrint}
-  className="w-full mt-3 bg-black text-white py-2 rounded text-sm"
->
-  Print Thermal Labels
-</button> */}
                   </>
-                )}
+                )} */}
 
               </Card>
             </div>
