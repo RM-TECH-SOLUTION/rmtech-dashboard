@@ -142,51 +142,46 @@ export default function POSComponent() {
 
   /* ================= ADD TO CART ================= */
 
-  const addToCart = (product) => {
+const addToCart = (product, variantFromScan = null) => {
 
-    const selected =
-      selectedVariants[product.id] || product.variants?.[0];
+  const selected =
+    variantFromScan ||
+    selectedVariants[product.id] ||
+    product.variants?.[0];
 
-    const variantId = selected?.id || "default";
-    const variantName = selected?.variant_name || "";
-    const price = Number(selected?.price || product.price || 0);
-    console.log(selected, "selectedselectedgg");
+  const variantId = selected?.id || "default";
+  const variantName = selected?.variant_name || "";
+  const price = Number(selected?.price || product.price || 0);
 
+  const exist = cart.find(
+    (item) =>
+      item.id === product.id &&
+      item.variantId === variantId
+  );
 
-    const exist = cart.find(
-      (item) =>
+  if (exist) {
+    setCart(
+      cart.map((item) =>
         item.id === product.id &&
         item.variantId === variantId
+          ? { ...item, qty: item.qty + 1 }
+          : item
+      )
     );
-
-    if (exist) {
-
-      setCart(
-        cart.map((item) =>
-          item.id === product.id &&
-            item.variantId === variantId
-            ? { ...item, qty: item.qty + 1 }
-            : item
-        )
-      );
-
-    } else {
-
-      setCart([
-        ...cart,
-        {
-          id: product.id,
-          variantId,
-          name: product.name,
-          variant: variantName,
-          price,
-          qty: 1,
-        },
-      ]);
-
-    }
-
-  };
+  } else {
+    setCart([
+      ...cart,
+      {
+        id: product.id,
+        variantId,
+        name: product.name,
+        variant: variantName,
+        price,
+        qty: 1,
+      },
+    ]);
+  }
+};
   /* ================= UPDATE QTY ================= */
 
   const updateQty = (id, variantId, type) => {
@@ -273,87 +268,101 @@ export default function POSComponent() {
 
   const createOrder = async () => {
 
-    try {
+  try {
 
-      console.log(cart, "cartcartcart")
-      const items = cart.map((item) => ({
+    console.log(cart, "cartcartcart")
 
-        item_id: item.id,
-        item_name: item.name,
-        variant_name: item.variant,
-        variantId: item.variantId || "default",
-        price: item.price,
-        quantity: item.qty,
-        total: item.qty * item.price
-      }));
+    const items = cart.map((item) => ({
+      item_id: item.id,
+      item_name: item.name,
+      variant_name: item.variant,
+      variantId: item.variantId || "default",
+      price: item.price,
+      quantity: item.qty,
+      total: item.qty * item.price
+    }));
 
-      const payload = {
-        merchant_id: merchantData?.merchant_id,
-        user_id: 0,
-        phone: customerPhone || "POS",
-        items,
-        amount: Number(finalTotal),
-        orderType: `offline[${paymentMethod}]`,
-        couponDiscount: discount || 0,
-        pointsDiscount: 0,
-        earnedPoints: earnedPoints || 0,
-        address: JSON.stringify({
-          source: "POS",
-          counter: "Dashboard POS"
-        })
-      };
+    const payload = {
+      merchant_id: merchantData?.merchant_id,
+      user_id: 0,
+      phone: customerPhone || "POS",
+      items,
+      amount: Number(finalTotal),
+      orderType: `offline[${paymentMethod}]`,
+      couponDiscount: discount || 0,
+      pointsDiscount: 0,
+      earnedPoints: earnedPoints || 0,
+      address: JSON.stringify({
+        source: "POS",
+        counter: "Dashboard POS"
+      })
+    };
 
-      console.log("POS PAYLOAD:", payload);
+    console.log("POS PAYLOAD:", payload);
 
-      const res = await fetch(
-        "https://api.rmtechsolution.com/create_pos_order.php",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify(payload)
-        }
-      );
-
-      const text = await res.text();
-
-      console.log("RAW RESPONSE:", text);
-
-      const data = JSON.parse(text);
-
-      console.log("PARSED RESPONSE:", data);
-
-      if (!data.success) {
-        alert("Order failed");
-        return;
+    const res = await fetch(
+      "https://api.rmtechsolution.com/create_pos_order.php",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(payload)
       }
+    );
 
-      setLastOrder({
-        items,
-        total,
-        discount,
-        finalTotal,
-        paymentMethod
-      });
+    const text = await res.text();
+    console.log("RAW RESPONSE:", text);
 
-      setCart([]);
-      setShowCheckout(false);
+    const data = JSON.parse(text);
+    console.log("PARSED RESPONSE:", data);
 
-      setTimeout(() => {
-        window.print();
-        fetchCatalogModels();
-      }, 300);
-
-    } catch (err) {
-
-      console.error("POS ERROR:", err);
-
-      alert("POS Order Error");
-
+    if (!data.success) {
+      alert("Order failed");
+      return;
     }
 
-  };
+    // ✅ Save order for printing
+    const orderData = {
+      items,
+      total,
+      discount,
+      finalTotal,
+      paymentMethod,
+      merchantName: merchantName || "RM Tech Store",
+      logo: logo || ""
+    };
+
+    console.log(orderData,"orderDatahghggjkhiu");
+    
+    setLastOrder(orderData);
+
+    setCart([]);
+    setShowCheckout(false);
+
+    // 🔥 NEW: Thermal Print
+    setTimeout(async () => {
+      try {
+        await fetch("http://localhost:5000/print", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(orderData),
+        });
+      } catch (err) {
+        console.error("Print error:", err);
+      }
+
+      fetchCatalogModels();
+    }, 300);
+
+  } catch (err) {
+    console.error("POS ERROR:", err);
+    alert("POS Order Error");
+  }
+
+};
 
   const handleCheckout = () => {
 
@@ -388,78 +397,78 @@ export default function POSComponent() {
     };
   }, []);
 
-  const handleBarcodeScan = (code) => {
-    if (!code) return;
+const handleBarcodeScan = (code) => {
+  if (!code) return;
 
-    // ✅ PREVENT SAME CODE DOUBLE SCAN
-    if (lastScannedRef.current === code) return;
+  if (lastScannedRef.current === code) return;
 
-    lastScannedRef.current = code;
+  lastScannedRef.current = code;
 
-    // reset after short time
-    setTimeout(() => {
-      lastScannedRef.current = "";
-    }, 500);
+  setTimeout(() => {
+    lastScannedRef.current = "";
+  }, 500);
 
-    let foundProduct = null;
-    let foundVariant = null;
+  let foundProduct = null;
+  let foundVariant = null;
 
-    for (const product of allProducts) {
-      if (product.barcode === code) {
-        foundProduct = product;
-        break;
-      }
-
-      const variant = product.variants?.find(
-        (v) => v.barcode === code
-      );
-
-      if (variant) {
-        foundProduct = product;
-        foundVariant = variant;
-        break;
-      }
+  for (const product of allProducts) {
+    if (product.barcode === code) {
+      foundProduct = product;
+      break;
     }
 
-    if (!foundProduct) {
-      alert("Product not found");
-      return;
-    }
-
-    // STOCK CHECK
-    if (foundVariant) {
-      if (Number(foundVariant.stock || 0) <= 0) {
-        alert("Variant out of stock");
-        return;
-      }
-    } else {
-      if (Number(foundProduct.stock || 0) <= 0) {
-        alert("Product out of stock");
-        return;
-      }
-    }
-
-    // CATEGORY SWITCH
-    const category = categories.find(
-      (c) => c.id === foundProduct.catalogue_model_id
+    const variant = product.variants?.find(
+      (v) => v.barcode === code
     );
 
-    if (category) {
-      setSelectedCategory(category);
-      loadItems(category.id);
+    if (variant) {
+      foundProduct = product;
+      foundVariant = variant;
+      break;
     }
+  }
 
-    // VARIANT SELECT
-    if (foundVariant) {
-      setSelectedVariants((prev) => ({
-        ...prev,
-        [foundProduct.id]: foundVariant,
-      }));
+  if (!foundProduct) {
+    alert("Product not found");
+    return;
+  }
+
+  // STOCK CHECK
+  if (foundVariant) {
+    if (Number(foundVariant.stock || 0) <= 0) {
+      alert("Variant out of stock");
+      return;
     }
+  } else {
+    if (Number(foundProduct.stock || 0) <= 0) {
+      alert("Product out of stock");
+      return;
+    }
+  }
 
-    addToCart(foundProduct);
-    playBeep();
-  };
+  // CATEGORY SWITCH
+  const category = categories.find(
+    (c) => c.id === foundProduct.catalogue_model_id
+  );
+
+  if (category) {
+    setSelectedCategory(category);
+    loadItems(category.id);
+  }
+
+  // SET SELECTED VARIANT
+  if (foundVariant) {
+    setSelectedVariants((prev) => ({
+      ...prev,
+      [foundProduct.id]: foundVariant,
+    }));
+  }
+
+  // 🔥 IMPORTANT FIX
+  addToCart(foundProduct, foundVariant);
+
+  playBeep();
+};
 
   const playBeep = () => {
     const audio = new Audio("https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg");

@@ -402,64 +402,23 @@ const CatalogueItemForm = () => {
   };
 
 
-  const printSingleBarcode = ({ name, sku, barcode, elementId }) => {
-    if (!barcode) return;
+const printSingleBarcode = async ({ name, sku, barcode }) => {
 
-    const printWindow = window.open("", "_blank");
+  console.log(barcode,"ghgahgsyuagsha");
+  
 
-    const barcodeSVG =
-      document.getElementById(elementId)?.innerHTML || "";
-
-    const html = `
-    <html>
-      <head>
-        <title>Print Label</title>
-        <style>
-          @page { size: 58mm auto; margin: 0; }
-
-          body {
-            width: 58mm;
-            margin: 0;
-            padding: 6px;
-            font-family: monospace;
-            text-align: center;
-          }
-
-          .barcode svg {
-            width: 100% !important;
-            height: 60px !important;
-          }
-        </style>
-      </head>
-
-      <body>
-        <div><b>${name}</b></div>
-        <div>SKU: ${sku || "-"}</div>
-
-        <div class="barcode">
-          ${barcodeSVG}
-        </div>
-
-        <div>${barcode}</div>
-
-        <script>
-          setTimeout(() => {
-            window.print();
-
-            // ✅ IMPORTANT: close tab after print
-            setTimeout(() => {
-              window.close();
-            }, 300);
-
-          }, 300);
-        </script>
-      </body>
-    </html>
-  `;
-
-    printWindow.document.write(html);
-    printWindow.document.close();
-  };
+  try {
+    await fetch("http://localhost:5000/print-barcode", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ name, sku, barcode }),
+    });
+  } catch (err) {
+    console.error("Barcode print error:", err);
+  }
+};
 
   /* ---------------- TAB CONTENT ---------------- */
   const renderTab = () => {
@@ -886,18 +845,17 @@ const CatalogueItemForm = () => {
 
                     {/* ✅ PRINT BUTTON */}
                     <button
-                      onClick={() =>
-                        printSingleBarcode({
-                          name: form.name,
-                          sku: form.sku,
-                          barcode: form.barcode,
-                          elementId: "barcode-item"
-                        })
-                      }
-                      className="mt-2 px-3 py-1 bg-black text-white rounded text-xs"
-                    >
-                      Print Label
-                    </button>
+                    className="w-full mt-3 bg-black text-white py-2 rounded text-sm"
+  onClick={() =>
+    printSingleBarcode({
+      name: form.name,
+      sku: form.sku,
+      barcode: form.barcode,
+    })
+  }
+>
+  Print Label
+</button>
                   </div>
                 )}
 
@@ -925,19 +883,18 @@ const CatalogueItemForm = () => {
                       <p className="text-xs mt-1 break-all">{v.barcode}</p>
 
                       {/* ✅ PRINT BUTTON */}
-                      <button
-                        onClick={() =>
-                          printSingleBarcode({
-                            name: v.variantName || form.name,
+                     <button
+                     className="w-full mt-3 bg-black text-white py-2 rounded text-sm"
+  onClick={() =>
+    printSingleBarcode({
+      name: v.variantName || form.name,
                             sku: v.sku,
                             barcode: v.barcode,
-                            elementId: `barcode-${i}`
-                          })
-                        }
-                        className="mt-2 px-3 py-1 bg-black text-white rounded text-xs"
-                      >
-                        Print Label
-                      </button>
+    })
+  }
+>
+  Print Label
+</button>
                     </div>
                   ) : null
                 )}
