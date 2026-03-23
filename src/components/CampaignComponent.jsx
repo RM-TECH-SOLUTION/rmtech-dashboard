@@ -6,6 +6,8 @@ export default function CampaignComponent() {
 
   /* ---------------- STATES ---------------- */
 
+  const [campaignType, setCampaignType] = useState("whatsapp"); // NEW
+
   const [users, setUsers] = useState([]);
   const [search, setSearch] = useState("");
   const [showEmoji, setShowEmoji] = useState(false);
@@ -29,8 +31,13 @@ Just use code: {{4}} 🎉
 {{BUY_URL}}`
   );
 
+  // PUSH STATES
+  const [pushTitle, setPushTitle] = useState("");
+  const [pushDesc, setPushDesc] = useState("");
+
   const [page, setPage] = useState(0);
   const pageSize = 8;
+
 
   /* ---------------- FETCH USERS ---------------- */
 
@@ -111,21 +118,103 @@ Just use code: {{4}} 🎉
     window.open(url, "_blank");
   };
 
+  /* ---------------- SEND PUSH ---------------- */
+
+const sendPushNotification = async () => {
+
+  if (!pushTitle || !pushDesc) {
+    alert("Please enter title and description");
+    return;
+  }
+
+  try {
+    const payload = {
+      merchant_id: token,
+      title: pushTitle,
+      message: pushDesc,
+    };
+
+    // ✅ If user selected → add user_id
+    if (selectedUser) {
+      payload.user_id = selectedUser.id;
+    }
+
+    const res = await fetch(
+      "https://api.rmtechsolution.com/sendPush.php",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      }
+    );
+
+    const data = await res.json();
+
+    if (data.success) {
+      alert(
+        selectedUser
+          ? "Push sent to selected user ✅"
+          : "Push sent to all users 🚀"
+      );
+    } else {
+      alert("Failed: " + data.error);
+    }
+
+  } catch (err) {
+    console.error(err);
+    alert("Error sending notification");
+  }
+};
+
   /* ---------------- UI ---------------- */
 
   return (
     <div className="space-y-6">
+
+      {/* HEADER */}
       <div>
         <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Campaign</h1>
-        <p className="text-gray-600 text-sm sm:text-base"> Manage and send promotional messages to your registered customers</p>
+        <p className="text-gray-600 text-sm sm:text-base">
+          Manage and send promotional messages to your registered customers
+        </p>
       </div>
+
+      {/* SWITCH BUTTONS */}
+      <div className="flex gap-3">
+        <button
+          onClick={() => setCampaignType("whatsapp")}
+          className={`px-4 py-2 rounded-lg font-medium ${
+            campaignType === "whatsapp"
+              ? "bg-green-600 text-white"
+              : "bg-gray-200"
+          }`}
+        >
+          WhatsApp Campaign
+        </button>
+
+        <button
+          onClick={() => setCampaignType("push")}
+          className={`px-4 py-2 rounded-lg font-medium ${
+            campaignType === "push"
+              ? "bg-blue-600 text-white"
+              : "bg-gray-200"
+          }`}
+        >
+          Push Notification
+        </button>
+      </div>
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 min-h-[600px]">
 
         {/* LEFT PANEL */}
         <div className="bg-white rounded-xl shadow flex flex-col">
 
           <div className="p-4 border-b">
-            <h2 className="text-xl font-bold">WhatsApp Contacts</h2>
+            <h2 className="text-xl font-bold">
+              {campaignType === "whatsapp" ? "WhatsApp Contacts" : "Users"}
+            </h2>
           </div>
 
           <div className="p-4 border-b">
@@ -177,7 +266,6 @@ Just use code: {{4}} 🎉
           </div>
 
           <div className="p-3 border-t flex justify-between items-center">
-
             <button
               disabled={page === 0}
               onClick={() => setPage(p => p - 1)}
@@ -197,7 +285,6 @@ Just use code: {{4}} 🎉
             >
               <ChevronRight />
             </button>
-
           </div>
         </div>
 
@@ -209,36 +296,72 @@ Just use code: {{4}} 🎉
           </div>
 
           <div className="p-4 border-b">
-            <label className="block text-sm font-medium mb-1">
-              Buy Now URL
-            </label>
-            <input
-              type="text"
-              value={buyUrl}
-              onChange={(e) => setBuyUrl(e.target.value)}
-              placeholder="https://yourwebsite.com/product"
-              className="w-full border rounded-lg px-3 py-2"
-            />
-          </div>
 
-          <div className="relative p-4 flex-1">
-
-            {showEmoji && (
-              <div className="absolute bottom-16 right-4 z-50">
-                <EmojiPicker onEmojiClick={onEmojiClick} />
-              </div>
+            {/* WHATSAPP UI */}
+            {campaignType === "whatsapp" && (
+              <>
+                <label className="block text-sm font-medium mb-1">
+                  Buy Now URL
+                </label>
+                <input
+                  type="text"
+                  value={buyUrl}
+                  onChange={(e) => setBuyUrl(e.target.value)}
+                  placeholder="https://yourwebsite.com/product"
+                  className="w-full border rounded-lg px-3 py-2"
+                />
+              </>
             )}
 
-            <textarea
-              className="w-full h-full border rounded-lg p-4 resize-none"
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-            />
+            {/* PUSH UI */}
+            {campaignType === "push" && (
+              <>
+                <label className="block text-sm font-medium mb-1">
+                  Title
+                </label>
+                <input
+                  type="text"
+                  value={pushTitle}
+                  onChange={(e) => setPushTitle(e.target.value)}
+                  placeholder="Enter title"
+                  className="w-full border rounded-lg px-3 py-2 mb-3"
+                />
 
+                <label className="block text-sm font-medium mb-1">
+                  Description
+                </label>
+                <textarea
+                  value={pushDesc}
+                  onChange={(e) => setPushDesc(e.target.value)}
+                  placeholder="Enter description"
+                  className="w-full border rounded-lg px-3 py-2"
+                />
+
+                <p className="text-xs text-gray-500 mt-2">
+                  Push will be sent to all users
+                </p>
+              </>
+            )}
           </div>
 
-          <div className="p-3 border-t flex items-center gap-3">
+          {/* WHATSAPP MESSAGE BOX */}
+          {campaignType === "whatsapp" && (
+            <div className="relative p-4 flex-1">
+              {showEmoji && (
+                <div className="absolute bottom-16 right-4 z-50">
+                  <EmojiPicker onEmojiClick={onEmojiClick} />
+                </div>
+              )}
 
+              <textarea
+                className="w-full h-full border rounded-lg p-4 resize-none"
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+              />
+            </div>
+          )}
+
+          <div className="p-3 border-t flex items-center gap-3">
             <button
               onClick={() => setShowEmoji(!showEmoji)}
               className="p-2 rounded-full hover:bg-gray-200"
@@ -249,16 +372,27 @@ Just use code: {{4}} 🎉
             <span className="text-sm text-gray-500">
               Selected: {selectedUser?.name || "None"}
             </span>
-
           </div>
 
           <div className="p-4">
-            <button
-              onClick={sendWhatsapp}
-              className="w-full py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
-            >
-              Send WhatsApp
-            </button>
+            {campaignType === "whatsapp" && (
+              <button
+                onClick={sendWhatsapp}
+                className="w-full py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+              >
+                Send WhatsApp Campaign
+              </button>
+            )}
+
+            {campaignType === "push" && (
+              
+              <button
+                onClick={sendPushNotification}
+                className="px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:shadow-lg transition-all duration-300 flex items-center shadow-lg"
+              >
+                Send Push Notification
+              </button>
+            )}
           </div>
 
         </div>
