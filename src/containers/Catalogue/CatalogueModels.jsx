@@ -12,13 +12,17 @@ import {
 } from "lucide-react";
 
 import { useDispatch, useSelector } from "react-redux";
+
 import {
   getCatalogModels,
   deleteCatalogModel,
   getCatalogItems,
 } from "../../redux/actions/catalogActions";
 
-import { getMerchant, setMerchantStatus } from "../../redux/actions/cmsActions";
+import {
+  getMerchant,
+  setMerchantStatus
+} from "../../redux/actions/cmsActions";
 
 import { useNavigate } from "react-router-dom";
 
@@ -33,26 +37,38 @@ const CatalogueModels = () => {
   const token = localStorage.getItem("token");
 
   const { models, loading } = useSelector((state) => state.catalog);
-  const merchantData = useSelector((state) => state.cms.merchantList || []);
-  const merchantStatus = useSelector((state) => state.cms.merchantStatus || {});
+
+  const merchantData = useSelector(
+    (state) => state.cms.merchantList || []
+  );
+
+  const merchantStatus = useSelector(
+    (state) => state.cms.merchantStatus || {}
+  );
 
   const [searchTerm, setSearchTerm] = useState("");
 
   const [showCreate, setShowCreate] = useState(false);
-  const [showMainCatalogPopup, setShowMainCatalogPopup] = useState(false);
+
+  const [showMainCatalogPopup, setShowMainCatalogPopup] =
+    useState(false);
 
   const [itemCounts, setItemCounts] = useState({});
 
-  /* MAIN CATALOGUE FILTER */
-
   const [mainCatalogues, setMainCatalogues] = useState([]);
-  const [mainCatalogFilter, setMainCatalogFilter] = useState("all");
+
+  const [mainCatalogFilter, setMainCatalogFilter] =
+    useState("all");
+
+  const [selectedMainCatalogue, setSelectedMainCatalogue] =
+    useState(null);
 
   /* FETCH MODELS */
 
   useEffect(() => {
 
     dispatch(getMerchant());
+
     dispatch(getCatalogModels(token));
 
   }, [dispatch, token]);
@@ -76,7 +92,9 @@ const CatalogueModels = () => {
         }
 
       } catch (err) {
+
         console.error("Main catalogue fetch error", err);
+
       }
 
     };
@@ -172,6 +190,7 @@ const CatalogueModels = () => {
   if (merchantStatus?.status === "inactive") {
 
     return (
+
       <div className="text-center py-12">
 
         <AlertCircle className="w-12 h-12 text-gray-400 mx-auto mb-4" />
@@ -185,6 +204,7 @@ const CatalogueModels = () => {
         </p>
 
       </div>
+
     );
 
   }
@@ -220,7 +240,10 @@ const CatalogueModels = () => {
           </button>
 
           <button
-            onClick={() => setShowCreate(true)}
+            onClick={() => {
+              setSelectedMainCatalogue(null);
+              setShowCreate(true);
+            }}
             className="px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl flex items-center"
           >
             <Plus size={18} className="mr-2" />
@@ -261,46 +284,137 @@ const CatalogueModels = () => {
 
       </div>
 
-      {/* SEARCH + MAIN CATALOGUE FILTER */}
+      {/* MAIN CATALOGUES */}
 
-      <div className="bg-white p-4 rounded-xl shadow-sm border">
+      <div className="flex gap-3 overflow-x-auto pb-2">
 
-        <div className="flex flex-col md:flex-row gap-4">
+        <button
+          onClick={() => {
+            setMainCatalogFilter("all");
+            setSelectedMainCatalogue(null);
+          }}
+          className={`px-4 py-3 rounded-xl border whitespace-nowrap transition ${
+            mainCatalogFilter === "all"
+              ? "bg-blue-600 text-white border-blue-600"
+              : "bg-white hover:border-blue-400"
+          }`}
+        >
 
-          <div className="flex-1 relative">
+          <div className="font-semibold">
+            All Catalogues
+          </div>
 
-            <Search
-              size={20}
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
-            />
+          <div className="text-xs opacity-70">
+            View all
+          </div>
 
-            <input
-              type="text"
-              placeholder="Search models..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-12 py-3 border rounded-lg"
-            />
+        </button>
+
+        {mainCatalogues.map((cat) => (
+
+          <div
+            key={cat.id}
+            onClick={() => {
+              setMainCatalogFilter(cat.id);
+              setSelectedMainCatalogue(cat);
+              setShowCreate(true);
+            }}
+            className={`min-w-fit px-5 py-3 rounded-xl border cursor-pointer transition ${
+              mainCatalogFilter == cat.id
+                ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white border-blue-600"
+                : "bg-white hover:border-blue-400"
+            }`}
+          >
+
+            <div className="font-semibold whitespace-nowrap">
+              {cat.name}
+            </div>
+
+            <div className="text-xs opacity-70 mt-1">
+              Click to create catalogue
+            </div>
 
           </div>
 
-          <select
-            value={mainCatalogFilter}
-            onChange={(e) => setMainCatalogFilter(e.target.value)}
-            className="px-4 py-3 border rounded-lg"
-          >
+        ))}
 
-            <option value="all">All Main Catalogues</option>
+      </div>
 
-            {mainCatalogues.map((cat) => (
-              <option key={cat.id} value={cat.id}>
-                {cat.name}
-              </option>
-            ))}
+      {/* SEARCH */}
 
-          </select>
+      <div className="bg-white p-4 rounded-xl shadow-sm border">
 
-        </div>
+        {/* SEARCH + FILTER */}
+
+<div className="bg-white p-4 rounded-xl shadow-sm border">
+
+  <div className="flex flex-col md:flex-row gap-4">
+
+    {/* SEARCH */}
+
+    <div className="flex-1 relative">
+
+      <Search
+        size={20}
+        className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+      />
+
+      <input
+        type="text"
+        placeholder="Search catalogue..."
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        className="w-full pl-10 pr-12 py-3 border rounded-lg"
+      />
+
+    </div>
+
+    {/* DROPDOWN FILTER */}
+
+    <select
+      value={mainCatalogFilter}
+      onChange={(e) => {
+
+        setMainCatalogFilter(e.target.value);
+
+        if (e.target.value === "all") {
+
+          setSelectedMainCatalogue(null);
+
+        } else {
+
+          const selectedCat = mainCatalogues.find(
+            (cat) => cat.id == e.target.value
+          );
+
+          setSelectedMainCatalogue(selectedCat || null);
+
+        }
+
+      }}
+      className="px-4 py-3 border rounded-lg min-w-[240px]"
+    >
+
+      <option value="all">
+        All Main Catalogues
+      </option>
+
+      {mainCatalogues.map((cat) => (
+
+        <option
+          key={cat.id}
+          value={cat.id}
+        >
+          {cat.name}
+        </option>
+
+      ))}
+
+    </select>
+
+  </div>
+
+</div>
 
       </div>
 
@@ -328,7 +442,7 @@ const CatalogueModels = () => {
                 <img
                   src={model.image}
                   alt="img"
-                  className="w-12 h-12 rounded-full mr-3"
+                  className="w-12 h-12 rounded-full mr-3 object-cover"
                 />
 
                 <div>
@@ -360,7 +474,9 @@ const CatalogueModels = () => {
                       : "text-green-500"
                   }`}
                 >
-                  {itemCounts[model.id] == 0 ? "inactive" : "active"}
+                  {itemCounts[model.id] == 0
+                    ? "inactive"
+                    : "active"}
                 </span>
 
               </div>
@@ -378,11 +494,13 @@ const CatalogueModels = () => {
 
                 <button
                   onClick={() => {
+
                     if (itemCounts[model.id] == 0) {
                       handleDeleteModel(model.id);
                     } else {
                       alert("First delete your items.");
                     }
+
                   }}
                   className="text-red-600"
                 >
@@ -402,14 +520,17 @@ const CatalogueModels = () => {
       {/* POPUPS */}
 
       {showMainCatalogPopup && (
+
         <CreateMainCatalogueForm
           onClose={() => setShowMainCatalogPopup(false)}
         />
+
       )}
 
       {showCreate && (
 
         <CatalogueModelForm
+          selectedMainCatalogue={selectedMainCatalogue}
           onClose={() => {
             setShowCreate(false);
             dispatch(getCatalogModels(token));

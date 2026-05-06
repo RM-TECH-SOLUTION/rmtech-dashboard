@@ -12,6 +12,23 @@ import {
   getMerchant,
   copyCms
 } from "../redux/actions/cmsActions";
+import {
+  User,
+  MapPin,
+  ShoppingCart,
+  Palette,
+  Store,
+  Image,
+  LogIn,
+  Receipt,
+  LayoutDashboard,
+  Home,
+  Settings,
+  Package,
+  CreditCard,
+  FileText,
+  Smartphone,
+} from "lucide-react";
 
 import ModelCard from "./ModelCard";
 import CreateModelForm from "./CreateModelForm";
@@ -132,6 +149,7 @@ const user = JSON.parse(localStorage.getItem("user"));
     });
 
     setModels(formatted);
+    
   }, [cmsData]);
 
   // -----------------------------
@@ -141,8 +159,10 @@ const user = JSON.parse(localStorage.getItem("user"));
     "ALL",
     ...Array.from(new Set(models.map((m) => m.modelName))),
   ];
-
+ console.log(models,"modelshhh");
+      
   const filteredModels = models.filter((m) => {
+   
     const searchMatch =
       m.modelName.toLowerCase().includes(searchTerm.toLowerCase()) ||
       m.modelSlug.toLowerCase().includes(searchTerm.toLowerCase());
@@ -161,6 +181,25 @@ const user = JSON.parse(localStorage.getItem("user"));
     setSelectedModel(null);
     setSingletonBase(null);
   };
+  const getModelIcon = (modelName) => {
+  const name = modelName.toLowerCase();
+
+  if (name.includes("account")) return User;
+  if (name.includes("address")) return MapPin;
+  if (name.includes("checkout")) return CreditCard;
+  if (name.includes("theme")) return Palette;
+  if (name.includes("merchant")) return Store;
+  if (name.includes("walkthrough")) return Image;
+  if (name.includes("login")) return LogIn;
+  if (name.includes("bill")) return Receipt;
+  if (name.includes("home")) return Home;
+  if (name.includes("category")) return LayoutDashboard;
+  if (name.includes("order")) return ShoppingCart;
+  if (name.includes("register")) return FileText;
+  if (name.includes("splash")) return Smartphone;
+
+  return Settings;
+};
 
 
     if (merchantStatus.status == "inactive" ) {
@@ -342,21 +381,31 @@ const user = JSON.parse(localStorage.getItem("user"));
 
       {/* MODEL GRID */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredModels.map((m) => (
-          <ModelCard
-            key={m.id}
-            model={m}
-            onEdit={(model, mode) => {
-              setSelectedModel(model);
-              setMode(mode);
-            }}
-            onEditSingelton={(model, mode) => {
-              setSelectedModel(model);
-              setMode(mode);
-            }}
-            deleteModel={(data) => dispatch(deleteModel(data))}
-          />
-        ))}
+       {filteredModels.map((m) => {
+  const Icon = getModelIcon(m.modelName);
+
+  return (
+    <div key={m.id} className="relative">
+      
+      <div className="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center mb-3">
+        <Icon className="w-6 h-6 text-blue-600" />
+      </div>
+
+      <ModelCard
+        model={m}
+        onEdit={(model, mode) => {
+          setSelectedModel(model);
+          setMode(mode);
+        }}
+        onEditSingelton={(model, mode) => {
+          setSelectedModel(model);
+          setMode(mode);
+        }}
+        deleteModel={(data) => dispatch(deleteModel(data))}
+      />
+    </div>
+  );
+})}
       </div>
 
       {/* MODALS */}

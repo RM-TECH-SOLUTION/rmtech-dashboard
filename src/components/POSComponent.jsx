@@ -6,11 +6,7 @@ import {
   fetchCMSData
 } from "../redux/actions/cmsActions";
 
-const suggestedCoupons = [
-  { code: "SAVE10", label: "10% OFF" },
-  { code: "FLAT50", label: "₹50 OFF" },
-  { code: "WELCOME20", label: "20% OFF" },
-];
+
 
 export default function POSComponent() {
 
@@ -343,13 +339,31 @@ const addToCart = (product, variantFromScan = null) => {
     // 🔥 NEW: Thermal Print
     setTimeout(async () => {
       try {
-        await fetch("http://localhost:5000/print", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(orderData),
-        });
+        const billText = `
+${orderData.merchantName}
+------------------------
+
+${orderData.items.map(i =>
+  `${i.item_name} x${i.quantity}  ₹${i.price}`
+).join("\n")}
+
+------------------------
+Subtotal: ₹${orderData.total}
+Discount: ₹${orderData.discount}
+TOTAL: ₹${orderData.finalTotal}
+
+Payment: ${orderData.paymentMethod}
+
+Thank you!
+`;
+
+await fetch("http://localhost:3001/print", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({ text: billText }),
+});
       } catch (err) {
         console.error("Print error:", err);
       }

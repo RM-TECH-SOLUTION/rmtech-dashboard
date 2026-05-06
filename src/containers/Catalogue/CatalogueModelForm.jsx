@@ -156,7 +156,7 @@ const CatalogueModelForm = ({ onClose }) => {
 
     <div className="fixed inset-0 z-50 bg-black bg-opacity-40 flex items-center justify-center p-4">
 
-      <div className="bg-white w-full max-w-xl rounded-xl shadow-lg overflow-hidden">
+      <div className="bg-white w-full max-w-xl rounded-xl shadow-lg overflow-hidden max-h-[90vh] flex flex-col">
 
         {/* HEADER */}
 
@@ -174,7 +174,7 @@ const CatalogueModelForm = ({ onClose }) => {
 
         {/* BODY */}
 
-        <div className="p-6 space-y-4">
+        <div className="p-6 space-y-4 overflow-y-auto flex-1">
 
           {/* MERCHANT ID */}
 
