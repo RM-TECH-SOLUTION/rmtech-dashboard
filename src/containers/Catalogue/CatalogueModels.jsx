@@ -53,6 +53,8 @@ const CatalogueModels = () => {
   const [showMainCatalogPopup, setShowMainCatalogPopup] =
     useState(false);
 
+  const [editingMainCatalogue, setEditingMainCatalogue] = useState(null);
+
   const [itemCounts, setItemCounts] = useState({});
 
   const [mainCatalogues, setMainCatalogues] = useState([]);
@@ -315,9 +317,7 @@ const CatalogueModels = () => {
           <div
             key={cat.id}
             onClick={() => {
-              setMainCatalogFilter(cat.id);
-              setSelectedMainCatalogue(cat);
-              setShowCreate(true);
+              setEditingMainCatalogue(cat);
             }}
             className={`min-w-fit px-5 py-3 rounded-xl border cursor-pointer transition ${
               mainCatalogFilter == cat.id
@@ -331,7 +331,7 @@ const CatalogueModels = () => {
             </div>
 
             <div className="text-xs opacity-70 mt-1">
-              Click to create catalogue
+              Click to edit catalogue
             </div>
 
           </div>
@@ -523,6 +523,32 @@ const CatalogueModels = () => {
 
         <CreateMainCatalogueForm
           onClose={() => setShowMainCatalogPopup(false)}
+        />
+
+      )}
+
+      {editingMainCatalogue && (
+
+        <CreateMainCatalogueForm
+          mainCatalogue={editingMainCatalogue}
+          onClose={() => {
+            setEditingMainCatalogue(null);
+            // Refresh main catalogues
+            const fetchMainCatalogues = async () => {
+              try {
+                const res = await fetch(
+                  `https://api.rmtechsolution.com/getMainCatalogues?merchantId=${token}`
+                );
+                const json = await res.json();
+                if (json.success) {
+                  setMainCatalogues(json.data);
+                }
+              } catch (err) {
+                console.error("Main catalogue fetch error", err);
+              }
+            };
+            fetchMainCatalogues();
+          }}
         />
 
       )}

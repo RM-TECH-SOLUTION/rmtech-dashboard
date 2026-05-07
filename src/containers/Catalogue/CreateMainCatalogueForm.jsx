@@ -1,7 +1,7 @@
-import React, { useState } from "react";
-import { X, Upload } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { X, Upload, Trash2 } from "lucide-react";
 
-const CreateMainCatalogueForm = ({ onClose }) => {
+const CreateMainCatalogueForm = ({ onClose, mainCatalogue }) => {
 
   const token = localStorage.getItem("token");
 
@@ -15,6 +15,19 @@ const CreateMainCatalogueForm = ({ onClose }) => {
     description:"",
     image:null
   });
+
+  // Prefill form if editing
+  useEffect(() => {
+    if (mainCatalogue) {
+      setForm({
+        merchantId: mainCatalogue.merchant_id || token || "",
+        name: mainCatalogue.name || "",
+        slug: mainCatalogue.slug || "",
+        description: mainCatalogue.description || "",
+        image: mainCatalogue.image || null
+      });
+    }
+  }, [mainCatalogue, token]);
 
   /* IMAGE SELECT */
 
@@ -41,7 +54,7 @@ const CreateMainCatalogueForm = ({ onClose }) => {
   const handleSubmit = async()=>{
 
     if(!form.name){
-      alert("Main catalogue name required");
+      alert(`${mainCatalogue ? 'Update' : 'Create'} main catalogue name required`);
       return;
     }
 
@@ -56,17 +69,22 @@ const CreateMainCatalogueForm = ({ onClose }) => {
       formData.append("slug", form.slug);
       formData.append("description", form.description);
 
+      if (mainCatalogue) {
+        formData.append("id", mainCatalogue.id);
+      }
+
       if(imageFile){
         formData.append("image", imageFile);
       }
 
-      const res = await fetch(
-        "https://api.rmtechsolution.com/createMainCatalogue",
-        {
-          method:"POST",
-          body: formData
-        }
-      );
+      const url = mainCatalogue 
+        ? "https://api.rmtechsolution.com/updateMainCatalogue"
+        : "https://api.rmtechsolution.com/createMainCatalogue";
+
+      const res = await fetch(url, {
+        method: "POST",
+        body: formData
+      });
 
       const json = await res.json();
 
@@ -74,7 +92,7 @@ const CreateMainCatalogueForm = ({ onClose }) => {
         throw new Error(json.message);
       }
 
-      alert("Main catalogue created");
+      alert(`Main catalogue ${mainCatalogue ? 'updated' : 'created'}`);
 
       onClose();
 
@@ -88,19 +106,70 @@ const CreateMainCatalogueForm = ({ onClose }) => {
 
   };
 
+  /* DELETE */
+
+  const handleDelete = async () => {
+
+    if (!window.confirm("Are you sure you want to delete this main catalogue?")) return;
+
+    try {
+
+      const formData = new FormData();
+
+      formData.append("id", mainCatalogue.id);
+
+      formData.append("merchant_id", form.merchantId);
+
+      const res = await fetch("https://api.rmtechsolution.com/deleteMainCatalogue", {
+
+        method: "POST",
+
+        body: formData
+
+      });
+
+      const json = await res.json();
+
+      if (!json.success) {
+
+        throw new Error(json.message);
+
+      }
+
+      alert("Main catalogue deleted");
+
+      onClose();
+
+    } catch (err) {
+
+      console.error(err);
+
+      alert(err.message);
+
+    }
+
+  };
+
   return(
 
     <div className="fixed inset-0 z-50 bg-black bg-opacity-40 flex items-center justify-center p-4">
 
-      <div className="bg-white w-full max-w-xl rounded-xl shadow-lg overflow-hidden">
+      <div className="bg-white w-full max-w-xl rounded-xl shadow-lg overflow-hidden max-h-[95vh] overflow-y-auto">
 
         {/* HEADER */}
 
         <div className="flex justify-between items-center px-6 py-4 border-b">
-          <h2 className="text-xl font-bold">Create Main Catalogue</h2>
-          <button onClick={onClose}>
-            <X size={20}/>
-          </button>
+          <h2 className="text-xl font-bold">{mainCatalogue ? 'Update' : 'Create'} Main Catalogue</h2>
+          <div className="flex gap-2">
+            {mainCatalogue && (
+              <button onClick={handleDelete} className="text-red-600" style={{marginRight:20}}>
+                <Trash2 size={20}/>
+              </button>
+            )}
+            <button onClick={onClose}>
+              <X size={20}/>
+            </button>
+          </div>
         </div>
 
         {/* BODY */}
@@ -232,7 +301,7 @@ const CreateMainCatalogueForm = ({ onClose }) => {
             disabled={saving}
             className="px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl"
           >
-            {saving ? "Saving..." : "Create Main Catalogue"}
+            {saving ? "Saving..." : `${mainCatalogue ? 'Update' : 'Create'} Main Catalogue`}
           </button>
 
         </div>
