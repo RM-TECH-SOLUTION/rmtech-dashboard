@@ -3,7 +3,7 @@ import { X, Upload } from "lucide-react";
 import { useDispatch } from "react-redux";
 import { createCatalogModel } from "../../redux/actions/catalogActions";
 
-const CatalogueModelForm = ({ onClose }) => {
+const CatalogueModelForm = ({ onClose, selectedMainCatalogue, selectedModel }) => {
 
   const dispatch = useDispatch();
   const [saving, setSaving] = useState(false);
@@ -52,6 +52,30 @@ const CatalogueModelForm = ({ onClose }) => {
     status: "active",
     image: null,
   });
+
+  useEffect(() => {
+    if (selectedMainCatalogue && !selectedModel) {
+      setForm((prev) => ({
+        ...prev,
+        main_catalogue_id: selectedMainCatalogue.id,
+      }));
+    }
+  }, [selectedMainCatalogue, selectedModel]);
+
+  useEffect(() => {
+    if (selectedModel) {
+      setForm({
+        merchantId: selectedModel.merchant_id || token || "",
+        main_catalogue_id: selectedModel.main_catalogue_id || "",
+        name: selectedModel.name || "",
+        slug: selectedModel.slug || "",
+        description: selectedModel.description || "",
+        status: selectedModel.status || "active",
+        image: selectedModel.image || null,
+      });
+      setImageFile(null);
+    }
+  }, [selectedModel, token]);
 
   /* ---------------- IMAGE SELECT ---------------- */
 
@@ -119,33 +143,60 @@ const CatalogueModelForm = ({ onClose }) => {
     setSaving(true);
 
     try {
+      if (selectedModel) {
+        const formData = new FormData();
+        formData.append("merchant_id", form.merchantId);
+        formData.append("id", selectedModel.id);
+        formData.append("main_catalogue_id", form.main_catalogue_id);
+        formData.append("name", form.name);
+        formData.append("slug", form.slug);
+        formData.append("description", form.description);
+        formData.append("status", form.status);
 
-      let uploadedImageUrl = null;
+        if (imageFile) {
+          formData.append("image", imageFile);
+        } else if (form.image) {
+          formData.append("image", form.image);
+        }
 
-      if (imageFile) {
-        uploadedImageUrl = await uploadImageBeforeCreate();
+        const res = await fetch(
+          "https://api.rmtechsolution.com/updateCatalogueModel.php",
+          {
+            method: "POST",
+            body: formData,
+          }
+        );
+
+        const json = await res.json();
+
+        if (!json.success) {
+          throw new Error(json.message || "Failed to update catalogue model");
+        }
+
+        alert("Catalogue model updated successfully");
+        onClose();
+      } else {
+        let uploadedImageUrl = null;
+
+        if (imageFile) {
+          uploadedImageUrl = await uploadImageBeforeCreate();
+        }
+
+        await dispatch(
+          createCatalogModel({
+            ...form,
+            image: uploadedImageUrl,
+          })
+        );
+
+        alert("Catalogue model created successfully");
+        onClose();
       }
-
-      await dispatch(
-        createCatalogModel({
-          ...form,
-          image: uploadedImageUrl,
-        })
-      );
-
-      alert("Catalogue model created successfully");
-
-      onClose();
-
     } catch (err) {
-
       console.error(err);
-      alert(err.message || "Failed to create catalogue model");
-
+      alert(err.message || "Failed to save catalogue model");
     } finally {
-
       setSaving(false);
-
     }
 
   };
@@ -163,7 +214,7 @@ const CatalogueModelForm = ({ onClose }) => {
         <div className="flex justify-between items-center px-6 py-4 border-b">
 
           <h2 className="text-xl font-bold">
-            Create Catalogue
+            {selectedModel ? "Update Catalogue" : "Create Catalogue"}
           </h2>
 
           <button onClick={onClose}>
@@ -359,7 +410,7 @@ const CatalogueModelForm = ({ onClose }) => {
             className="px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl flex items-center"
           >
 
-            {saving ? "Saving..." : "Create Catalogue"}
+            {saving ? "Saving..." : selectedModel ? "Update Catalogue" : "Create Catalogue"}
 
           </button>
 

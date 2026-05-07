@@ -55,6 +55,8 @@ const CatalogueModels = () => {
 
   const [editingMainCatalogue, setEditingMainCatalogue] = useState(null);
 
+  const [editingModel, setEditingModel] = useState(null);
+
   const [itemCounts, setItemCounts] = useState({});
 
   const [mainCatalogues, setMainCatalogues] = useState([]);
@@ -244,6 +246,7 @@ const CatalogueModels = () => {
           <button
             onClick={() => {
               setSelectedMainCatalogue(null);
+              setEditingModel(null);
               setShowCreate(true);
             }}
             className="px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl flex items-center"
@@ -483,14 +486,26 @@ const CatalogueModels = () => {
 
               <div className="flex justify-between border-t pt-4">
 
-                <button
-                  onClick={() =>
-                    navigate(`/dashboard/catalogue/${model.id}`)
-                  }
-                  className="px-3 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl text-sm"
-                >
-                  Manage Items
-                </button>
+                      <div className="flex gap-2">
+                  <button
+                    onClick={() => {
+                      setEditingModel(model);
+                      setShowCreate(true);
+                    }}
+                    className="px-3 py-2 border rounded-xl text-sm text-gray-700 hover:bg-gray-100"
+                  >
+                    Edit
+                  </button>
+
+                  <button
+                    onClick={() =>
+                      navigate(`/dashboard/catalogue/${model.id}`)
+                    }
+                    className="px-3 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl text-sm"
+                  >
+                    Manage Items
+                  </button>
+                </div>
 
                 <button
                   onClick={() => {
@@ -557,8 +572,10 @@ const CatalogueModels = () => {
 
         <CatalogueModelForm
           selectedMainCatalogue={selectedMainCatalogue}
+          selectedModel={editingModel}
           onClose={() => {
             setShowCreate(false);
+            setEditingModel(null);
             dispatch(getCatalogModels(token));
           }}
         />
