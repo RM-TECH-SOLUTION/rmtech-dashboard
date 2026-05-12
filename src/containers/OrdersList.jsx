@@ -34,6 +34,8 @@ const OrdersList = () => {
   const [orders, setOrders] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [dateFrom, setDateFrom] = useState("");
+  const [dateTo, setDateTo] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedOrder, setSelectedOrder] = useState(null);
 
@@ -68,6 +70,7 @@ console.log(merchantData, "merchantData");
               ? item.created_at.split(" ")[0]
               : "-",
             amount: `₹${item.amount}`,
+            amountNumber: Number(item.amount) || 0,
             orderType: item.orderType,
             discount: `₹${item.discount}`,
             items: item.items,
@@ -93,8 +96,19 @@ console.log(merchantData, "merchantData");
     const matchStatus =
       statusFilter === "all" || o.order_status === statusFilter;
 
-    return matchSearch && matchStatus;
+    const matchFromDate =
+      !dateFrom || o.date === "-" || o.date >= dateFrom;
+
+    const matchToDate =
+      !dateTo || o.date === "-" || o.date <= dateTo;
+
+    return matchSearch && matchStatus && matchFromDate && matchToDate;
   });
+
+  const totalAmount = filteredOrders.reduce(
+    (sum, o) => sum + (Number(o.amountNumber) || 0),
+    0
+  );
 
   /* ================= PAGINATION ================= */
 
@@ -185,6 +199,40 @@ console.log(merchantData, "merchantData");
       <div className="px-2 sm:px-0">
         <h1 className="text-xl sm:text-2xl md:text-3xl font-bold">Order Status</h1>
         <p className="text-xs sm:text-sm md:text-base text-gray-600">Manage all your orders</p>
+      </div>
+
+      <div className="grid gap-3 sm:grid-cols-3">
+        <div className="bg-white rounded-xl border p-4">
+          <p className="text-xs text-gray-500">Total Amount</p>
+          <p className="mt-2 text-3xl font-bold">₹{totalAmount.toFixed(2)}</p>
+          <p className="text-xs text-gray-500 mt-1">Based on filtered orders</p>
+        </div>
+
+        <div className="bg-white rounded-xl border p-4">
+          <label className="block text-xs font-medium text-gray-600 mb-2">From</label>
+          <input
+            type="date"
+            value={dateFrom}
+            onChange={(e) => {
+              setDateFrom(e.target.value);
+              setCurrentPage(1);
+            }}
+            className="w-full px-3 py-2 border rounded-lg text-sm"
+          />
+        </div>
+
+        <div className="bg-white rounded-xl border p-4">
+          <label className="block text-xs font-medium text-gray-600 mb-2">To</label>
+          <input
+            type="date"
+            value={dateTo}
+            onChange={(e) => {
+              setDateTo(e.target.value);
+              setCurrentPage(1);
+            }}
+            className="w-full px-3 py-2 border rounded-lg text-sm"
+          />
+        </div>
       </div>
 
       {/* SEARCH */}
