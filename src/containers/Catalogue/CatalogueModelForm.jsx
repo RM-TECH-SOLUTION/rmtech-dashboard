@@ -144,6 +144,12 @@ const CatalogueModelForm = ({ onClose, selectedMainCatalogue, selectedModel }) =
 
     try {
       if (selectedModel) {
+        let uploadedImageUrl = null;
+
+        if (imageFile) {
+          uploadedImageUrl = await uploadImageBeforeCreate();
+        }
+
         const formData = new FormData();
         formData.append("merchant_id", form.merchantId);
         formData.append("id", selectedModel.id);
@@ -153,8 +159,8 @@ const CatalogueModelForm = ({ onClose, selectedMainCatalogue, selectedModel }) =
         formData.append("description", form.description);
         formData.append("status", form.status);
 
-        if (imageFile) {
-          formData.append("image", imageFile);
+        if (uploadedImageUrl) {
+          formData.append("image", uploadedImageUrl);
         } else if (form.image) {
           formData.append("image", form.image);
         }
