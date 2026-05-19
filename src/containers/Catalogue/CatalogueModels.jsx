@@ -483,6 +483,7 @@ const CatalogueModels = () => {
                 </span>
 
               </div>
+              <span>ID:- {model.id}</span>
 
               <div className="flex justify-between border-t pt-4">
 
