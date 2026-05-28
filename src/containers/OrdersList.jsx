@@ -14,6 +14,7 @@ const STATUS_STYLES = {
   accepted: "bg-blue-100 text-blue-800",
   shipped: "bg-purple-100 text-purple-800",
   delivered: "bg-green-100 text-green-800",
+  rejected: "bg-red-100 text-red-800",
   refunded: "bg-red-100 text-red-800",
 };
 
@@ -40,11 +41,11 @@ const OrdersList = () => {
   const [selectedOrder, setSelectedOrder] = useState(null);
 
   const token = localStorage.getItem("token");
- const user = JSON.parse(localStorage.getItem("user") || "{}");
-const merchantData = user.merchantData;
+  const user = JSON.parse(localStorage.getItem("user") || "{}");
+  const merchantData = user.merchantData;
 
-console.log(user, "user");
-console.log(merchantData, "merchantData");
+  console.log(user, "user");
+  console.log(merchantData, "merchantData");
 
 
   /* ================= FETCH ================= */
@@ -137,8 +138,8 @@ console.log(merchantData, "merchantData");
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             payment_id: order.payment_id,
-            keyId:merchantData?.key_id,
-            keySecret:merchantData?.key_secret
+            keyId: merchantData?.key_id,
+            keySecret: merchantData?.key_secret
           }),
         }
       );
@@ -152,10 +153,10 @@ console.log(merchantData, "merchantData");
           prev.map((o) =>
             o.id === order.id
               ? {
-                  ...o,
-                  order_status: "refunded",
-                  payment_status: "refunded",
-                }
+                ...o,
+                order_status: "refunded",
+                payment_status: "refunded",
+              }
               : o
           )
         );
@@ -169,27 +170,56 @@ console.log(merchantData, "merchantData");
 
   /* ================= UPDATE ORDER STATUS ================= */
 
-  const handleStatusUpdate = async (order) => {
-    if (order.order_status === "refunded") return;
-
-    const nextStatus = STATUS_FLOW[order.order_status];
-    if (!nextStatus) return;
-
+  const updateOrderStatusLocally = (orderId, status) => {
     setOrders((prev) =>
       prev.map((o) =>
-        o.id === order.id ? { ...o, order_status: nextStatus } : o
+        o.id === orderId ? { ...o, order_status: status } : o
       )
     );
 
+    setSelectedOrder((prev) =>
+      prev && prev.id === orderId
+        ? { ...prev, order_status: status }
+        : prev
+    );
+  };
+
+  const updateOrderStatusApi = async (orderId, status) => {
     await fetch("https://api.rmtechsolution.com/updateOrderStatus", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        orderId: order.id,
-        order_status: nextStatus,
+        orderId,
+        order_status: status,
         merchantId: token,
+        reject: status === "rejected" ? 1 : 0,
       }),
     });
+  };
+
+  const handleStatusUpdate = async (order) => {
+    if (order.order_status === "refunded" || order.order_status === "rejected") return;
+
+    const nextStatus = STATUS_FLOW[order.order_status];
+    if (!nextStatus) return;
+
+    updateOrderStatusLocally(order.id, nextStatus);
+
+    await updateOrderStatusApi(order.id, nextStatus);
+  };
+
+  const handleRejectOrder = async (order) => {
+    if (
+      order.order_status === "refunded" ||
+      order.order_status === "rejected" ||
+      order.order_status === "delivered"
+    ) {
+      return;
+    }
+
+    updateOrderStatusLocally(order.id, "rejected");
+
+    await updateOrderStatusApi(order.id, "rejected");
   };
 
   return (
@@ -267,89 +297,114 @@ console.log(merchantData, "merchantData");
               <th className="px-2 sm:px-3 lg:px-6 py-2 sm:py-3 text-left text-xs sm:text-sm font-bold">Payment</th>
               <th className="px-2 sm:px-3 lg:px-6 py-2 sm:py-3 text-left text-xs sm:text-sm font-bold hidden lg:table-cell">Status</th>
               <th className="px-2 sm:px-3 lg:px-6 py-2 sm:py-3 text-left text-xs sm:text-sm font-bold">Action</th>
+              <th className="px-2 sm:px-3 lg:px-6 py-2 sm:py-3 text-left text-xs sm:text-sm font-bold">Reject</th>
               <th className="px-2 sm:px-3 lg:px-6 py-2 sm:py-3 text-left text-xs sm:text-sm font-bold">Refund</th>
             </tr>
           </thead>
 
           <tbody>
             {paginatedOrders.map((order) => (
-            <tr key={order.id} className="hover:bg-gray-50">
-              <td className="px-2 sm:px-3 lg:px-6 py-2 sm:py-3">
-                <button
-                  onClick={() => setSelectedOrder(order)}
-                  className="text-blue-600 hover:underline font-medium text-xs sm:text-sm break-all"
-                >
-                  {order.id}
-                </button>
-              </td>
+              <tr key={order.id} className="hover:bg-gray-50">
+                <td className="px-2 sm:px-3 lg:px-6 py-2 sm:py-3">
+                  <button
+                    onClick={() => setSelectedOrder(order)}
+                    className="text-blue-600 hover:underline font-medium text-xs sm:text-sm break-all"
+                  >
+                    {order.id}
+                  </button>
+                </td>
 
-              <td className="px-2 sm:px-3 lg:px-6 py-2 sm:py-3 hidden sm:table-cell text-xs sm:text-sm">{order.customer}</td>
-              <td className="px-2 sm:px-3 lg:px-6 py-2 sm:py-3 text-xs sm:text-sm">{order.date}</td>
-              <td className="px-2 sm:px-3 lg:px-6 py-2 sm:py-3 hidden md:table-cell text-xs sm:text-sm">{order.orderType || "-"}</td>
-              <td className="px-2 sm:px-3 lg:px-6 py-2 sm:py-3 font-semibold text-xs sm:text-sm">{order.amount}</td>
+                <td className="px-2 sm:px-3 lg:px-6 py-2 sm:py-3 hidden sm:table-cell text-xs sm:text-sm">{order.customer}</td>
+                <td className="px-2 sm:px-3 lg:px-6 py-2 sm:py-3 text-xs sm:text-sm">{order.date}</td>
+                <td className="px-2 sm:px-3 lg:px-6 py-2 sm:py-3 hidden md:table-cell text-xs sm:text-sm">{order.orderType || "-"}</td>
+                <td className="px-2 sm:px-3 lg:px-6 py-2 sm:py-3 font-semibold text-xs sm:text-sm">{order.amount}</td>
 
-              {/* PAYMENT STATUS */}
-              <td className="px-2 sm:px-3 lg:px-6 py-2 sm:py-3">
-                <span
-                  className={`inline-block px-1.5 sm:px-2 py-0.5 text-xs rounded-full ${PAYMENT_STATUS_STYLES[order.payment_status]}`}
-                >
-                  {order.payment_status}
-                </span>
-              </td>
+                {/* PAYMENT STATUS */}
+                <td className="px-2 sm:px-3 lg:px-6 py-2 sm:py-3">
+                  <span
+                    className={`inline-block px-1.5 sm:px-2 py-0.5 text-xs rounded-full ${PAYMENT_STATUS_STYLES[order.payment_status]}`}
+                  >
+                    {order.payment_status}
+                  </span>
+                </td>
 
-              {/* ORDER STATUS */}
-              <td className="px-2 sm:px-3 lg:px-6 py-2 sm:py-3 hidden lg:table-cell">
-                <span
-                  className={`inline-block px-1.5 sm:px-2 py-0.5 text-xs rounded-full ${STATUS_STYLES[order.order_status]}`}
-                >
-                  {order.order_status}
-                </span>
-              </td>
+                {/* ORDER STATUS */}
+                <td className="px-2 sm:px-3 lg:px-6 py-2 sm:py-3 hidden lg:table-cell">
+                  <span
+                    className={`inline-block px-1.5 sm:px-2 py-0.5 text-xs rounded-full ${STATUS_STYLES[order.order_status]}`}
+                  >
+                    {order.order_status}
+                  </span>
+                </td>
 
-              {/* ACTION */}
-              <td className="px-2 sm:px-3 lg:px-6 py-2 sm:py-3">
-                <button
-                  onClick={() => handleStatusUpdate(order)}
-                  disabled={
-                    !(
-                      order.payment_status === "pending" ||
-                      order.payment_status === "success"
-                    )
-                  }
-                  className={`px-1.5 sm:px-3 py-1 text-xs rounded transition whitespace-nowrap font-medium
-                    ${
-                      order.payment_status === "pending" ||
-                      order.payment_status === "success"
+                {/* ACTION */}
+                <td className="px-2 sm:px-3 lg:px-6 py-2 sm:py-3">
+                  <button
+                    onClick={() => handleStatusUpdate(order)}
+                    disabled={
+                      !(
+                        order.payment_status === "pending" ||
+                        order.payment_status === "success"
+                      ) ||
+                      order.order_status === "rejected" ||
+                      order.order_status === "refunded"
+                    }
+                    className={`px-1.5 sm:px-3 py-1 text-xs rounded transition whitespace-nowrap font-medium
+ ${(order.payment_status === "pending" ||
+                        order.payment_status === "success") &&
+                        order.order_status !== "rejected" &&
+                        order.order_status !== "refunded"
                         ? "bg-blue-600 text-white hover:bg-blue-700"
                         : "bg-gray-300 text-gray-600 cursor-not-allowed"
-                    }
-                  `}
-                >
-                  <span className="hidden sm:inline">Next</span><span className="sm:hidden">→</span>
-                </button>
-              </td>
+                      }
+ `}
+                  >
+                    <span className="hidden sm:inline">Next</span><span className="sm:hidden">→</span>
+                  </button>
+                </td>
 
-              {/* REFUND */}
-              <td className="px-2 sm:px-3 lg:px-6 py-2 sm:py-3">
-                <button
-                  disabled={
-                    order.payment_status !== "success" ||
-                    order.payment_status === "refunded"
-                  }
-                  onClick={() => handleRefund(order)}
-                  className={`px-2 sm:px-3 py-1 text-xs rounded whitespace-nowrap font-medium
-                    ${
+                {/* REJECT */}
+                <td className="px-2 sm:px-3 lg:px-6 py-2 sm:py-3">
+                  <button
+                    disabled={
+                      order.order_status === "rejected" ||
+                      order.order_status === "refunded" ||
+                      order.order_status === "delivered"
+                    }
+                    onClick={() => handleRejectOrder(order)}
+                    className={`px-2 sm:px-3 py-1 text-xs rounded whitespace-nowrap font-medium
+ ${order.order_status === "rejected" ||
+                        order.order_status === "refunded" ||
+                        order.order_status === "delivered"
+                        ? "bg-gray-300 text-gray-600 cursor-not-allowed"
+                        : "bg-orange-600 text-white hover:bg-orange-700"
+                      }
+ `}
+                  >
+                    Reject
+                  </button>
+                </td>
+
+                {/* REFUND */}
+                <td className="px-2 sm:px-3 lg:px-6 py-2 sm:py-3">
+                  <button
+                    disabled={
                       order.payment_status !== "success" ||
                       order.payment_status === "refunded"
+                    }
+                    onClick={() => handleRefund(order)}
+                    className={`px-2 sm:px-3 py-1 text-xs rounded whitespace-nowrap font-medium
+ ${order.payment_status !== "success" ||
+                        order.payment_status === "refunded"
                         ? "bg-gray-300 text-gray-600 cursor-not-allowed"
                         : "bg-red-600 text-white hover:bg-red-700"
-                    }
-                  `}
-                >
-                  <span className="hidden sm:inline">Refund</span><span className="sm:hidden">RF</span>
-                </button>
-              </td>
-            </tr>
+                      }
+ `}
+                  >
+                    <span className="hidden sm:inline">Refund</span><span className="sm:hidden">RF</span>
+                  </button>
+                </td>
+              </tr>
 
             ))}
           </tbody>
@@ -384,253 +439,255 @@ console.log(merchantData, "merchantData");
           </button>
         </div>
       </div>
-     {selectedOrder && (
-  <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 p-4">
+      {selectedOrder && (
+        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 p-4">
 
-    <div className="bg-white max-w-3xl w-full p-3 sm:p-6 rounded-xl relative max-h-[90vh] overflow-y-auto">
+          <div className="bg-white max-w-3xl w-full p-3 sm:p-6 rounded-xl relative max-h-[90vh] overflow-y-auto">
 
-      {/* Close */}
-      <button
-        onClick={() => setSelectedOrder(null)}
-        className="absolute top-3 right-4 text-xl font-bold text-gray-500 hover:text-black"
-      >
-        ✕
-      </button>
+            {/* Close */}
+            <button
+              onClick={() => setSelectedOrder(null)}
+              className="absolute top-3 right-4 text-xl font-bold text-gray-500 hover:text-black"
+            >
+              ✕
+            </button>
 
-      <h2 className="text-lg sm:text-xl font-bold mb-4 sm:mb-6 text-center">
-        Order Details
-      </h2>
+            <h2 className="text-lg sm:text-xl font-bold mb-4 sm:mb-6 text-center">
+              Order Details
+            </h2>
 
-      {/* ================= ORDER INFO ================= */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-4 sm:mb-6">
+            {/* ================= ORDER INFO ================= */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-4 sm:mb-6">
 
-        <div>
-          <p className="text-xs sm:text-sm text-gray-500">Order ID</p>
-          <p className="font-semibold text-sm sm:text-base break-all">{selectedOrder.id}</p>
-        </div>
+              <div>
+                <p className="text-xs sm:text-sm text-gray-500">Order ID</p>
+                <p className="font-semibold text-sm sm:text-base break-all">{selectedOrder.id}</p>
+              </div>
 
-        <div>
-          <p className="text-xs sm:text-sm text-gray-500">Order Type</p>
-          <p className="font-semibold text-sm sm:text-base">{selectedOrder.orderType}</p>
-        </div>
+              <div>
+                <p className="text-xs sm:text-sm text-gray-500">Order Type</p>
+                <p className="font-semibold text-sm sm:text-base">{selectedOrder.orderType}</p>
+              </div>
 
-        <div>
-          <p className="text-xs sm:text-sm text-gray-500">Amount</p>
-          <p className="font-semibold text-sm sm:text-base">{selectedOrder.amount}</p>
-        </div>
+              <div>
+                <p className="text-xs sm:text-sm text-gray-500">Amount</p>
+                <p className="font-semibold text-sm sm:text-base">{selectedOrder.amount}</p>
+              </div>
 
-        <div>
-          <p className="text-xs sm:text-sm text-gray-500">Date</p>
-          <p className="font-semibold text-sm sm:text-base">{selectedOrder.date}</p>
-        </div>
+              <div>
+                <p className="text-xs sm:text-sm text-gray-500">Date</p>
+                <p className="font-semibold text-sm sm:text-base">{selectedOrder.date}</p>
+              </div>
 
-      </div>
-
-      {/* ================= CUSTOMER INFO ================= */}
-      <div className="border-t pt-3 sm:pt-4 mb-4 sm:mb-6">
-
-        <h3 className="font-semibold text-sm sm:text-base mb-3">Customer Info</h3>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-
-          <div>
-            <p className="text-xs sm:text-sm text-gray-500">Customer ID</p>
-            <p className="text-sm sm:text-base">{selectedOrder.customer}</p>
-          </div>
-
-          <div>
-            <p className="text-xs sm:text-sm text-gray-500">Phone</p>
-            <p className="text-sm sm:text-base break-all">{selectedOrder.phone}</p>
-          </div>
-
-        </div>
-
-      </div>
-
-      {/* ================= PAYMENT & ORDER STATUS ================= */}
-      <div className="border-t pt-3 sm:pt-4 mb-4 sm:mb-6">
-
-        <h3 className="font-semibold text-sm sm:text-base mb-3">Status Info</h3>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-
-          <div>
-            <p className="text-xs sm:text-sm text-gray-500">Payment Status</p>
-            <span className={`inline-block px-2 py-1 text-xs rounded-full ${PAYMENT_STATUS_STYLES[selectedOrder.payment_status]}`}>
-              {selectedOrder.payment_status}
-            </span>
-          </div>
-
-          <div>
-            <p className="text-xs sm:text-sm text-gray-500">Order Status</p>
-            <span className={`inline-block px-2 py-1 text-xs rounded-full ${STATUS_STYLES[selectedOrder.order_status]}`}>
-              {selectedOrder.order_status}
-            </span>
-          </div>
-
-          <div>
-            <p className="text-xs sm:text-sm text-gray-500">Payment ID</p>
-            <p className="text-xs sm:text-sm break-all">{selectedOrder.payment_id || "-"}</p>
-          </div>
-
-        </div>
-
-      </div>
-
-      {/* ================= REFUND DETAILS ================= */}
-      {selectedOrder.payment_status === "refunded" && (
-        <div className="border-t pt-3 sm:pt-4 mb-4 sm:mb-6 bg-red-50 p-3 sm:p-4 rounded-lg">
-
-          <h3 className="font-semibold text-sm sm:text-base mb-2 text-red-800">Refund Details</h3>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-
-            <div>
-              <p className="text-xs sm:text-sm text-red-700">Refund Status</p>
-              <p className="font-semibold text-sm sm:text-base text-red-900">Refunded</p>
             </div>
 
-            <div>
-              <p className="text-xs sm:text-sm text-red-700">Refund Amount</p>
-              <p className="font-semibold text-sm sm:text-base text-red-900">{selectedOrder.amount}</p>
+            {/* ================= CUSTOMER INFO ================= */}
+            <div className="border-t pt-3 sm:pt-4 mb-4 sm:mb-6">
+
+              <h3 className="font-semibold text-sm sm:text-base mb-3">Customer Info</h3>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+
+                <div>
+                  <p className="text-xs sm:text-sm text-gray-500">Customer ID</p>
+                  <p className="text-sm sm:text-base">{selectedOrder.customer}</p>
+                </div>
+
+                <div>
+                  <p className="text-xs sm:text-sm text-gray-500">Phone</p>
+                  <p className="text-sm sm:text-base break-all">{selectedOrder.phone}</p>
+                </div>
+
+              </div>
+
             </div>
 
-          </div>
+            {/* ================= PAYMENT & ORDER STATUS ================= */}
+            <div className="border-t pt-3 sm:pt-4 mb-4 sm:mb-6">
 
+              <h3 className="font-semibold text-sm sm:text-base mb-3">Status Info</h3>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+
+                <div>
+                  <p className="text-xs sm:text-sm text-gray-500">Payment Status</p>
+                  <span className={`inline-block px-2 py-1 text-xs rounded-full ${PAYMENT_STATUS_STYLES[selectedOrder.payment_status]}`}>
+                    {selectedOrder.payment_status}
+                  </span>
+                </div>
+
+                <div>
+                  <p className="text-xs sm:text-sm text-gray-500">Order Status</p>
+                  <span className={`inline-block px-2 py-1 text-xs rounded-full ${STATUS_STYLES[selectedOrder.order_status]}`}>
+                    {selectedOrder.order_status}
+                  </span>
+                </div>
+
+                <div>
+                  <p className="text-xs sm:text-sm text-gray-500">Payment ID</p>
+                  <p className="text-xs sm:text-sm break-all">{selectedOrder.payment_id || "-"}</p>
+                </div>
+
+              </div>
+
+            </div>
+
+            {/* ================= REFUND DETAILS ================= */}
+            {selectedOrder.payment_status === "refunded" && (
+              <div className="border-t pt-3 sm:pt-4 mb-4 sm:mb-6 bg-red-50 p-3 sm:p-4 rounded-lg">
+
+                <h3 className="font-semibold text-sm sm:text-base mb-2 text-red-800">Refund Details</h3>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+
+                  <div>
+                    <p className="text-xs sm:text-sm text-red-700">Refund Status</p>
+                    <p className="font-semibold text-sm sm:text-base text-red-900">Refunded</p>
+                  </div>
+
+                  <div>
+                    <p className="text-xs sm:text-sm text-red-700">Refund Amount</p>
+                    <p className="font-semibold text-sm sm:text-base text-red-900">{selectedOrder.amount}</p>
+                  </div>
+
+                </div>
+
+              </div>
+            )}
+
+            {/* ================= ITEMS ================= */}
+            <div className="border-t pt-3 sm:pt-4 mb-4 sm:mb-6">
+
+              <h3 className="font-semibold text-sm sm:text-base mb-3">Items</h3>
+
+              {Array.isArray(selectedOrder.items) ? (
+                <div className="overflow-x-auto">
+                  <table className="w-full border text-xs sm:text-sm">
+
+                    <thead className="bg-gray-100">
+                      <tr>
+                        <th className="p-2 border">Item ID</th>
+                        <th className="p-2 border">Name</th>
+                        <th className="p-2 border">Varient</th>
+                        <th className="p-2 border">Price</th>
+                        <th className="p-2 border">Qty</th>
+                        <th className="p-2 border">Total</th>
+                      </tr>
+                    </thead>
+
+                    <tbody>
+                      {selectedOrder.items.map((i, idx) => (
+                        <tr key={idx}>
+                          <td className="p-2 border text-center">{i.item_id}</td>
+                          <td className="p-2 border text-center text-xs">{i.item_name}</td>
+                          <td className="p-2 border text-center text-xs">{i.variant_name}</td>
+                          <td className="p-2 border text-center">₹{i.price}</td>
+                          <td className="p-2 border text-center">{i.quantity}</td>
+                          <td className="p-2 border text-center">₹{i.total}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+
+                  </table>
+                </div>
+              ) : (
+                <p className="text-sm">No items</p>
+              )}
+
+            </div>
+
+            {/* ================= ADDRESS ================= */}
+
+            {console.log(selectedOrder, "selectedOrderhh")}
+
+            {selectedOrder?.address && (
+              <div className="border-t pt-3 sm:pt-4 mb-4 sm:mb-6">
+
+                <h3 className="font-semibold text-sm sm:text-base mb-3">
+                  Delivery Address
+                </h3>
+
+                {selectedOrder.address.building && (
+                  <p className="text-sm sm:text-base font-medium">
+                    {selectedOrder.address.building}
+                  </p>
+                )}
+
+                {(selectedOrder.address.doorNo || selectedOrder.address.street) && (
+                  <p className="text-sm sm:text-base">
+                    {selectedOrder.address.doorNo && `${selectedOrder.address.doorNo}, `}
+                    {selectedOrder.address.street}
+                  </p>
+                )}
+
+                {selectedOrder.address.landmark && (
+                  <p className="text-sm sm:text-base">
+                    {selectedOrder.address.landmark}
+                  </p>
+                )}
+
+                {(selectedOrder.address.city ||
+                  selectedOrder.address.pincode ||
+                  selectedOrder.address.state) && (
+                    <p className="text-sm sm:text-base">
+                      {selectedOrder.address.city}
+                      {selectedOrder.address.city && " - "}
+                      {selectedOrder.address.pincode}
+                      {selectedOrder.address.pincode && " - "}
+                      {selectedOrder.address.state}
+                    </p>
+                  )}
+
+              </div>
+            )}
+
+            {/* ================= ACTION BUTTONS ================= */}
+            {/* <div className="border-t pt-4 flex flex-col sm:flex-row gap-3 sm:gap-4">
+ <button
+ onClick={() => handleStatusUpdate(selectedOrder)}
+ disabled={
+ !(
+ selectedOrder.payment_status === "pending" ||
+ selectedOrder.payment_status === "success"
+ )
+ }
+ className={`flex-1 px-4 sm:px-6 py-2 text-sm sm:text-base rounded transition font-medium
+ ${
+ selectedOrder.payment_status === "pending" ||
+ selectedOrder.payment_status === "success"
+ ? "bg-blue-600 text-white hover:bg-blue-700"
+ : "bg-gray-300 text-gray-600 cursor-not-allowed"
+ }
+ `}
+ >
+ Mark {STATUS_FLOW[selectedOrder.order_status]}
+ </button>
+
+ <button
+ disabled={
+ selectedOrder.payment_status !== "success" ||
+ selectedOrder.payment_status === "refunded"
+ }
+ onClick={() => {
+ handleRefund(selectedOrder);
+ setSelectedOrder(null);
+ }}
+ className={`flex-1 px-4 sm:px-6 py-2 text-sm sm:text-base rounded transition font-medium
+ ${
+ selectedOrder.payment_status !== "success" ||
+ selectedOrder.payment_status === "refunded"
+ ? "bg-gray-300 text-gray-600 cursor-not-allowed"
+ : "bg-red-600 text-white hover:bg-red-700"
+ }
+ `}
+ >
+ Refund Payment
+ </button>
+ </div> */}
+
+          </div>
         </div>
       )}
-
-      {/* ================= ITEMS ================= */}
-      <div className="border-t pt-3 sm:pt-4 mb-4 sm:mb-6">
-
-        <h3 className="font-semibold text-sm sm:text-base mb-3">Items</h3>
-
-        {Array.isArray(selectedOrder.items) ? (
-          <div className="overflow-x-auto">
-            <table className="w-full border text-xs sm:text-sm">
-
-              <thead className="bg-gray-100">
-                <tr>
-                  <th className="p-2 border">Item ID</th>
-                  <th className="p-2 border">Name</th>
-                  <th className="p-2 border">Price</th>
-                  <th className="p-2 border">Qty</th>
-                  <th className="p-2 border">Total</th>
-                </tr>
-              </thead>
-
-              <tbody>
-                {selectedOrder.items.map((i, idx) => (
-                  <tr key={idx}>
-                    <td className="p-2 border text-center">{i.item_id}</td>
-                    <td className="p-2 border text-center text-xs">{i.item_name}</td>
-                    <td className="p-2 border text-center">₹{i.price}</td>
-                    <td className="p-2 border text-center">{i.quantity}</td>
-                    <td className="p-2 border text-center">₹{i.total}</td>
-                  </tr>
-                ))}
-            </tbody>
-
-            </table>
-          </div>
-        ) : (
-          <p className="text-sm">No items</p>
-        )}
-
-      </div>
-
-      {/* ================= ADDRESS ================= */}
-
-      {console.log(selectedOrder,"selectedOrderhh")}
-      
-      {selectedOrder?.address && (
-  <div className="border-t pt-3 sm:pt-4 mb-4 sm:mb-6">
-
-    <h3 className="font-semibold text-sm sm:text-base mb-3">
-      Delivery Address
-    </h3>
-
-    {selectedOrder.address.building && (
-      <p className="text-sm sm:text-base font-medium">
-        {selectedOrder.address.building}
-      </p>
-    )}
-
-    {(selectedOrder.address.doorNo || selectedOrder.address.street) && (
-      <p className="text-sm sm:text-base">
-        {selectedOrder.address.doorNo && `${selectedOrder.address.doorNo}, `}
-        {selectedOrder.address.street}
-      </p>
-    )}
-
-    {selectedOrder.address.landmark && (
-      <p className="text-sm sm:text-base">
-        {selectedOrder.address.landmark}
-      </p>
-    )}
-
-    {(selectedOrder.address.city ||
-      selectedOrder.address.pincode ||
-      selectedOrder.address.state) && (
-      <p className="text-sm sm:text-base">
-        {selectedOrder.address.city}
-        {selectedOrder.address.city && " - "}
-        {selectedOrder.address.pincode}
-        {selectedOrder.address.pincode && " - "}
-        {selectedOrder.address.state}
-      </p>
-    )}
-
-  </div>
-)}
-
-      {/* ================= ACTION BUTTONS ================= */}
-      {/* <div className="border-t pt-4 flex flex-col sm:flex-row gap-3 sm:gap-4">
-        <button
-          onClick={() => handleStatusUpdate(selectedOrder)}
-          disabled={
-            !(
-              selectedOrder.payment_status === "pending" ||
-              selectedOrder.payment_status === "success"
-            )
-          }
-          className={`flex-1 px-4 sm:px-6 py-2 text-sm sm:text-base rounded transition font-medium
-            ${
-              selectedOrder.payment_status === "pending" ||
-              selectedOrder.payment_status === "success"
-                ? "bg-blue-600 text-white hover:bg-blue-700"
-                : "bg-gray-300 text-gray-600 cursor-not-allowed"
-            }
-          `}
-        >
-          Mark {STATUS_FLOW[selectedOrder.order_status]}
-        </button>
-
-        <button
-          disabled={
-            selectedOrder.payment_status !== "success" ||
-            selectedOrder.payment_status === "refunded"
-          }
-          onClick={() => {
-            handleRefund(selectedOrder);
-            setSelectedOrder(null);
-          }}
-          className={`flex-1 px-4 sm:px-6 py-2 text-sm sm:text-base rounded transition font-medium
-            ${
-              selectedOrder.payment_status !== "success" ||
-              selectedOrder.payment_status === "refunded"
-                ? "bg-gray-300 text-gray-600 cursor-not-allowed"
-                : "bg-red-600 text-white hover:bg-red-700"
-            }
-          `}
-        >
-          Refund Payment
-        </button>
-      </div> */}
-
-    </div>
-  </div>
-)}
 
     </div>
   );
