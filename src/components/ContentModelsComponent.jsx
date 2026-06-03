@@ -92,7 +92,7 @@ const user = JSON.parse(localStorage.getItem("user"));
     if (selectedMerchantId === "ALL") {
       if (token == "0") {
          dispatch(getMerchant()); 
-        dispatch(fetchCMSData()); 
+        dispatch(fetchCMSData(token)); 
       }else{
         dispatch(fetchCMSData(token)); 
          dispatch(getMerchant()); 
