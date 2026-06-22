@@ -592,10 +592,10 @@ const pricingPlans = [
                       <div key={i} className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 border-2 border-white"></div>
                     ))}
                   </div>
-                  <div>
+                  {/* <div>
                     <div className="font-bold text-gray-900">50+</div>
                     <div className="text-sm text-gray-500">Happy Clients</div>
-                  </div>
+                  </div> */}
                 </div>
 
                 <div className="flex items-center">
@@ -2183,10 +2183,10 @@ Chat on WhatsApp
                 <div className="text-3xl font-bold text-white">24/7</div>
                 <div className="text-blue-100">Support</div>
               </div>
-              <div className="text-center">
+              {/* <div className="text-center">
                 <div className="text-3xl font-bold text-white">50+</div>
                 <div className="text-blue-100">Happy Clients</div>
-              </div>
+              </div> */}
               <div className="text-center">
                 <div className="text-3xl font-bold text-white">99.9%</div>
                 <div className="text-blue-100">Uptime</div>

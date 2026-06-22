@@ -60,6 +60,7 @@ export const setMerchantStatus = (payload) => ({
 
 export const fetchCMSData = (merchantId = null) => async (dispatch) => {
   dispatch({ type: FETCH_CMS_REQUEST });
+  console.log(merchantId, "fetchCMSData merchantId");
 
   try {
     const payload = merchantId ? { merchantId } : {};
@@ -271,13 +272,13 @@ export const deleteCoupon = (id) => async (dispatch) => {
   }
 };
 
-export const updateMerchantStatus = ({ merchantId, status }) => async (dispatch) => {
+export const updateMerchantStatus = (data) => async (dispatch) => {
   dispatch({ type: UPDATE_MERCHANT_REQUEST });
 
   try {
     const response = await api.post(
       api.Urls.updateMerchantStatus,
-      { merchantId, status } 
+      data
     );
 
     if (response?.success) {
