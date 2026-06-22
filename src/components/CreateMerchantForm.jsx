@@ -93,6 +93,7 @@ const CreateMerchantForm = ({
       // upload files first (if provided)
       if (storeLogoFile) {
         const url = await uploadImage(storeLogoFile, merchantId);
+        console.log("Uploaded store logo URL:", url);
         if (url) uploadedStoreLogo = url;
       }
 
@@ -101,22 +102,31 @@ const CreateMerchantForm = ({
         if (url) uploadedTypeLogo = url;
       }
 
+      const existingData = initialData || {};
       const payload = {
+        ...existingData,
         merchantId,
+        merchant_id: merchantId,
         name: merchantName,
         email,
         phone,
         password,
         gst,
         webhook_secret: webhookSecret,
+        webhookSecret,
         key_id: keyId,
+        keyId,
         key_secret: keySecret,
+        keySecret,
         address,
         latitude,
         longitude,
         store_type: storeType,
+        storeType,
         store_logo: uploadedStoreLogo,
+        storeLogo: uploadedStoreLogo,
         type_logo: uploadedTypeLogo,
+        typeLogo: uploadedTypeLogo,
         status,
       };
 
@@ -344,24 +354,24 @@ const CreateMerchantForm = ({
           {/* STORE LOGO */}
           <div>
             <label className="block text-sm font-medium mb-1">Store Logo</label>
+            <input
+              id="store-logo-upload"
+              type="file"
+              accept="image/*"
+              hidden
+              onChange={(e) => {
+                const f = e.target.files && e.target.files[0];
+                if (!f) return;
+                setStoreLogoFile(f);
+                setStoreLogoPreview(URL.createObjectURL(f));
+              }}
+            />
             {!storeLogoPreview ? (
               <div
                 className="border-2 border-dashed rounded-lg p-4 text-center cursor-pointer"
                 onClick={() => document.getElementById("store-logo-upload").click()}
               >
                 <p className="text-gray-500 text-sm">Click to upload store logo</p>
-                <input
-                  id="store-logo-upload"
-                  type="file"
-                  accept="image/*"
-                  hidden
-                  onChange={(e) => {
-                    const f = e.target.files && e.target.files[0];
-                    if (!f) return;
-                    setStoreLogoFile(f);
-                    setStoreLogoPreview(URL.createObjectURL(f));
-                  }}
-                />
               </div>
             ) : (
               <div className="flex items-center gap-3">
@@ -369,9 +379,7 @@ const CreateMerchantForm = ({
                 <div className="flex gap-2">
                   <button
                     type="button"
-                    onClick={() => {
-                      document.getElementById("store-logo-upload").click();
-                    }}
+                    onClick={() => document.getElementById("store-logo-upload").click()}
                     className="px-3 py-1 border rounded"
                   >
                     Change
@@ -395,24 +403,24 @@ const CreateMerchantForm = ({
           {/* TYPE LOGO */}
           <div>
             <label className="block text-sm font-medium mb-1">Type Logo</label>
+            <input
+              id="type-logo-upload"
+              type="file"
+              accept="image/*"
+              hidden
+              onChange={(e) => {
+                const f = e.target.files && e.target.files[0];
+                if (!f) return;
+                setTypeLogoFile(f);
+                setTypeLogoPreview(URL.createObjectURL(f));
+              }}
+            />
             {!typeLogoPreview ? (
               <div
                 className="border-2 border-dashed rounded-lg p-4 text-center cursor-pointer"
                 onClick={() => document.getElementById("type-logo-upload").click()}
               >
                 <p className="text-gray-500 text-sm">Click to upload type logo</p>
-                <input
-                  id="type-logo-upload"
-                  type="file"
-                  accept="image/*"
-                  hidden
-                  onChange={(e) => {
-                    const f = e.target.files && e.target.files[0];
-                    if (!f) return;
-                    setTypeLogoFile(f);
-                    setTypeLogoPreview(URL.createObjectURL(f));
-                  }}
-                />
               </div>
             ) : (
               <div className="flex items-center gap-3">
