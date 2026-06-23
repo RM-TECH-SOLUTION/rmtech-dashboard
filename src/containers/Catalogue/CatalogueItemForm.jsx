@@ -406,18 +406,21 @@ const printSingleBarcode = async ({ name, sku, barcode }) => {
 
   console.log(barcode,"ghgahgsyuagsha");
   
+try {
+  const response = await fetch("http://localhost:5000/print-barcode", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ name, sku, barcode }),
+  });
 
-  try {
-    await fetch("http://localhost:5000/print-barcode", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ name, sku, barcode }),
-    });
-  } catch (err) {
-    console.error("Barcode print error:", err);
-  }
+  const result = await response.json();
+
+  console.log("Barcode Result:", result);
+} catch (err) {
+  console.error("Barcode print error:", err);
+}
 };
 
   /* ---------------- TAB CONTENT ---------------- */
