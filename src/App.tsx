@@ -14,6 +14,7 @@ import ContentModels from './containers/ContentModels';
 import ContentItems from './containers/ContentItems';
 import ContentItemForm from './containers/ContentItemForm';
 import Home from './containers/Home';
+import PlanOnboarding from './containers/PlanOnboarding';
 import CatalogueModels from './containers/Catalogue/CatalogueModels';
 import CatalogueItems from './containers/Catalogue/CatalogueItems';
 import CatalogueItemForm from './containers/Catalogue/CatalogueItemForm';
@@ -46,6 +47,8 @@ function App() {
       <Routes>
         <Route path="/" element={<PublicLayout />}>
           <Route index element={<Home />} />
+          <Route path="plans" element={<PlanOnboarding />} />
+          <Route path="plant" element={<PlanOnboarding />} />
           <Route path="login" element={<Login />} />
         </Route>
 

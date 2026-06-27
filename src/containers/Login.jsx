@@ -1,11 +1,12 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { LogIn, Mail, Lock, Eye, EyeOff, Hash } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { merchantLogin } from "../redux/actions/cmsActions";
 
 const Login = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const dispatch = useDispatch();
 
   // --------------------
@@ -23,6 +24,15 @@ const Login = () => {
   const { loading, error, loginMerchantData } = useSelector(
     (state) => state.cms
   );
+
+  useEffect(() => {
+    const prefill = location?.state?.prefillCredentials;
+    if (!prefill) return;
+
+    setMerchantId(String(prefill.merchantId || ""));
+    setEmail(prefill.email || "");
+    setPassword(prefill.password || "");
+  }, [location]);
 
   // --------------------
   // SUBMIT

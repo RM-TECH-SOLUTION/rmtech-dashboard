@@ -20,6 +20,7 @@ import CatalogueItems from './containers/Catalogue/CatalogueItems';
 import CatalogueItemForm from './containers/Catalogue/CatalogueItemForm';
 import MerchantListContainer from './containers/MerchantListContainer';
 import Home from './containers/Home';
+import PlanOnboarding from './containers/PlanOnboarding';
 import './App.css';
 import Dashboard1 from './containers/Dashboard1';
 import Campaign from "./containers/Campaign"
@@ -44,6 +45,8 @@ function App() {
           {/* Public Routes */}
           <Route path="/" element={<PublicLayout />}>
             <Route index element={<Home />} />
+            <Route path="plans" element={<PlanOnboarding />} />
+            <Route path="plant" element={<PlanOnboarding />} />
             <Route path="login" element={<Login />} />
           </Route>
 

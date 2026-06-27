@@ -5,6 +5,13 @@ const CreateMerchantForm = ({
   onSubmit,
   isEdit = false,
   initialData = null,
+  renderMode = "modal",
+  submitLabel,
+  title,
+  description,
+  hideInternalFields = false,
+  lockMerchantId = false,
+  showCancelButton = true,
 }) => {
 
   // ----------------------------
@@ -36,11 +43,12 @@ const CreateMerchantForm = ({
   // PREFILL WHEN EDIT
   // ----------------------------
   useEffect(() => {
-    if (isEdit && initialData) {
+    if (initialData) {
       setMerchantId(initialData.merchantId || initialData.merchant_id || "");
       setMerchantName(initialData.name || initialData.merchantName || "");
       setEmail(initialData.email || initialData.email_address || "");
       setPhone(initialData.phone || initialData.phone_number || "");
+      setPassword(initialData.password || "");
       setGst(initialData.gst || initialData.gst_number || "");
       setAddress(initialData.address || "");
       setStatus(initialData.status || "active");
@@ -57,7 +65,7 @@ const CreateMerchantForm = ({
       setStoreLogoPreview(sLogo);
       setTypeLogoPreview(tLogo);
     }
-  }, [isEdit, initialData]);
+  }, [initialData]);
 
   // ----------------------------
   // SUBMIT
@@ -90,10 +98,8 @@ const CreateMerchantForm = ({
       let uploadedStoreLogo = storeLogo;
       let uploadedTypeLogo = typeLogo;
 
-      // upload files first (if provided)
       if (storeLogoFile) {
         const url = await uploadImage(storeLogoFile, merchantId);
-        console.log("Uploaded store logo URL:", url);
         if (url) uploadedStoreLogo = url;
       }
 
@@ -132,27 +138,45 @@ const CreateMerchantForm = ({
 
       if (!password) delete payload.password;
 
-      await onSubmit(payload);
-      onClose();
+      const result = await onSubmit(payload);
+      const shouldClose = result === undefined || result === true || result?.success;
+
+      if (shouldClose && onClose) {
+        onClose();
+      }
     } catch (err) {
       console.error(err);
       alert(err.message || "Failed to create/update merchant");
     }
   };
 
+  const wrapperClassName =
+    renderMode === "modal"
+      ? "fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center p-4 z-50"
+      : "w-full";
+
+  const formClassName =
+    renderMode === "modal"
+      ? "bg-white w-full max-w-lg rounded-lg flex flex-col max-h-[90vh]"
+      : "bg-white w-full rounded-[28px] border border-slate-200 shadow-xl flex flex-col";
+
+  const resolvedTitle = title || (isEdit ? "Update Merchant Details" : "Create New Merchant");
+  const isMerchantIdDisabled = isEdit || lockMerchantId;
+
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center p-4 z-50">
+    <div className={wrapperClassName}>
 
       <form
         onSubmit={handleSubmit}
-        className="bg-white w-full max-w-lg rounded-lg flex flex-col max-h-[90vh]"
+        className={formClassName}
       >
 
         {/* HEADER */}
         <div className="p-5 border-b">
-          <h2 className="text-xl font-bold">
-            {isEdit ? "Update Merchant Details" : "Create New Merchant"}
-          </h2>
+          <h2 className="text-xl font-bold">{resolvedTitle}</h2>
+          {description ? (
+            <p className="mt-2 text-sm text-slate-600">{description}</p>
+          ) : null}
         </div>
 
         {/* BODY */}
@@ -165,10 +189,10 @@ const CreateMerchantForm = ({
             </label>
             <input
               value={merchantId}
-              disabled={isEdit}
+              disabled={isMerchantIdDisabled}
               onChange={(e) => setMerchantId(e.target.value)}
               className={`w-full px-4 py-3 border rounded-lg ${
-                isEdit ? "bg-gray-100 cursor-not-allowed" : ""
+                isMerchantIdDisabled ? "bg-gray-100 cursor-not-allowed" : ""
               }`}
               placeholder="Enter Merchant ID"
               required
@@ -249,44 +273,48 @@ const CreateMerchantForm = ({
             />
           </div>
 
-          {/* WEBHOOK SECRET */}
-          <div>
-            <label className="block text-sm font-medium mb-1">
-              Webhook Secret
-            </label>
-            <input
-              value={webhookSecret}
-              onChange={(e) => setWebhookSecret(e.target.value)}
-              className="w-full px-4 py-3 border rounded-lg"
-              placeholder="Enter Webhook Secret"
-            />
-          </div>
+          {!hideInternalFields ? (
+            <>
+              {/* WEBHOOK SECRET */}
+              <div>
+                <label className="block text-sm font-medium mb-1">
+                  Webhook Secret
+                </label>
+                <input
+                  value={webhookSecret}
+                  onChange={(e) => setWebhookSecret(e.target.value)}
+                  className="w-full px-4 py-3 border rounded-lg"
+                  placeholder="Enter Webhook Secret"
+                />
+              </div>
 
-          {/* KEY ID */}
-          <div>
-            <label className="block text-sm font-medium mb-1">
-              Key ID
-            </label>
-            <input
-              value={keyId}
-              onChange={(e) => setKeyId(e.target.value)}
-              className="w-full px-4 py-3 border rounded-lg"
-              placeholder="Enter Key ID"
-            />
-          </div>
+              {/* KEY ID */}
+              <div>
+                <label className="block text-sm font-medium mb-1">
+                  Key ID
+                </label>
+                <input
+                  value={keyId}
+                  onChange={(e) => setKeyId(e.target.value)}
+                  className="w-full px-4 py-3 border rounded-lg"
+                  placeholder="Enter Key ID"
+                />
+              </div>
 
-          {/* KEY SECRET */}
-          <div>
-            <label className="block text-sm font-medium mb-1">
-              Key Secret
-            </label>
-            <input
-              value={keySecret}
-              onChange={(e) => setKeySecret(e.target.value)}
-              className="w-full px-4 py-3 border rounded-lg"
-              placeholder="Enter Key Secret"
-            />
-          </div>
+              {/* KEY SECRET */}
+              <div>
+                <label className="block text-sm font-medium mb-1">
+                  Key Secret
+                </label>
+                <input
+                  value={keySecret}
+                  onChange={(e) => setKeySecret(e.target.value)}
+                  className="w-full px-4 py-3 border rounded-lg"
+                  placeholder="Enter Key Secret"
+                />
+              </div>
+            </>
+          ) : null}
 
           {/* STORE TYPE */}
           <div>
@@ -479,20 +507,21 @@ const CreateMerchantForm = ({
             />
           </div>
 
-          {/* STATUS */}
-          <div>
-            <label className="block text-sm font-medium mb-1">
-              Status
-            </label>
-            <select
-              value={status}
-              onChange={(e) => setStatus(e.target.value)}
-              className="w-full px-4 py-3 border rounded-lg"
-            >
-              <option value="active">Active</option>
-              <option value="inactive">Inactive</option>
-            </select>
-          </div>
+          {!hideInternalFields ? (
+            <div>
+              <label className="block text-sm font-medium mb-1">
+                Status
+              </label>
+              <select
+                value={status}
+                onChange={(e) => setStatus(e.target.value)}
+                className="w-full px-4 py-3 border rounded-lg"
+              >
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+              </select>
+            </div>
+          ) : null}
 
           {/* ADDRESS */}
           <div>
@@ -511,19 +540,21 @@ const CreateMerchantForm = ({
 
         {/* FOOTER */}
         <div className="p-5 border-t flex justify-end gap-3">
-          <button
-            type="button"
-            onClick={onClose}
-            className="px-6 py-2 border rounded-xl"
-          >
-            Cancel
-          </button>
+          {showCancelButton ? (
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-6 py-2 border rounded-xl"
+            >
+              Cancel
+            </button>
+          ) : null}
 
           <button
             type="submit"
             className="px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl"
           >
-            {isEdit ? "Update" : "Create"}
+            {submitLabel || (isEdit ? "Update" : "Create")}
           </button>
         </div>
 

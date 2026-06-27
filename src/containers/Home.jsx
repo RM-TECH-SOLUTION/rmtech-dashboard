@@ -284,71 +284,47 @@ const [tooltip,setTooltip]=useState(null)
   // Pricing Plans
 const pricingPlans = [
   {
-    name: "Monthly",
-    price: "₹3,000",
+    name: "One App Multiple Merchants",
+    price: "Rs 699",
     period: "/month",
     highlight: false,
-    description: "Launch your online store instantly",
+    description: "Shared RM Tech app onboarding for merchants",
     features: [
-      "Free Domain + Hosting",
-      "Unlimited Products & Categories",
-      "Responsive Website Design",
-      "Android Mobile App",
-      "Payment Gateway Integration",
-      "Shipping & Order Tracking",
-      "Coupons & Discounts",
-      "Google Map Integration",
-      "WhatsApp Campaign",
-      "Push Notification",
-      "3 Business Email IDs",
-      "Social Media Integration",
-      "Customer Enquiry Form",
-      "User Access Control",
-      "1 Year Technical Support"
+      "One app with multiple merchants",
+      "Catalog, order and payment flow",
+      "CRM and dashboard control",
+      "Coupons, loyalty and push notifications",
+      "GST extra at 18%"
     ]
   },
   {
-    name: "Yearly",
-    price: "₹30,000",
+    name: "Complete Setup (Without Hardware)",
+    price: "Rs 19,999",
+    period: "/year",
+    highlight: false,
+    description: "Software suite without system scanner printer",
+    features: [
+      "Monthly: Rs 1,667 (GST included)",
+      "3 Months: Rs 5,000 (GST included)",
+      "Yearly: Rs 19,999 (GST included)",
+      "Dedicated app, web ordering and dashboard",
+      "Payment gateway integration"
+    ]
+  },
+    {
+    name: "Complete Setup (With Hardware)",
+    price: "Rs 29,999",
     period: "/year",
     highlight: true,
-    description: "Best value for growing businesses",
+    description: "Website + app + dashboard + system scanner printer",
     features: [
-      "Free Domain + Hosting",
-      "Unlimited Products & Categories",
-      "Responsive Website Design",
-      "Android Mobile App & Ios *",
-      "Payment Gateway Integration",
-      "Shipping & Order Tracking",
-      "Coupons & Discounts",
-      "Google Map Integration",
-      "WhatsApp Campaign",
-      "Push Notification",
-      "3 Business Email IDs",
-      "Social Media Integration",
-      "Customer Enquiry Form",
-      "User Access Control",
-      "1 Year Technical Support"
+      "Monthly: Rs 2,500 (GST included)",
+      "3 Months: Rs 7,500 (GST included)",
+      "Yearly: Rs 29,999 (GST included)",
+      "System, scanner and printer included",
+      "1 year technical support"
     ]
   },
-  {
-    name: "Custom",
-    price: "Custom",
-    period: "",
-    highlight: false,
-    description: "Enterprise level solutions",
-    features: [
-      "Everything in Yearly Plan",
-      "Custom App Development",
-      "White Label Solution",
-      "Dedicated Server",
-      "Priority Support",
-      "Custom Integrations",
-      "Advanced Analytics",
-      "Source Code Access",
-      "Unlimited Users"
-    ]
-  }
 ];
 
   // Our Services
@@ -472,7 +448,7 @@ const pricingPlans = [
 
             {/* Desktop Menu */}
             <div className="hidden md:flex items-center space-x-8">
-              {['Home', 'Showcase', "Features", 'Industries', 'Services', 'Pricing', 'Portfolio', 'About'].map((item) => (
+              {['Home', 'Showcase', "Features", 'Industries', 'Services', 'Pricing', 'About'].map((item) => (
                 <a
                   key={item}
                   href={`#${item.toLowerCase()}`}
@@ -482,6 +458,12 @@ const pricingPlans = [
                 </a>
               ))}
 
+              <button
+                onClick={() => navigate('/plans')}
+                className="px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:shadow-lg transition-all duration-300 flex items-center shadow-lg"
+              >
+                Buy Plan <ChevronRight className="ml-2 w-4 h-4" />
+              </button>
               <button
                 onClick={() => navigate('/dashboard')}
                 className="px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:shadow-lg transition-all duration-300 flex items-center shadow-lg"
@@ -516,10 +498,19 @@ const pricingPlans = [
               ))}
               <button
                 onClick={() => {
-                  navigate('/dashboard');
+                  navigate('/plant');
                   setIsMenuOpen(false);
                 }}
                 className="w-full mt-4 px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:shadow-lg flex items-center justify-center text-lg font-semibold"
+              >
+                Buy Plan <ChevronRight className="ml-2 w-5 h-5" />
+              </button>
+              <button
+                onClick={() => {
+                  navigate('/dashboard');
+                  setIsMenuOpen(false);
+                }}
+                className="w-full px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:shadow-lg flex items-center justify-center text-lg font-semibold"
               >
                 Dashboard <ChevronRight className="ml-2 w-5 h-5" />
               </button>
@@ -1742,13 +1733,16 @@ Included in this plan
 
 <div className="space-y-3">
 
-<button className="w-full py-4 rounded-xl font-semibold bg-gradient-to-r from-purple-500 to-pink-500 hover:opacity-90 transition">
-{plan.name==="Custom" ? "Contact Sales" : "Get Started"}
+<button
+onClick={() => navigate('/plant')}
+className="w-full py-4 rounded-xl font-semibold bg-gradient-to-r from-purple-500 to-pink-500 hover:opacity-90 transition"
+>
+Get Started
 </button>
 
 <a
-// href="https://wa.me/8143770778"
-// target="_blank"
+href="https://wa.me/8143770778"
+target="_blank"
 className="flex items-center justify-center gap-2 border border-green-500 text-green-400 py-3 rounded-xl hover:bg-green-500 hover:text-white transition"
 >
 
