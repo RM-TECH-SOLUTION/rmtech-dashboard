@@ -14,10 +14,12 @@ import {
   Merchant,
   X,
   Megaphone,
+  Bell,
   Ticket,
   Receipt,
   RefreshCw
 } from 'lucide-react';
+import { getPlanDataFromStorage } from '../utils/planExpiry';
 
 const Sidebar = ({ isMobileOpen, toggleMobileSidebar }) => {
   const [collapsed, setCollapsed] = useState(false);
@@ -25,6 +27,11 @@ const Sidebar = ({ isMobileOpen, toggleMobileSidebar }) => {
   const location = useLocation();
   const user = { name: 'Admin', email: 'admin@rmtechsolution.com', ...JSON.parse(localStorage.getItem('user') || '{}') };
   const token = localStorage.getItem('token');
+  const planData = getPlanDataFromStorage();
+  const isMultiMerchantPlan = planData?.planId === 'multi-merchant-app';
+  const isCompleteSetupBuyer =
+    planData?.planId === 'complete-business-solution' &&
+    planData?.setupOptionId === 'with-hardware';
 
   console.log(user,"useruseruserhhhh");
   
@@ -61,17 +68,16 @@ const Sidebar = ({ isMobileOpen, toggleMobileSidebar }) => {
 
   const navItemsUser = [
     { path: '/dashboard', icon: <Home size={20} />, label: 'Dashboard' },
-    { path: '/dashboard/pos', icon: <Receipt size={20} />, label: 'Point of Sale (POS)' },
+    ...(isCompleteSetupBuyer
+      ? [{ path: '/dashboard/pos', icon: <Receipt size={20} />, label: 'Point of Sale (POS)' }]
+      : []),
     { path: '/dashboard/posts', icon: <FileText size={20} />, label: 'Order Status' },
     { path: '/dashboard/campaign', icon: <Megaphone size={20} />, label: 'Campaign' },
     { path: '/dashboard/coupons', icon: <Ticket size={20} />, label: 'Coupons' },
     { path: '/dashboard/content-models', icon: <Layers size={20} />, label: 'Content Models' },
     { path: '/dashboard/catalogue', icon: <ShoppingBag size={20} />, label: 'Catalogue' },
-    // { path: '/dashboard/media', icon: <Image size={20} />, label: 'Media' },
     { path: '/dashboard/users', icon: <Users size={20} />, label: 'Users' },
     { path: '/dashboard/renew-plan', icon: <RefreshCw size={20} />, label: 'Renew Plan' },
-    // { path: '/dashboard/settings', icon: <Settings size={20} />, label: 'Settings' },
-    
   ];
 
    const navItemsMerchant = [
@@ -167,7 +173,7 @@ const Sidebar = ({ isMobileOpen, toggleMobileSidebar }) => {
 
         {/* Navigation */}
         <nav className="flex-1 px-4 py-6 space-y-2">
-          {(token == "0" ?navItemsMerchant : navItemsUser).map((item) => (
+          {(token == "0" ? navItemsMerchant : navItemsUser).map((item) => (
             <NavLink
               key={item.path}
               to={item.path}

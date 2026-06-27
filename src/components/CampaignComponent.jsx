@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { Search, Smile, ChevronLeft, ChevronRight } from "lucide-react";
 import EmojiPicker from "emoji-picker-react";
+import { getPlanDataFromStorage } from "../utils/planExpiry";
 
 export default function CampaignComponent() {
 
   /* ---------------- STATES ---------------- */
 
-  const [campaignType, setCampaignType] = useState("whatsapp"); // NEW
+  const planData = getPlanDataFromStorage();
+  const isMultiMerchantPlan = planData?.planId === "multi-merchant-app";
+  const [campaignType, setCampaignType] = useState("whatsapp");
 
   const [users, setUsers] = useState([]);
   const [search, setSearch] = useState("");
@@ -15,6 +18,12 @@ export default function CampaignComponent() {
   const [loading, setLoading] = useState(false);
 
   const token = localStorage.getItem("token");
+  useEffect(() => {
+    if (isMultiMerchantPlan && campaignType !== "whatsapp") {
+      setCampaignType("whatsapp");
+    }
+  }, [isMultiMerchantPlan, campaignType]);
+
 
   const [buyUrl, setBuyUrl] = useState("");
 
@@ -194,16 +203,18 @@ const sendPushNotification = async () => {
           WhatsApp Campaign
         </button>
 
-        <button
-          onClick={() => setCampaignType("push")}
-          className={`px-4 py-2 rounded-lg font-medium ${
-            campaignType === "push"
-              ? "bg-blue-600 text-white"
-              : "bg-gray-200"
-          }`}
-        >
-          Push Notification
-        </button>
+        {!isMultiMerchantPlan && (
+          <button
+            onClick={() => setCampaignType("push")}
+            className={`px-4 py-2 rounded-lg font-medium ${
+              campaignType === "push"
+                ? "bg-blue-600 text-white"
+                : "bg-gray-200"
+            }`}
+          >
+            Push Notification
+          </button>
+        )}
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 min-h-[600px]">
@@ -314,7 +325,7 @@ const sendPushNotification = async () => {
             )}
 
             {/* PUSH UI */}
-            {campaignType === "push" && (
+            {!isMultiMerchantPlan && campaignType === "push" && (
               <>
                 <label className="block text-sm font-medium mb-1">
                   Title
@@ -384,7 +395,7 @@ const sendPushNotification = async () => {
               </button>
             )}
 
-            {campaignType === "push" && (
+            {!isMultiMerchantPlan && campaignType === "push" && (
               
               <button
                 onClick={sendPushNotification}
