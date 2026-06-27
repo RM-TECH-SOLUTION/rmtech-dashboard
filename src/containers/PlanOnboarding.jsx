@@ -6,6 +6,7 @@ import { PLAN_CATALOG, SUBSCRIPTION_OPTIONS, getPlanById, getSubscriptionById } 
 import { createMerchant, getMerchant } from '../redux/actions/cmsActions';
 import { useDispatch } from 'react-redux';
 import logo from '../assets/logo4.png';
+import { computeExpiryDate, savePlanDataToStorage } from '../utils/planExpiry';
 
 const PlanOnboarding = () => {
   const navigate = useNavigate();
@@ -140,6 +141,20 @@ const PlanOnboarding = () => {
   };
 
   const handlePaymentClick = () => {
+    // Store plan data in localStorage for expiry tracking
+    const expiryDate = computeExpiryDate(selectedSubscription);
+    const planData = {
+      planId: plan?.id,
+      planName: plan?.name,
+      subscriptionId: selectedSubscription,
+      setupOptionId: selectedSetupOption || null,
+      startDate: new Date().toISOString(),
+      expiryDate,
+      merchantId: successData?.merchantId,
+      amount: totalAmount
+    };
+    savePlanDataToStorage(planData);
+
     alert(
       'Payment integration with Razorpay would be triggered here.\n\n' +
       'Plan: ' +

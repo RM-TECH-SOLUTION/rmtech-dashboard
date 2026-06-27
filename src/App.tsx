@@ -24,6 +24,7 @@ import Dashboard1 from './containers/Dashboard1';
 import Campaign from "./containers/Campaign";
 import Coupons from "./containers/Coupons"
 import POSContainer from './containers/POSContainer';
+import RenewPlanContainer from './containers/RenewPlanContainer';
 
 
 const PublicLayout = () => {
@@ -76,6 +77,7 @@ function App() {
           <Route path="settings" element={<Settings />} />
           <Route path="campaign" element={<Campaign />} />
           <Route path="coupons" element={<Coupons />} />
+          <Route path="renew-plan" element={<RenewPlanContainer />} />
         </Route>
 
         <Route path="*" element={<Navigate to="/" replace />} />

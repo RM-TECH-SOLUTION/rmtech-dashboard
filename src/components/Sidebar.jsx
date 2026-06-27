@@ -15,7 +15,8 @@ import {
   X,
   Megaphone,
   Ticket,
-  Receipt
+  Receipt,
+  RefreshCw
 } from 'lucide-react';
 
 const Sidebar = ({ isMobileOpen, toggleMobileSidebar }) => {
@@ -68,6 +69,7 @@ const Sidebar = ({ isMobileOpen, toggleMobileSidebar }) => {
     { path: '/dashboard/catalogue', icon: <ShoppingBag size={20} />, label: 'Catalogue' },
     // { path: '/dashboard/media', icon: <Image size={20} />, label: 'Media' },
     { path: '/dashboard/users', icon: <Users size={20} />, label: 'Users' },
+    { path: '/dashboard/renew-plan', icon: <RefreshCw size={20} />, label: 'Renew Plan' },
     // { path: '/dashboard/settings', icon: <Settings size={20} />, label: 'Settings' },
     
   ];
@@ -82,6 +84,7 @@ const Sidebar = ({ isMobileOpen, toggleMobileSidebar }) => {
     { path: '/dashboard/content-models', icon: <Layers size={20} />, label: 'Content Models' },
     { path: '/dashboard/catalogue', icon: <ShoppingBag size={20} />, label: 'Catalogue' },
     { path: '/dashboard/media', icon: <Image size={20} />, label: 'Media' },
+    { path: '/dashboard/renew-plan', icon: <RefreshCw size={20} />, label: 'Renew Plan' },
     // { path: '/dashboard/settings', icon: <Settings size={20} />, label: 'Settings' },
   ];
 

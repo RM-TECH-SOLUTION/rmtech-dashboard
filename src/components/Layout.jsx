@@ -3,6 +3,7 @@ import React,{ useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import Topbar from './Topbar';
+import PlanExpiryBanner from './PlanExpiryBanner';
 
 const Layout = () => {
    const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
@@ -17,6 +18,7 @@ const Layout = () => {
        />
       <div className="flex flex-col flex-1 w-full overflow-hidden">
         <Topbar  toggleSidebar={toggleMobileSidebar} />
+        <PlanExpiryBanner />
         <main className="flex-1 overflow-y-auto overflow-x-hidden p-2 sm:p-4 md:p-6">
           <Outlet />
         </main>
