@@ -122,7 +122,7 @@ const Dashboard1 = () => {
         },
         {
           title: 'Total Amount',
-          value: `₹${totalAmount}`,
+          value: `₹${totalAmount.toFixed(2)}`,
           icon: <IndianRupee />,
           color: 'bg-green-500'
         },
