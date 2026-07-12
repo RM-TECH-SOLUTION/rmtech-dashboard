@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import {
   Home,
@@ -19,22 +20,69 @@ import {
   Receipt,
   RefreshCw
 } from 'lucide-react';
+import { getMerchant } from '../redux/actions/cmsActions';
 import { getPlanDataFromStorage } from '../utils/planExpiry';
 
 const Sidebar = ({ isMobileOpen, toggleMobileSidebar }) => {
   const [collapsed, setCollapsed] = useState(false);
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
   const user = { name: 'Admin', email: 'admin@rmtechsolution.com', ...JSON.parse(localStorage.getItem('user') || '{}') };
   const token = localStorage.getItem('token');
   const planData = getPlanDataFromStorage();
-  const isMultiMerchantPlan = planData?.planId === 'multi-merchant-app';
-  const isCompleteSetupBuyer =
-    planData?.planId === 'complete-business-solution' &&
-    planData?.setupOptionId === 'with-hardware';
+  const merchantList = useSelector((state) => state.cms.merchantList || []);
+  const currentMerchant = merchantList.find((m) => String(m.merchantId || m.merchant_id) === String(token));
 
-  console.log(user,"useruseruserhhhh");
-  
+  const getCurrentMerchantAccess = () => {
+    const raw = currentMerchant?.dashboardAccess ?? currentMerchant?.dashboard_access ?? [];
+    if (Array.isArray(raw)) {
+      return raw.map((item) => String(item).trim()).filter(Boolean);
+    }
+    if (!raw) return [];
+    try {
+      const parsed = JSON.parse(String(raw));
+      if (Array.isArray(parsed)) {
+        return parsed.map((item) => String(item).trim()).filter(Boolean);
+      }
+    } catch (err) {
+      // fall back to comma split
+    }
+    return String(raw).split(',').map((item) => item.trim()).filter(Boolean);
+  };
+
+  const currentMerchantAccess = getCurrentMerchantAccess();
+  const currentMerchantAccessKeys = currentMerchantAccess.map((value) =>
+    String(value).trim().toLowerCase().replace(/\s+/g, ' ')
+  );
+
+  const navAccessMap = {
+    dashboard: { path: '/dashboard', icon: <Home size={20} />, label: 'Dashboard' },
+    pos: { path: '/dashboard/pos', icon: <Receipt size={20} />, label: 'Point of Sale (POS)' },
+    'point of sale': { path: '/dashboard/pos', icon: <Receipt size={20} />, label: 'Point of Sale (POS)' },
+    'order history': { path: '/dashboard/posts', icon: <FileText size={20} />, label: 'Order Status' },
+    campaign: { path: '/dashboard/campaign', icon: <Megaphone size={20} />, label: 'Campaign' },
+    coupons: { path: '/dashboard/coupons', icon: <Ticket size={20} />, label: 'Coupons' },
+    'content models': { path: '/dashboard/content-models', icon: <Layers size={20} />, label: 'Content Models' },
+    catalogue: { path: '/dashboard/catalogue', icon: <ShoppingBag size={20} />, label: 'Catalogue' },
+    users: { path: '/dashboard/users', icon: <Users size={20} />, label: 'Users' },
+    'renew plan': { path: '/dashboard/renew-plan', icon: <RefreshCw size={20} />, label: 'Renew Plan' },
+  };
+
+  const dynamicNavItems = currentMerchantAccessKeys
+    .map((key) => navAccessMap[key])
+    .filter(Boolean);
+
+  const sidebarItems = [
+    navAccessMap.dashboard,
+    ...dynamicNavItems,
+  ].filter(Boolean);
+
+  useEffect(() => {
+    if (!merchantList.length) {
+      dispatch(getMerchant());
+    }
+  }, [dispatch, merchantList.length]);
 
   // Close mobile sidebar when clicking outside on mobile
   useEffect(() => {
@@ -65,20 +113,6 @@ const Sidebar = ({ isMobileOpen, toggleMobileSidebar }) => {
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, [isMobileOpen, toggleMobileSidebar]);
-
-  const navItemsUser = [
-    { path: '/dashboard', icon: <Home size={20} />, label: 'Dashboard' },
-    ...(isCompleteSetupBuyer
-      ? [{ path: '/dashboard/pos', icon: <Receipt size={20} />, label: 'Point of Sale (POS)' }]
-      : []),
-    { path: '/dashboard/posts', icon: <FileText size={20} />, label: 'Order Status' },
-    { path: '/dashboard/campaign', icon: <Megaphone size={20} />, label: 'Campaign' },
-    { path: '/dashboard/coupons', icon: <Ticket size={20} />, label: 'Coupons' },
-    { path: '/dashboard/content-models', icon: <Layers size={20} />, label: 'Content Models' },
-    { path: '/dashboard/catalogue', icon: <ShoppingBag size={20} />, label: 'Catalogue' },
-    { path: '/dashboard/users', icon: <Users size={20} />, label: 'Users' },
-    { path: '/dashboard/renew-plan', icon: <RefreshCw size={20} />, label: 'Renew Plan' },
-  ];
 
    const navItemsMerchant = [
     { path: '/dashboard', icon: <Home size={20} />, label: 'Dashboard' },
@@ -173,7 +207,7 @@ const Sidebar = ({ isMobileOpen, toggleMobileSidebar }) => {
 
         {/* Navigation */}
         <nav className="flex-1 px-4 py-6 space-y-2">
-          {(token == "0" ? navItemsMerchant : navItemsUser).map((item) => (
+          {(token == "0" ? navItemsMerchant : sidebarItems).map((item) => (
             <NavLink
               key={item.path}
               to={item.path}
@@ -193,6 +227,16 @@ const Sidebar = ({ isMobileOpen, toggleMobileSidebar }) => {
             </NavLink>
           ))}
         </nav>
+
+        {currentMerchant && !collapsed && (
+          <div className="px-4 pb-4 pt-2 border-t border-gray-800 text-sm text-gray-300">
+            <div className="text-xs uppercase tracking-[0.2em] text-gray-500 mb-2">Current Merchant</div>
+            <div className="rounded-xl border border-gray-800 bg-gray-950 p-3">
+              <p className="text-white font-medium truncate">{currentMerchant.name || currentMerchant.company_name || 'Unnamed Merchant'}</p>
+              <p className="text-gray-400 text-xs truncate">ID: {currentMerchant.merchantId || currentMerchant.merchant_id || '-'}</p>
+            </div>
+          </div>
+        )}
 
         {/* User Profile */}
         <div className={`p-4 border-t border-gray-800 ${collapsed ? 'px-3' : ''}`}>

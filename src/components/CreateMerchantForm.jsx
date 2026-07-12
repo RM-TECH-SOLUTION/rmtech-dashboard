@@ -32,6 +32,7 @@ const CreateMerchantForm = ({
   const [latitude, setLatitude] = useState("");
   const [longitude, setLongitude] = useState("");
   const [storeType, setStoreType] = useState("");
+  const [dashboardAccess, setDashboardAccess] = useState([]);
   const [storeLogo, setStoreLogo] = useState("");
   const [typeLogo, setTypeLogo] = useState("");
   const [storeLogoFile, setStoreLogoFile] = useState(null);
@@ -58,6 +59,8 @@ const CreateMerchantForm = ({
       setLatitude(initialData.latitude || "");
       setLongitude(initialData.longitude || "");
       setStoreType(initialData.storeType || initialData.store_type || "");
+      const accessValue = initialData.dashboardAccess || initialData.dashboard_access || [];
+      setDashboardAccess(Array.isArray(accessValue) ? accessValue : String(accessValue).split(",").map((item) => item.trim()).filter(Boolean));
       const sLogo = initialData.storeLogo || initialData.store_logo || "";
       const tLogo = initialData.typeLogo || initialData.type_logo || "";
       setStoreLogo(sLogo);
@@ -129,6 +132,8 @@ const CreateMerchantForm = ({
         longitude,
         store_type: storeType,
         storeType,
+        dashboard_access: Array.isArray(dashboardAccess) ? dashboardAccess.join(", ") : dashboardAccess,
+        dashboardAccess,
         store_logo: uploadedStoreLogo,
         storeLogo: uploadedStoreLogo,
         type_logo: uploadedTypeLogo,
@@ -377,6 +382,34 @@ const CreateMerchantForm = ({
               <option value="Hardware Store">Hardware Store</option>
               <option value="Others">Others</option>
             </select>
+          </div>
+
+          {/* DASHBOARD ACCESS */}
+          <div>
+            <label className="block text-sm font-medium mb-1">
+              Dashboard Access
+            </label>
+            <select
+              multiple
+              value={dashboardAccess}
+              onChange={(e) => {
+                const selected = Array.from(e.target.selectedOptions, (option) => option.value);
+                setDashboardAccess(selected);
+              }}
+              className="w-full px-4 py-3 border rounded-lg h-40"
+            >
+              <option value="POS">POS</option>
+              <option value="Order History">Order History</option>
+              <option value="Campaign">Campaign</option>
+              <option value="Coupons">Coupons</option>
+              <option value="Content Models">Content Models</option>
+              <option value="Catalogue">Catalogue</option>
+              <option value="Media">Media</option>
+              <option value="Renew Plan">Renew Plan</option>
+              <option value="Settings">Settings</option>
+              <option value="Users">Users</option>
+            </select>
+            <p className="mt-1 text-xs text-gray-500">Hold Ctrl (Windows) or Cmd (Mac) to select multiple access items.</p>
           </div>
 
           {/* STORE LOGO */}

@@ -148,6 +148,9 @@ const MerchantListComponent = () => {
                             <th className="px-2 sm:px-4 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase hidden sm:table-cell">
                                 Id
                             </th>
+                            <th className="px-2 sm:px-4 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase hidden md:table-cell">
+                                Dashboard Access
+                            </th>
                             <th className="px-2 sm:px-4 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                                 Status
                             </th>
@@ -179,6 +182,18 @@ const MerchantListComponent = () => {
                                 <td className="px-2 sm:px-4 md:px-6 py-3 sm:py-4 text-gray-500 hidden sm:table-cell text-xs sm:text-sm">
                                     <div className="flex items-center truncate">
                                         {m.merchantId}
+                                    </div>
+                                </td>
+
+                                <td className="px-2 sm:px-4 md:px-6 py-3 sm:py-4 text-xs sm:text-sm hidden md:table-cell">
+                                    <div className="text-gray-700 truncate max-w-[160px]">
+                                        {(Array.isArray(m.dashboardAccess)
+                                            ? m.dashboardAccess
+                                            : String(m.dashboard_access || m.dashboardAccess || "").split(",")
+                                        )
+                                            .map((item) => item.trim())
+                                            .filter(Boolean)
+                                            .join(", ")}
                                     </div>
                                 </td>
 
